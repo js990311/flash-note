@@ -1,0 +1,20 @@
+name: "notedb"
+
+services:
+  mariadb:
+    container_name: notedb
+    image: mariadb:latest
+    ports:
+      - 3306:3306
+    environment:
+      MARIADB_DATABASE: ${DATASOURCE_DB_NAME}
+      MARIADB_USER: ${DATASOURCE_USERNAME}
+      MARIADB_PASSWORD: ${DATASOURCE_PASSWORD}
+      MARIADB_ROOT_PASSWORD: root_password
+    healthcheck:
+      test: [ "CMD", "healthcheck.sh", "--connect", "--innodb_initialized" ]
+      start_period: 1m
+      start_interval: 10s
+      interval: 1m
+      timeout: 5s
+      retries: 3

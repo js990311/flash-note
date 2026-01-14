@@ -38,6 +38,23 @@ dependencies {
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	//flyway
+	implementation 'org.flywaydb:flyway-core'
+	implementation 'org.flywaydb:flyway-mysql'
+
+	// 테스트 컨테이너
+	testImplementation 'org.springframework.boot:spring-boot-testcontainers'
+	testImplementation 'org.testcontainers:junit-jupiter'
+	testImplementation 'org.testcontainers:mariadb'
+
+	// jsp
+	implementation 'org.apache.tomcat.embed:tomcat-embed-jasper' // 톰캣 jsp
+	compileOnly 'jakarta.servlet:jakarta.servlet-api:6.1.0' // el 사용
+	implementation 'jakarta.servlet.jsp.jstl:jakarta.servlet.jsp.jstl-api' // jsp 태그
+	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
+	implementation 'org.springframework.security:spring-security-taglibs:7.0.2' // spring 시큐리티 jsp 지원
+
 }
 
 tasks.named('test') {

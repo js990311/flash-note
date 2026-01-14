@@ -1,0 +1,27 @@
+server:
+  jsp-servlet:
+    init-parameters:
+      development: true
+
+spring:
+  application:
+    name: flashnote
+  web:
+    resources:
+      static-locations: classpath:/static/,classpath:/public/,classpath:/resources/
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+  jpa:
+    properties:
+      hibernate:
+        jdbc.batch_size: 50
+        order_inserts: true
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations:
+      - classpath:db/migration/dev
