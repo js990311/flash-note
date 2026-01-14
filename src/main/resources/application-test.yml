@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: flashnote
+  jpa:
+    properties:
+      hibernate:
+        jdbc.batch_size: 50
+        order_inserts: true
+    hibernate:
+      ddl-auto: validate
+    open-in-view: false
+  flyway:
+    enabled: true
+    locations:
+      - classpath:db/migration/dev

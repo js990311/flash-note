@@ -3,7 +3,7 @@ CREATE TABLE members (
                          email        VARCHAR(255) NOT NULL,
                          name         VARCHAR(100),
                          provider     VARCHAR(50),
-                         role         VARCHAR(20)  DEFAULT 'USER',
+                         role         VARCHAR(20)  DEFAULT 'ROLE_USER',
                          created_at   DATETIME(6)  NOT NULL,
                          updated_at   DATETIME(6)  NOT NULL,
                          deleted_at   DATETIME(6)  NULL,
