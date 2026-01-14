@@ -47,9 +47,7 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <img src="<sec:authentication property='principal.attributes.picture' />"
-                                 alt="profile" class="rounded-circle me-2" style="width: 28px; height: 28px; object-fit: cover;">
-                            <span class="fw-medium"><sec:authentication property="principal.attributes.name" /></span>
+                            <span class="fw-medium"><sec:authentication property="principal.name" /></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
                             <li><a class="dropdown-item" href="<c:url value='/profile' />">내 프로필</a></li>

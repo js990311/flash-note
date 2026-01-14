@@ -1,5 +1,6 @@
-package com.rejs.flashnote.global.security;
+package com.rejs.flashnote.global.security.config;
 
+import com.rejs.flashnote.global.security.service.CustomOidcService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +14,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SpringSecurity {
+    private final CustomOidcService oidcService;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -28,7 +30,8 @@ public class SpringSecurity {
                 )
                 // OAuth2 로그인 설정
                 .oauth2Login(
-                        Customizer.withDefaults()
+                        oauth2->oauth2
+                                .userInfoEndpoint(userinfo->userinfo.oidcUserService(oidcService))
                 );
 
         return http.build();
