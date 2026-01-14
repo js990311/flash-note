@@ -1,6 +1,19 @@
+server:
+  jsp-servlet:
+    init-parameters:
+      development: true
+
 spring:
   application:
     name: flashnote
+  web:
+    resources:
+      static-locations: classpath:/static/,classpath:/public/,classpath:/resources/
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
   security:
     oauth2:
       client:
