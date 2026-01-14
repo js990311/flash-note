@@ -1,4 +1,4 @@
-package com.rejs.flashnote.global.entity;
+package com.rejs.flashnote.global.repository.entity;
 
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;

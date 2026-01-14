@@ -1,5 +1,6 @@
 package com.rejs.flashnote.global.security.authentication;
 
+import com.rejs.flashnote.domain.member.dto.MemberAuthentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.oauth2.core.oidc.OidcIdToken;
 import org.springframework.security.oauth2.core.oidc.OidcUserInfo;
@@ -10,11 +11,18 @@ import java.util.Map;
 
 public class OidcMember implements OidcUser {
     private OidcUser delegate;
+    private MemberAuthentication memberAuthentication;
 
-
-    public OidcMember(OidcUser delegate) {
+    public OidcMember(OidcUser delegate, MemberAuthentication memberAuthentication) {
         this.delegate = delegate;
+        this.memberAuthentication = memberAuthentication;
     }
+
+    public MemberAuthentication getMember() {
+        return memberAuthentication;
+    }
+
+    // OIDC 처리
 
     @Override
     public Map<String, Object> getClaims() {

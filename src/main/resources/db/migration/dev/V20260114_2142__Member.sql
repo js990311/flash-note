@@ -4,8 +4,8 @@ CREATE TABLE members (
                          name         VARCHAR(100),
                          provider     VARCHAR(50),
                          role         VARCHAR(20)  DEFAULT 'ROLE_USER',
-                         created_at   DATETIME(6)  NOT NULL,
-                         updated_at   DATETIME(6)  NOT NULL,
+                         created_at   DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
+                         updated_at   DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
                          deleted_at   DATETIME(6)  NULL,
                          PRIMARY KEY (member_id),
                          CONSTRAINT uk_members_email_provider UNIQUE (email, provider)

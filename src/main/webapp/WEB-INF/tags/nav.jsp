@@ -47,7 +47,7 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <span class="fw-medium"><sec:authentication property="principal.name" /></span>
+                            <span class="fw-medium"><sec:authentication property="principal.member.name" /></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
                             <li><a class="dropdown-item" href="<c:url value='/profile' />">내 프로필</a></li>
