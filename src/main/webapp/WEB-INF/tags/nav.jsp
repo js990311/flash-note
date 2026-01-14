@@ -27,13 +27,9 @@
 
             <ul class="navbar-nav align-items-center">
                 <sec:authorize access="isAnonymous()">
-                    <%-- 로그인하지 않은 상태 --%>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/login' />">로그인</a>
-                    </li>
                     <li class="nav-item ms-lg-2">
-                        <a class="btn btn-primary btn-sm px-3" href="<c:url value='/oauth2/authorization/google' />">
-                            시작하기
+                        <a class="btn btn-primary btn-sm px-3" href="/login">
+                            로그인
                         </a>
                     </li>
                 </sec:authorize>

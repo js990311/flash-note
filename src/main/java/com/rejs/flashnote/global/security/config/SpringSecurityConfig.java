@@ -13,7 +13,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
-public class SpringSecurity {
+public class SpringSecurityConfig {
     private final CustomOidcService oidcService;
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
@@ -31,6 +31,7 @@ public class SpringSecurity {
                 // OAuth2 로그인 설정
                 .oauth2Login(
                         oauth2->oauth2
+                                .loginPage("/login")
                                 .userInfoEndpoint(userinfo->userinfo.oidcUserService(oidcService))
                 );
 
