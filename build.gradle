@@ -55,6 +55,8 @@ dependencies {
 	implementation 'org.glassfish.web:jakarta.servlet.jsp.jstl'
 	implementation 'org.springframework.security:spring-security-taglibs:7.0.2' // spring 시큐리티 jsp 지원
 
+	// fixture 몽키
+	testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:1.1.15")
 }
 
 tasks.named('test') {

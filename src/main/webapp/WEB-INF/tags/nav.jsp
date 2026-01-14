@@ -27,13 +27,9 @@
 
             <ul class="navbar-nav align-items-center">
                 <sec:authorize access="isAnonymous()">
-                    <%-- 로그인하지 않은 상태 --%>
-                    <li class="nav-item">
-                        <a class="nav-link" href="<c:url value='/login' />">로그인</a>
-                    </li>
                     <li class="nav-item ms-lg-2">
-                        <a class="btn btn-primary btn-sm px-3" href="<c:url value='/oauth2/authorization/google' />">
-                            시작하기
+                        <a class="btn btn-primary btn-sm px-3" href="/login">
+                            로그인
                         </a>
                     </li>
                 </sec:authorize>
@@ -47,9 +43,7 @@
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
-                            <img src="<sec:authentication property='principal.attributes.picture' />"
-                                 alt="profile" class="rounded-circle me-2" style="width: 28px; height: 28px; object-fit: cover;">
-                            <span class="fw-medium"><sec:authentication property="principal.attributes.name" /></span>
+                            <span class="fw-medium"><sec:authentication property="principal.member.name" /></span>
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
                             <li><a class="dropdown-item" href="<c:url value='/profile' />">내 프로필</a></li>
