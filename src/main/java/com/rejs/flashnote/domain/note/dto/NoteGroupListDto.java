@@ -1,7 +1,10 @@
 package com.rejs.flashnote.domain.note.dto;
 
+import lombok.Getter;
+
 import java.time.LocalDateTime;
 
+@Getter
 public class NoteGroupListDto {
     /**
      * noteGroup의 id

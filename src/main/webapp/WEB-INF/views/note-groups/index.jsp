@@ -25,15 +25,24 @@
                                 <a href="/note-groups/${group.id}"
                                    class="list-group-item list-group-item-action p-3 d-flex align-items-center border-bottom justify-content-between transition">
                                     <div class="d-flex align-items-center">
+                                            <%-- 아이콘: 권한에 따라 색상을 다르게 표현할 수도 있습니다 --%>
                                         <div class="bg-light p-2 rounded-3 me-3">
-                                            <i class="bi bi-folder2 text-primary fs-5"></i>
+                                            <i class="bi bi-folder2-open text-primary fs-5"></i>
                                         </div>
                                         <div>
-                                            <h6 class="fw-bold mb-0 text-dark">
-                                                <c:out value="${group.name}" />
-                                            </h6>
-                                                <%-- 설명이 필요한 경우 추가 필드를 사용할 수 있습니다 --%>
-                                            <small class="text-muted">노트 보러가기</small>
+                                            <div class="d-flex align-items-center mb-1">
+                                                <h6 class="fw-bold mb-0 text-dark me-2">
+                                                    <c:out value="${group.groupName}" />
+                                                </h6>
+                                                    <%-- 권한(Permission) 뱃지 --%>
+                                                <span class="badge rounded-pill bg-secondary-subtle text-secondary small" style="font-size: 0.7rem;">
+                                                    <c:out value="${group.permission}" />
+                                                </span>
+                                            </div>
+                                                <%-- 최근 수정 일자 반영 --%>
+                                            <small class="text-muted">
+                                                최근 수정: <c:out value="${group.updatedAt}" />
+                                            </small>
                                         </div>
                                     </div>
                                     <i class="bi bi-chevron-right text-muted small"></i>
@@ -44,7 +53,7 @@
                     <c:otherwise>
                         <div class="text-center py-5">
                             <i class="bi bi-folder-x display-4 text-light-emphasis"></i>
-                            <p class="text-muted mt-3 mb-0">생성된 노트 그룹이 없습니다.</p>
+                            <p class="text-muted mt-3 mb-0">참여 중인 노트 그룹이 없습니다.</p>
                         </div>
                     </c:otherwise>
                 </c:choose>
