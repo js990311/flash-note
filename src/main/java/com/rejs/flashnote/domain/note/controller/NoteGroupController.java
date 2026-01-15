@@ -46,7 +46,8 @@ public class NoteGroupController {
 
     @GetMapping
     public String getNoteGroupIndex(@PageableDefault Pageable pageable, Model model){
-        Pagination<NoteGroupDto> noteGroupDtos = Pagination.from(noteGroupService.readByPage(pageable));
+        Long memberId = PrincipalUtils.getMemberId();
+        Pagination<NoteGroupDto> noteGroupDtos = Pagination.from(noteGroupService.readMyNoteGroupsByPage(memberId, pageable));
         model.addAttribute("noteGroups", noteGroupDtos);
         return "note-groups/index";
     }

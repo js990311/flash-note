@@ -47,6 +47,12 @@ public class NoteGroupService {
         return noteGroupRepository.findAll(pageable).map(NoteGroupDto::from);
     }
 
+    @Transactional(readOnly = true)
+    public Page<NoteGroupDto> readMyNoteGroupsByPage(Long memberId, Pageable pageable){
+        return null;
+    }
+
+
     // Update
     @Transactional
     public void updateName(Long noteGroupId, UpdateNoteGroupRequest request){
