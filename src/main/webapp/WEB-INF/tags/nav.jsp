@@ -18,10 +18,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="<c:url value='/notes' />">전체 노트</a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="<c:url value='/categories' />">카테고리</a>
+                    <a class="nav-link" href="<c:url value="/note-groups"/>">내 노트그룹</a>
                 </li>
             </ul>
 
