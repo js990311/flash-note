@@ -50,6 +50,9 @@ class NoteGroupControllerTest {
         // given
         Long mockMemberId = 1L;
 
+        Long mockId = 123L;
+        given(noteGroupService.createNoteGroup(anyLong(), any(CreateNoteGroupRequest.class))).willReturn(mockId);
+
         // when & then
         mockMvc.perform(post("/note-groups/create")
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
@@ -57,7 +60,7 @@ class NoteGroupControllerTest {
                         .with(csrf())
                 )
                 .andExpect(status().isOk())
-                .andExpect(view().name("note-groups/create"));
+                .andExpect(view().name("note-groups/" + mockId));
 
         // 서비스가 올바른 인자로 호출되었는지 검증
         verify(noteGroupService, times(1)).createNoteGroup(eq(mockMemberId), any(CreateNoteGroupRequest.class));
