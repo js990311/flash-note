@@ -3,6 +3,7 @@ package com.rejs.flashnote.domain.note.controller;
 import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
 import com.rejs.flashnote.domain.note.service.NoteGroupService;
+import com.rejs.flashnote.global.controller.dto.Pagination;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -45,7 +46,7 @@ public class NoteGroupController {
 
     @GetMapping
     public String getNoteGroupIndex(@PageableDefault Pageable pageable, Model model){
-        Page<NoteGroupDto> noteGroupDtos = noteGroupService.readByPage(pageable);
+        Pagination<NoteGroupDto> noteGroupDtos = Pagination.from(noteGroupService.readByPage(pageable));
         model.addAttribute("noteGroups", noteGroupDtos);
         return "note-groups/index";
     }
