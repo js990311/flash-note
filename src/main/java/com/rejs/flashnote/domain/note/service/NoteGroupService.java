@@ -4,7 +4,7 @@ import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
-import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupNameRequest;
+import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.entity.NotePermission;
 import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
@@ -49,7 +49,7 @@ public class NoteGroupService {
 
     // Update
     @Transactional
-    public void updateName(Long noteGroupId, UpdateNoteGroupNameRequest request){
+    public void updateName(Long noteGroupId, UpdateNoteGroupRequest request){
         NoteGroup noteGroup = noteGroupRepository.findById(noteGroupId).orElseThrow();
         noteGroup.updateName(request.getName());
     }

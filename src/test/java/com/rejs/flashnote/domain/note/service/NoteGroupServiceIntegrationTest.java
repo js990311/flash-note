@@ -6,7 +6,7 @@ import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
-import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupNameRequest;
+import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.entity.NotePermission;
 import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
@@ -80,7 +80,7 @@ public class NoteGroupServiceIntegrationTest {
                 .set(javaGetter(NoteGroup::getName), "Old Name")
                 .sample();
         noteGroup = noteGroupRepository.save(noteGroup);
-        UpdateNoteGroupNameRequest request = fixtureMonkey.giveMeOne(UpdateNoteGroupNameRequest.class);
+        UpdateNoteGroupRequest request = fixtureMonkey.giveMeOne(UpdateNoteGroupRequest.class);
 
         // when
         noteGroupService.updateName(noteGroup.getId(), request);

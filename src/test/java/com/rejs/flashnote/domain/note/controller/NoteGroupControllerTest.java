@@ -2,6 +2,8 @@ package com.rejs.flashnote.domain.note.controller;
 
 import com.rejs.flashnote.common.WithMockOidcMember;
 import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
+import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.service.NoteGroupService;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;
 import org.junit.jupiter.api.BeforeEach;
@@ -83,5 +85,77 @@ class NoteGroupControllerTest {
 
         // 에러 시 서비스가 호출되지 않아야 함
         verify(noteGroupService, never()).createNoteGroup(any(), any());
+    }
+
+    @Test
+    @WithMockOidcMember
+    @DisplayName("수정 페이지 요청 시 기존 데이터를 조회하여 모델에 담아 뷰를 반환한다")
+    void getUpdateNoteGroup_Success() throws Exception {
+        // given
+        Long noteGroupId = 1L;
+        NoteGroupDto mockDto = new NoteGroupDto(noteGroupId, "기존 그룹명");
+        given(noteGroupService.readById(noteGroupId)).willReturn(mockDto);
+
+        // when & then
+        mockMvc.perform(get("/note-groups/{id}/update", noteGroupId))
+                .andExpect(status().isOk())
+                .andExpect(model().attributeExists("request"))
+                .andExpect(view().name("note-groups/update"));
+
+        verify(noteGroupService, times(1)).readById(noteGroupId);
+    }
+
+    @Test
+    @WithMockOidcMember
+    @DisplayName("수정 폼 데이터 전송 시 성공적으로 수정하고 상세 페이지로 리다이렉트한다")
+    void postUpdateNoteGroup_Success() throws Exception {
+        // given
+        Long noteGroupId = 1L;
+        String updatedName = "수정된 그룹명";
+
+        // when & then
+        mockMvc.perform(post("/note-groups/{id}/update", noteGroupId)
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("name", updatedName)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/note-groups/" + noteGroupId));
+
+        verify(noteGroupService, times(1)).updateName(eq(noteGroupId), any(UpdateNoteGroupRequest.class));
+    }
+
+    @Test
+    @WithMockOidcMember
+    @DisplayName("수정 시 검증 에러가 발생하면 다시 수정 페이지를 보여준다")
+    void postUpdateNoteGroup_ValidationError() throws Exception {
+        // given
+        Long noteGroupId = 1L;
+
+        // when & then
+        mockMvc.perform(post("/note-groups/{id}/update", noteGroupId)
+                        .contentType(MediaType.APPLICATION_FORM_URLENCODED)
+                        .param("name", "") // 빈 값 전송 (Validation 에러 유발)
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(model().hasErrors())
+                .andExpect(view().name("note-groups/update"));
+
+        verify(noteGroupService, never()).updateName(any(), any());
+    }
+
+    @Test
+    @WithMockOidcMember
+    @DisplayName("삭제 요청 시 해당 노트를 삭제하고 목록 페이지로 리다이렉트한다")
+    void postDeleteNoteGroup_Success() throws Exception {
+        // given
+        Long noteGroupId = 1L;
+
+        // when & then
+        mockMvc.perform(post("/note-groups/{id}/delete", noteGroupId)
+                        .with(csrf()))
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/note-groups"));
+
+        verify(noteGroupService, times(1)).deleteNoteGroup(noteGroupId);
     }
 }

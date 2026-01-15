@@ -6,9 +6,8 @@ import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
-import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupNameRequest;
+import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
-import com.rejs.flashnote.domain.note.entity.NotePermission;
 import com.rejs.flashnote.domain.note.entity.NoteRole;
 import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NotePermissionRepository;
@@ -23,7 +22,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
 import java.util.List;
@@ -147,7 +145,7 @@ class NoteGroupServiceTest {
     void updateName_Test() {
         // Given
         Long noteGroupId = 1L;
-        UpdateNoteGroupNameRequest request = fixtureMonkey.giveMeOne(UpdateNoteGroupNameRequest.class);
+        UpdateNoteGroupRequest request = fixtureMonkey.giveMeOne(UpdateNoteGroupRequest.class);
         NoteGroup noteGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class)
                 .set(javaGetter(NoteGroup::getId), noteGroupId)
                 .set(javaGetter(NoteGroup::getName), "Old Name")

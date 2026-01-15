@@ -2,12 +2,12 @@ package com.rejs.flashnote.domain.note.controller;
 
 import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
+import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.service.NoteGroupService;
 import com.rejs.flashnote.global.controller.dto.Pagination;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -51,4 +51,26 @@ public class NoteGroupController {
         return "note-groups/index";
     }
 
+    @GetMapping("{id}/update")
+    public String getUpdateNoteGroup(@PathVariable("id")Long noteGroupId, Model model){
+        NoteGroupDto noteGroupDto = noteGroupService.readById(noteGroupId);
+        model.addAttribute("id", noteGroupId);
+        model.addAttribute("request", new UpdateNoteGroupRequest(noteGroupDto.getName()));
+        return "note-groups/update";
+    }
+
+    @PostMapping("/{id}/update")
+    public String postUpdateNoteGroup(@PathVariable("id")Long noteGroupId, @Valid @ModelAttribute("request") UpdateNoteGroupRequest request, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "note-groups/update";
+        }
+        noteGroupService.updateName(noteGroupId, request);
+        return "redirect:/note-groups/"+ noteGroupId;
+    }
+
+    @PostMapping("/{id}/delete")
+    public String postDeleteNoteGroup(@PathVariable("id")Long noteGroupId){
+        noteGroupService.deleteNoteGroup(noteGroupId);
+        return "redirect:/note-groups";
+    }
 }
