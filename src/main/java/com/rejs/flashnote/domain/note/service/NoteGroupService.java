@@ -2,11 +2,13 @@ package com.rejs.flashnote.domain.note.service;
 
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
-import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.NoteGroupListDto;
+import com.rejs.flashnote.domain.note.dto.request.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
-import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.entity.NotePermission;
+import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NotePermissionRepository;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,7 @@ public class NoteGroupService {
     private final NoteGroupRepository noteGroupRepository;
     private final NotePermissionRepository notePermissionRepository;
     private final MemberRepository memberRepository;
+    private final MyNoteGroupRepository myNoteGroupRepository;
 
     // Create
     @Transactional
@@ -48,10 +51,9 @@ public class NoteGroupService {
     }
 
     @Transactional(readOnly = true)
-    public Page<NoteGroupDto> readMyNoteGroupsByPage(Long memberId, Pageable pageable){
-        return null;
+    public Page<NoteGroupListDto> readMyNoteGroupsByPage(Long memberId, Pageable pageable){
+        return myNoteGroupRepository.findByMyPage(memberId, pageable);
     }
-
 
     // Update
     @Transactional

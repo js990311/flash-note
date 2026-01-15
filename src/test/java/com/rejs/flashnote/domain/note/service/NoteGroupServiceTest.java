@@ -4,11 +4,13 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.*;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
-import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.NoteGroupListDto;
+import com.rejs.flashnote.domain.note.dto.request.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
-import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.entity.NoteRole;
+import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NotePermissionRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -44,6 +46,9 @@ class NoteGroupServiceTest {
     private NotePermissionRepository notePermissionRepository;
     @Mock
     private MemberRepository memberRepository;
+
+    @Mock
+    private MyNoteGroupRepository myNoteGroupRepository;
 
     @InjectMocks
     private NoteGroupService noteGroupService;
@@ -184,5 +189,31 @@ class NoteGroupServiceTest {
 
         // 3. 그 다음 부모(NoteGroup)가 삭제되었는가?
         inOrder.verify(noteGroupRepository).delete(noteGroupProxy);
+    }
+
+    @Test
+    @DisplayName("사용자 ID를 기반으로 내가 속한 노트 그룹 목록을 페이징 조회한다")
+    void readMyNoteGroupsByPage_Test() {
+        // Given
+        Long memberId = 1L;
+        Pageable pageable = PageRequest.of(0, 10);
+
+        // MyNoteGroupRepository가 반환할 DTO 리스트 생성
+        List<NoteGroupListDto> dtoList = fixtureMonkey.giveMeBuilder(NoteGroupListDto.class)
+                .sampleList(3);
+        Page<NoteGroupListDto> expectedPage = new PageImpl<>(dtoList, pageable, dtoList.size());
+
+        // Repository Mocking (Service가 호출하는 대상)
+        given(myNoteGroupRepository.findByMyPage(memberId, pageable)).willReturn(expectedPage);
+
+        // When
+        Page<NoteGroupListDto> result = noteGroupService.readMyNoteGroupsByPage(memberId, pageable);
+
+        // Then
+        assertAll(
+                () -> assertThat(result).isNotNull(),
+                () -> assertThat(result.getTotalElements()).isEqualTo(3),
+                () -> verify(myNoteGroupRepository).findByMyPage(memberId, pageable)
+        );
     }
 }
