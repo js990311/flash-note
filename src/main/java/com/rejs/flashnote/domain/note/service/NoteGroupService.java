@@ -4,6 +4,7 @@ import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
+import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupNameRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.entity.NotePermission;
 import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
@@ -21,6 +22,7 @@ public class NoteGroupService {
     private final NotePermissionRepository notePermissionRepository;
     private final MemberRepository memberRepository;
 
+    // Create
     @Transactional
     public Long createNoteGroup(Long memberId, CreateNoteGroupRequest request){
         NoteGroup noteGroup = new NoteGroup(request.name());
@@ -32,9 +34,11 @@ public class NoteGroupService {
         return noteGroup.getId();
     }
 
+    // Read
+
     @Transactional(readOnly = true)
-    public NoteGroupDto readById(Long id){
-        NoteGroup noteGroup = noteGroupRepository.findById(id).orElseThrow();
+    public NoteGroupDto readById(Long noteGroupId){
+        NoteGroup noteGroup = noteGroupRepository.findById(noteGroupId).orElseThrow();
         return NoteGroupDto.from(noteGroup);
     }
 
@@ -42,4 +46,20 @@ public class NoteGroupService {
     public Page<NoteGroupDto> readByPage(Pageable pageable){
         return noteGroupRepository.findAll(pageable).map(NoteGroupDto::from);
     }
+
+    // Update
+    @Transactional
+    public void updateName(Long noteGroupId, UpdateNoteGroupNameRequest request){
+        NoteGroup noteGroup = noteGroupRepository.findById(noteGroupId).orElseThrow();
+        noteGroup.updateName(request.getName());
+    }
+
+    // Delete
+    @Transactional
+    public void deleteNoteGroup(Long noteGroupId){
+        NoteGroup noteGroup = noteGroupRepository.getReferenceById(noteGroupId);
+        notePermissionRepository.deleteByNoteGroup(noteGroup);
+        noteGroupRepository.delete(noteGroup);
+    }
+
 }

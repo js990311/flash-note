@@ -5,19 +5,29 @@ import com.navercorp.fixturemonkey.api.introspector.*;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
+import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupNameRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
+import com.rejs.flashnote.domain.note.entity.NotePermission;
 import com.rejs.flashnote.domain.note.entity.NoteRole;
 import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NotePermissionRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InOrder;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.util.ReflectionTestUtils;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -25,6 +35,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.verify;
 
 @ExtendWith(MockitoExtension.class)
@@ -91,6 +102,89 @@ class NoteGroupServiceTest {
                         // 2. 전달된 프록시 객체가 그대로 쓰였는지 확인
                         permission.getMember().getId().equals(memberProxy.getId())
         ));
+    }
 
+    @Test
+    @DisplayName("노트 그룹 단건 조회 테스트")
+    void readById_Test() {
+        // Given
+        Long noteGroupId = 1L;
+        NoteGroup noteGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class)
+                .set(javaGetter(NoteGroup::getId), noteGroupId)
+                .sample();
+
+        given(noteGroupRepository.findById(noteGroupId)).willReturn(Optional.of(noteGroup));
+
+        // When
+        NoteGroupDto result = noteGroupService.readById(noteGroupId);
+
+        // Then
+        assertThat(result.getId()).isEqualTo(noteGroupId);
+        assertThat(result.getName()).isEqualTo(noteGroup.getName());
+    }
+
+    @Test
+    @DisplayName("노트 그룹 페이징 조회 테스트")
+    void readByPage_Test() {
+        // Given
+        int size = 10;
+        Pageable pageable = PageRequest.of(0, size);
+        List<NoteGroup> noteGroups = fixtureMonkey.giveMeBuilder(NoteGroup.class).sampleList(size);
+        Page<NoteGroup> page = new PageImpl<>(noteGroups, pageable, noteGroups.size());
+
+        given(noteGroupRepository.findAll(pageable)).willReturn(page);
+
+        // When
+        Page<NoteGroupDto> result = noteGroupService.readByPage(pageable);
+
+        // Then
+        assertEquals(noteGroups.size(), result.getContent().size());
+        assertThat(result.getContent().get(0).getName()).isEqualTo(noteGroups.get(0).getName());
+    }
+
+    @Test
+    @DisplayName("노트 그룹 이름 수정 테스트")
+    void updateName_Test() {
+        // Given
+        Long noteGroupId = 1L;
+        UpdateNoteGroupNameRequest request = fixtureMonkey.giveMeOne(UpdateNoteGroupNameRequest.class);
+        NoteGroup noteGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class)
+                .set(javaGetter(NoteGroup::getId), noteGroupId)
+                .set(javaGetter(NoteGroup::getName), "Old Name")
+                .sample();
+
+        given(noteGroupRepository.findById(noteGroupId)).willReturn(Optional.of(noteGroup));
+
+        // When
+        noteGroupService.updateName(noteGroupId, request);
+
+        // Then
+        assertThat(noteGroup.getName()).isEqualTo(request.getName());
+    }
+
+    @Test
+    @DisplayName("노트 그룹 삭제 시 자식을 먼저 지우고 부모를 지운다")
+    void deleteNoteGroup_Test() {
+        // Given
+        Long noteGroupId = 1L;
+        // getReferenceById는 실제 DB를 안 찌르므로 ID만 박힌 프록시 객체 모사
+        NoteGroup noteGroupProxy = fixtureMonkey.giveMeBuilder(NoteGroup.class)
+                .set(javaGetter(NoteGroup::getId), noteGroupId)
+                .sample();
+
+        given(noteGroupRepository.getReferenceById(noteGroupId)).willReturn(noteGroupProxy);
+
+        // When
+        noteGroupService.deleteNoteGroup(noteGroupId);
+
+        // Then
+        // 1. 순서 검증을 위한 InOrder 생성
+        InOrder inOrder = inOrder(notePermissionRepository, noteGroupRepository);
+
+        // 2. 자식(Permission) 벌크 삭제가 먼저 일어났는가?
+        inOrder.verify(notePermissionRepository).deleteByNoteGroup(noteGroupProxy);
+
+        // 3. 그 다음 부모(NoteGroup)가 삭제되었는가?
+        inOrder.verify(noteGroupRepository).delete(noteGroupProxy);
     }
 }

@@ -6,6 +6,7 @@ import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.CreateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.UpdateNoteGroupNameRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.entity.NotePermission;
 import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
@@ -70,4 +71,55 @@ public class NoteGroupServiceIntegrationTest {
         assertThat(permissions.get(0).getMember().getId()).isEqualTo(member.getId());
         assertThat(permissions.get(0).getNoteGroup().getId()).isEqualTo(groupId);
     }
+
+    @Test
+    @DisplayName("노트 그룹 수정 시 DB의 데이터가 실제로 변경되어야 한다")
+    void updateNoteGroup_Integration() {
+        // given
+        NoteGroup noteGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class).setNull(javaGetter(NoteGroup::getId))
+                .set(javaGetter(NoteGroup::getName), "Old Name")
+                .sample();
+        noteGroup = noteGroupRepository.save(noteGroup);
+        UpdateNoteGroupNameRequest request = fixtureMonkey.giveMeOne(UpdateNoteGroupNameRequest.class);
+
+        // when
+        noteGroupService.updateName(noteGroup.getId(), request);
+
+        // then
+        NoteGroup updatedGroup = noteGroupRepository.findById(noteGroup.getId()).orElseThrow();
+        assertThat(updatedGroup.getName()).isEqualTo(request.getName());
+    }
+
+    @Test
+    @DisplayName("노트 그룹 삭제 시 자식 데이터(권한)도 함께 삭제되어야 한다")
+    void deleteNoteGroup_Integration() {
+        // given
+        // 1. 멤버 생성 및 저장
+        Member member = fixtureMonkey.giveMeBuilder(Member.class).setNull(javaGetter(Member::getId)).sample();
+        memberRepository.save(member);
+
+        // 2. 노트 그룹 생성 및 저장
+        NoteGroup noteGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class).setNull(javaGetter(NoteGroup::getId))
+                .set(javaGetter(NoteGroup::getName), "Old Name")
+                .sample();
+        noteGroupRepository.save(noteGroup);
+
+        // 3. 권한 생성 및 저장
+        NotePermission permission = NotePermission.createNoteGroup(member, noteGroup);
+        notePermissionRepository.save(permission);
+
+        // when
+        noteGroupService.deleteNoteGroup(noteGroup.getId());
+
+        // then
+        // 부모 그룹이 삭제되었는지 확인
+        assertThat(noteGroupRepository.findById(noteGroup.getId())).isEmpty();
+
+        // 자식 권한(NotePermission)이 벌크 삭제 쿼리에 의해 삭제되었는지 확인
+        List<NotePermission> permissions = notePermissionRepository.findAll();
+        boolean hasPermission = permissions.stream()
+                .anyMatch(p -> p.getNoteGroup().getId().equals(noteGroup.getId()));
+        assertThat(hasPermission).isFalse();
+    }
+
 }

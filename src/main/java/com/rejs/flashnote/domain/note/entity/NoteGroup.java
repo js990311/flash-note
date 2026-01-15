@@ -29,4 +29,8 @@ public class NoteGroup extends BaseEntity {
     public NoteGroup(String name) {
         this.name = name;
     }
+
+    public void updateName(String name) {
+        this.name = name;
+    }
 }

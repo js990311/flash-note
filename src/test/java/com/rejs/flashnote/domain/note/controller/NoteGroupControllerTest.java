@@ -45,7 +45,7 @@ class NoteGroupControllerTest {
 
     @Test
     @WithMockOidcMember
-    @DisplayName("올바른 폼 데이터 전송 시 노트 그룹을 생성하고 생성 페이지로 돌아간다")
+    @DisplayName("올바른 폼 데이터 전송 시 노트 그룹을 생성하고 리다이렉트한다")
     void postCreateNoteGroup_Success() throws Exception {
         // given
         Long mockMemberId = 1L;
@@ -59,8 +59,8 @@ class NoteGroupControllerTest {
                         .param("name", "나의 첫 노트 그룹")
                         .with(csrf())
                 )
-                .andExpect(status().isOk())
-                .andExpect(view().name("note-groups/" + mockId));
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/note-groups/" + mockId));
 
         // 서비스가 올바른 인자로 호출되었는지 검증
         verify(noteGroupService, times(1)).createNoteGroup(eq(mockMemberId), any(CreateNoteGroupRequest.class));
