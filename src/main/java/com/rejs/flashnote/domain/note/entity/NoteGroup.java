@@ -25,4 +25,8 @@ public class NoteGroup extends BaseEntity {
 
     @Column
     private String name;
+
+    public NoteGroup(String name) {
+        this.name = name;
+    }
 }

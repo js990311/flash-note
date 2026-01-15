@@ -39,4 +39,12 @@ public class NotePermission extends BaseEntity {
     @ManyToOne
     @JoinColumn(name = "member_id")
     private Member member;
+
+    public static NotePermission createNoteGroup(Member member, NoteGroup noteGroup){
+        return NotePermission.builder()
+                .member(member)
+                .noteGroup(noteGroup)
+                .role(NoteRole.OWNER)
+                .build();
+    }
 }
