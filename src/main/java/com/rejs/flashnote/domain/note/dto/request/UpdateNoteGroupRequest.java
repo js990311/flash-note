@@ -4,9 +4,6 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-/**
- * 이름 바꾸기
- */
 @Getter
 @AllArgsConstructor
 public class UpdateNoteGroupRequest {
