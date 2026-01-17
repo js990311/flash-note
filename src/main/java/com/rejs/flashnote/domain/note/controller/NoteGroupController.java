@@ -1,9 +1,9 @@
 package com.rejs.flashnote.domain.note.controller;
 
 import com.rejs.flashnote.domain.note.dto.NoteGroupListDto;
-import com.rejs.flashnote.domain.note.dto.request.CreateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.group.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
-import com.rejs.flashnote.domain.note.dto.request.UpdateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.group.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.service.NoteGroupService;
 import com.rejs.flashnote.global.controller.dto.Pagination;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;

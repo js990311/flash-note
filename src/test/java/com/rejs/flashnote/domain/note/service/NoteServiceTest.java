@@ -3,7 +3,7 @@ package com.rejs.flashnote.domain.note.service;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
-import com.rejs.flashnote.domain.note.dto.request.NoteEditRequest;
+import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;

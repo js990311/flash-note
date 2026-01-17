@@ -1,7 +1,7 @@
 package com.rejs.flashnote.domain.note.service;
 
 import com.rejs.flashnote.domain.note.dto.NoteDto;
-import com.rejs.flashnote.domain.note.dto.request.NoteEditRequest;
+import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;

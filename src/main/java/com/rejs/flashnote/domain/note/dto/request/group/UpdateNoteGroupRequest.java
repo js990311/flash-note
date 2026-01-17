@@ -1,4 +1,4 @@
-package com.rejs.flashnote.domain.note.dto.request;
+package com.rejs.flashnote.domain.note.dto.request.group;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;

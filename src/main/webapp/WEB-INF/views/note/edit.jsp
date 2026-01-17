@@ -31,6 +31,8 @@
     <div id="editor" class="mb-5"></div>
 
     <form:hidden path="content" id="content" />
+    <form:hidden path="noteId" id="noteId" />
+    <form:hidden path="noteGroupId" id="noteGroupId" />
 
     <nav class="navbar fixed-bottom bg-white border-top py-3" style="z-index: 1000;">
         <div class="container d-flex justify-content-end">
