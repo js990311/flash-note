@@ -3,9 +3,9 @@ package com.rejs.flashnote.domain.note.service;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.NoteGroupListDto;
-import com.rejs.flashnote.domain.note.dto.request.CreateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.group.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
-import com.rejs.flashnote.domain.note.dto.request.UpdateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.group.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.entity.NotePermission;
 import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;
@@ -28,7 +28,7 @@ public class NoteGroupService {
     // Create
     @Transactional
     public Long createNoteGroup(Long memberId, CreateNoteGroupRequest request){
-        NoteGroup noteGroup = new NoteGroup(request.name());
+        NoteGroup noteGroup = new NoteGroup(request.getName());
         Member member = memberRepository.getReferenceById(memberId);
         noteGroup = noteGroupRepository.save(noteGroup);
 

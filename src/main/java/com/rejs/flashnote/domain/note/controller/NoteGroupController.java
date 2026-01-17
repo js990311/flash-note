@@ -1,14 +1,17 @@
 package com.rejs.flashnote.domain.note.controller;
 
+import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.NoteGroupListDto;
-import com.rejs.flashnote.domain.note.dto.request.CreateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.group.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
-import com.rejs.flashnote.domain.note.dto.request.UpdateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.group.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.service.NoteGroupService;
+import com.rejs.flashnote.domain.note.service.NoteService;
 import com.rejs.flashnote.global.controller.dto.Pagination;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/note-groups")
 public class NoteGroupController {
     private final NoteGroupService noteGroupService;
+    private final NoteService noteService;
 
     @GetMapping("/create")
     public String getCreateNoteGroup(Model model){
@@ -39,9 +43,11 @@ public class NoteGroupController {
     }
 
     @GetMapping("/{id}")
-    public String getNoteGroupById(@PathVariable("id") Long id, Model model){
+    public String getNoteGroupById(@PathVariable("id") Long id, Pageable pageable, Model model){
         NoteGroupDto noteGroupDto = noteGroupService.readById(id);
         model.addAttribute("noteGroup", noteGroupDto);
+        Pagination<NoteDto> notes = Pagination.from(noteService.readPageByNoteGroupId(id, pageable));
+        model.addAttribute("notes", notes);
         return "note-groups/id";
     }
 

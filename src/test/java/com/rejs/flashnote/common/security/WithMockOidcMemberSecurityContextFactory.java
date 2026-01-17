@@ -1,4 +1,4 @@
-package com.rejs.flashnote.common;
+package com.rejs.flashnote.common.security;
 
 import com.rejs.flashnote.domain.member.dto.MemberAuthentication;
 import com.rejs.flashnote.global.security.authentication.OidcMember;
@@ -12,7 +12,6 @@ import org.springframework.security.oauth2.core.oidc.user.DefaultOidcUser;
 import org.springframework.security.oauth2.core.oidc.user.OidcUser;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
-import java.lang.annotation.Annotation;
 import java.time.Instant;
 import java.util.Collections;
 import java.util.List;

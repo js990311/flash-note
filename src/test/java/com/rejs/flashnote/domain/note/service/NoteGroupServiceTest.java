@@ -1,13 +1,13 @@
 package com.rejs.flashnote.domain.note.service;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
-import com.navercorp.fixturemonkey.api.introspector.*;
+import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.NoteGroupListDto;
-import com.rejs.flashnote.domain.note.dto.request.CreateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.group.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
-import com.rejs.flashnote.domain.note.dto.request.UpdateNoteGroupRequest;
+import com.rejs.flashnote.domain.note.dto.request.group.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.entity.NoteRole;
 import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;
@@ -25,7 +25,6 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,19 +52,7 @@ class NoteGroupServiceTest {
     @InjectMocks
     private NoteGroupService noteGroupService;
 
-    private final FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
-            .objectIntrospector(
-                    new FailoverIntrospector(
-                            Arrays.asList(
-                                    BuilderArbitraryIntrospector.INSTANCE, // 빌더
-                                    ConstructorPropertiesArbitraryIntrospector.INSTANCE, // 생성자
-                                    BeanArbitraryIntrospector.INSTANCE, // setter
-                                    FieldReflectionArbitraryIntrospector.INSTANCE // 리플렉션
-                            ),
-                            false // 로그가... 남는다... 왜?
-                    )
-            )
-            .build();
+    private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
 
     @Test
     @DisplayName("Fixture Monkey를 사용하여 노트 그룹 생성 로직을 검증한다")
@@ -74,15 +61,13 @@ class NoteGroupServiceTest {
         Long memberId = fixtureMonkey.giveMeOne(Long.class);
         CreateNoteGroupRequest request = fixtureMonkey.giveMeOne(CreateNoteGroupRequest.class);
 
-        // 2. Mocking: getReferenceById 호출 시 반환할 Member 프록시(가짜 객체)
-        // ID만 memberId로 고정하고 나머지는 랜덤하게 채운 객체 생성
         Member memberProxy = fixtureMonkey.giveMeBuilder(Member.class)
                 .set(javaGetter(Member::getId), memberId)
                 .sample();
 
         NoteGroup savedNoteGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class)
-                .setNotNull(javaGetter(NoteGroup::getId)) // ID가 생성된 상태를 모사
-                .set(javaGetter(NoteGroup::getName), request.name())
+                .setNotNull(javaGetter(NoteGroup::getId))
+                .set(javaGetter(NoteGroup::getName), request.getName())
                 .sample();
 
         given(memberRepository.getReferenceById(memberId)).willReturn(memberProxy);

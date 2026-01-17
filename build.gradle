@@ -10,6 +10,7 @@ description = 'Demo project for Spring Boot'
 
 ext {
 	queryDslVersion = "5.1.0"
+	fixtureMonkeyVersion="1.1.15"
 }
 
 java {
@@ -66,7 +67,8 @@ dependencies {
 	annotationProcessor "jakarta.persistence:jakarta.persistence-api"
 
 	// fixture 몽키
-	testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:1.1.15")
+	testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:${fixtureMonkeyVersion}")
+	testImplementation("com.navercorp.fixturemonkey:fixture-monkey-jakarta-validation:${fixtureMonkeyVersion}")
 }
 
 tasks.named('test') {

@@ -3,6 +3,7 @@ package com.rejs.flashnote.domain.member.service;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.BuilderArbitraryIntrospector;
 import com.rejs.flashnote.TestcontainersConfiguration;
+import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.member.dto.MemberAuthentication;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
@@ -24,9 +25,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 @ActiveProfiles("test")
 @SpringBootTest
 class MemberServiceIntegrationTest {
-    private final FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
-            .objectIntrospector(BuilderArbitraryIntrospector.INSTANCE)
-            .build();
+    private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
 
     @Autowired
     private MemberService memberService;
@@ -37,8 +36,7 @@ class MemberServiceIntegrationTest {
     @Test
     @DisplayName("신규 회원은 Fixture Monkey로 생성된 임의의 데이터로 가입에 성공해야 한다")
     void getOrCreateAuthentication_NewMember() {
-        // given: 임의의 이메일과 공급자 생성
-        String email = fixtureMonkey.giveMeOne(String.class); // 혹은 특정 패턴의 문자열
+        String email = fixtureMonkey.giveMeOne(String.class);
         String provider = "google";
 
         // when
@@ -56,21 +54,17 @@ class MemberServiceIntegrationTest {
     @Test
     @DisplayName("기존 회원이 존재할 때 Fixture Monkey로 생성된 객체의 ID를 보존해야 한다")
     void getOrCreateAuthentication_ExistingMember() {
-        // given: Fixture Monkey로 기존 멤버 객체 생성
-        String email = "test@flashnote.com";
+        // given
+        String email = "test@email.com";
         String provider = "google";
-
-        // Member.of() 대신 Fixture Monkey를 사용하여 엔티티를 직접 생성(Mocking 시나리오와 유사)
         Member existingMember = fixtureMonkey.giveMeBuilder(Member.class)
                 .set(javaGetter(Member::getEmail), email)
                 .set(javaGetter(Member::getProvider), provider)
-                .setNull(javaGetter(Member::getId)) // ID는 DB가 할당하도록 null 설정
                 .sample();
-
-        memberRepository.save(existingMember);
+        memberRepository.saveAndFlush(existingMember);
         long countBefore = memberRepository.count();
 
-        // when
+        // when : 누군가가 똑같은 데이터로 로그인 시도
         MemberAuthentication auth = memberService.getOrCreateAuthentication(email, provider);
 
         // then

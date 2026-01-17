@@ -3,6 +3,7 @@ package com.rejs.flashnote.domain.note.repository;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.navercorp.fixturemonkey.api.introspector.*;
 import com.rejs.flashnote.TestcontainersConfiguration;
+import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.NoteGroupListDto;
@@ -49,21 +50,7 @@ class MyNoteGroupRepositoryTest {
     @Autowired
     private EntityManager entityManager;
 
-    private final FixtureMonkey fixtureMonkey = FixtureMonkey.builder()
-            .objectIntrospector(
-                    BuilderArbitraryIntrospector.INSTANCE
-            )
-            .register(Member.class, fixture -> fixture.giveMeBuilder(Member.class)
-                    .setNull(javaGetter(Member::getId))
-                    .set(javaGetter(Member::getProvider), Arbitraries.strings().alpha().ofMaxLength(10))
-                    .set(javaGetter(Member::getEmail), Arbitraries.strings().alpha().ofMaxLength(10).map(s -> s + "@test.com"))
-                    .set(javaGetter(Member::getName), Arbitraries.strings().ofMaxLength(5))
-            )
-            .register(NoteGroup.class, fixture -> fixture.giveMeBuilder(NoteGroup.class)
-                    .setNull(javaGetter(NoteGroup::getId))
-                    .set(javaGetter(NoteGroup::getName), Arbitraries.strings().alpha().ofMaxLength(10))
-            )
-            .build();
+    private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
 
     @Test
     @DisplayName("내가 권한을 가진 NoteGroup 리스트만 페이징하여 조회해야 한다")
