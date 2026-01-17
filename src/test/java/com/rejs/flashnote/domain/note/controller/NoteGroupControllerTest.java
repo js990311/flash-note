@@ -5,6 +5,7 @@ import com.rejs.flashnote.domain.note.dto.request.group.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
 import com.rejs.flashnote.domain.note.dto.request.group.UpdateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.service.NoteGroupService;
+import com.rejs.flashnote.domain.note.service.NoteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +28,8 @@ class NoteGroupControllerTest {
 
     @MockitoBean
     private NoteGroupService noteGroupService;
+    @MockitoBean
+    private NoteService noteService;
 
     @Test
     @WithMockOidcMember

@@ -59,7 +59,8 @@ public class MyNoteGroupRepository {
                                 note.id,
                                 note.group.id,
                                 note.title,
-                                note.content
+                                note.content,
+                                note.updatedAt
                         )
                 )
                 .from(note)
