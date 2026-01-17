@@ -49,6 +49,8 @@ public class Note extends BaseEntity {
     public static Note newNote(NoteGroup noteGroup){
         return Note.builder()
                 .group(noteGroup)
+                .title("Write title In Here")
+                .content("Write content In Here")
                 .build();
     }
 
