@@ -143,4 +143,26 @@ class NoteControllerTest {
 
         // 서비스의 update 메서드는 호출되지 않아야 함
         then(noteService).shouldHaveNoInteractions();
-    }}
+    }
+
+    @Test
+    @DisplayName("노트 삭제 요청(POST): 삭제 후 해당 노트가 속해있던 그룹 페이지로 리다이렉트된다")
+    @WithMockOidcMember
+    void deleteNote_success() throws Exception {
+        // given
+        Long noteId = 100L;
+        Long returnedGroupId = 555L;
+
+        given(noteService.deleteNote(noteId)).willReturn(returnedGroupId);
+
+        // when & then
+        mockMvc.perform(post("/note/{id}/delete", noteId)
+                        .with(csrf())
+                )
+                .andExpect(status().is3xxRedirection()) // 302 Found 등 리다이렉트 응답 확인
+                .andExpect(redirectedUrl("/note-groups/" + returnedGroupId)); // 리다이렉트 경로 검증
+
+        // 서비스 메서드가 정확한 인자로 호출되었는지 검증
+        then(noteService).should().deleteNote(noteId);
+    }
+}

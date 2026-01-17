@@ -48,4 +48,9 @@ public class NoteController {
         return "redirect:/note/"+noteId;
     }
 
+    @PostMapping("/{id}/delete")
+    public String deleteNote(@PathVariable("id") Long noteId){
+        Long groupId = noteService.deleteNote(noteId);
+        return "redirect:/note-groups/"+ groupId;
+    }
 }

@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
@@ -163,13 +164,30 @@ class NoteServiceTest {
     @Test
     @DisplayName("노트 삭제: 리포지토리의 삭제 메서드가 호출된다")
     void deleteNote_success() {
-        // given
         Long noteId = 100L;
+        Long expectedGroupId = 555L;
+
+        // 1. 삭제 후 반환할 그룹 ID를 가진 NoteGroup 생성
+        NoteGroup mockGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class)
+                .set("id", expectedGroupId)
+                .sample();
+
+        // 2. 삭제 대상 Note 생성 (위에서 만든 그룹과 연결)
+        Note mockNote = fixtureMonkey.giveMeBuilder(Note.class)
+                .set("id", noteId)
+                .set(javaGetter(Note::getGroup), mockGroup)
+                .sample();
+
+        // 3. findById 호출 시 mockNote를 반환하도록 설정
+        given(noteRepository.findById(noteId)).willReturn(Optional.of(mockNote));
 
         // when
-        noteService.deleteNote(noteId);
+        Long resultGroupId = noteService.deleteNote(noteId);
 
         // then
-        then(noteRepository).should().deleteById(noteId);
-    }
+        // 1. 반환된 그룹 ID가 예상값과 일치하는지 검증
+        assertThat(resultGroupId).isEqualTo(expectedGroupId);
+
+        // 2. (중요) deleteById(id)가 아니라 delete(entity)가 호출되었는지 검증
+        then(noteRepository).should().delete(mockNote);    }
 }

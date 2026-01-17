@@ -149,11 +149,13 @@ class NoteServiceIntegrationTest {
         Long noteId = savedNote.getId();
 
         // when
-        noteService.deleteNote(noteId);
+        Long deleteNotesGroupId = noteService.deleteNote(noteId);
 
         // then
         assertThatThrownBy(() -> noteService.readById(noteId))
                 .isInstanceOf(NoSuchElementException.class);
 
         assertThat(noteRepository.findById(noteId)).isEmpty();
-    }}
+        assertThat(deleteNotesGroupId).isEqualTo(noteGroupId);
+    }
+}

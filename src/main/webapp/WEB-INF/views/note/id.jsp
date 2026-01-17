@@ -39,7 +39,7 @@
                             <i class="bi bi-pencil-square me-1"></i> 수정
                         </a>
 
-                        <form action="/note/${note.id}/delete" method="post" onsubmit="return confirm('정말 삭제하시겠습니까?');">
+                        <form action="/note/${note.id}/delete" method="post">
                              <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <button type="submit" class="btn btn-outline-danger">
                                 <i class="bi bi-trash me-1"></i> 삭제

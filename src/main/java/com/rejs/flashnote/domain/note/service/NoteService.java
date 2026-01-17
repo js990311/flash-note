@@ -57,7 +57,9 @@ public class NoteService {
 
     // ## Delete
     @Transactional
-    public void deleteNote(Long noteId){
-        noteRepository.deleteById(noteId);
+    public Long deleteNote(Long noteId){
+        Note note = noteRepository.findById(noteId).orElseThrow();
+        noteRepository.delete(note);
+        return note.getGroup().getId();
     }
 }
