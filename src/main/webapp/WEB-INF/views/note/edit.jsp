@@ -17,7 +17,7 @@
     <link rel="stylesheet" href="<c:url value='/css/global.css' />">
 </head>
 <body>
-<form:form modelAttribute="noteForm" action="/note/edit" method="post" id="writeForm">
+<form:form modelAttribute="noteForm" action="/note/${noteForm.noteId}/edit" method="post" id="writeForm">
 
     <div class="mb-4">
         <form:input path="title"
