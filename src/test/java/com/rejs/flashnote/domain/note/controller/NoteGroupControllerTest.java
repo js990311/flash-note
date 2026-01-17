@@ -1,6 +1,6 @@
 package com.rejs.flashnote.domain.note.controller;
 
-import com.rejs.flashnote.common.WithMockOidcMember;
+import com.rejs.flashnote.common.security.WithMockOidcMember;
 import com.rejs.flashnote.domain.note.dto.request.CreateNoteGroupRequest;
 import com.rejs.flashnote.domain.note.dto.NoteGroupDto;
 import com.rejs.flashnote.domain.note.dto.request.UpdateNoteGroupRequest;

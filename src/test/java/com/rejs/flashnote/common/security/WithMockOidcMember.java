@@ -1,4 +1,4 @@
-package com.rejs.flashnote.common;
+package com.rejs.flashnote.common.security;
 
 import com.rejs.flashnote.domain.member.entity.MemberRole;
 import org.springframework.security.test.context.support.WithSecurityContext;

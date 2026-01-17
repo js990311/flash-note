@@ -28,7 +28,7 @@ public class NoteGroupService {
     // Create
     @Transactional
     public Long createNoteGroup(Long memberId, CreateNoteGroupRequest request){
-        NoteGroup noteGroup = new NoteGroup(request.name());
+        NoteGroup noteGroup = new NoteGroup(request.getName());
         Member member = memberRepository.getReferenceById(memberId);
         noteGroup = noteGroupRepository.save(noteGroup);
 
