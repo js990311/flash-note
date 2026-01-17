@@ -4,6 +4,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rejs.flashnote.domain.member.entity.QMember;
+import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.NoteGroupListDto;
 import com.rejs.flashnote.domain.note.entity.QNote;
 import com.rejs.flashnote.domain.note.entity.QNoteGroup;
@@ -13,11 +14,13 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @RequiredArgsConstructor
 @Repository
+@Transactional(readOnly = true)
 public class MyNoteGroupRepository {
     private final JPAQueryFactory jpaQueryFactory;
 
@@ -47,5 +50,31 @@ public class MyNoteGroupRepository {
                 .from(notePermission)
                 .where(notePermission.member.id.eq(memberId));
         return PageableExecutionUtils.getPage(content, pageable, countq::fetchOne);
+    }
+
+    public Page<NoteDto> findNoteByNoteGroupId(Long noteGroupId, Pageable pageable){
+        List<NoteDto> content = jpaQueryFactory.select(
+                        Projections.constructor(
+                                NoteDto.class,
+                                note.id,
+                                note.group.id,
+                                note.title,
+                                note.content
+                        )
+                )
+                .from(note)
+                .where(note.group.id.eq(noteGroupId))
+                .orderBy(note.updatedAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+        ;
+        JPAQuery<Long> countq = jpaQueryFactory
+                .select(note.count())
+                .from(note)
+                .where(note.group.id.eq(noteGroupId))
+        ;
+        return PageableExecutionUtils.getPage(content, pageable, countq::fetchOne);
+
     }
 }
