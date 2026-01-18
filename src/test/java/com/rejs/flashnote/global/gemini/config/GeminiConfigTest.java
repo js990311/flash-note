@@ -1,5 +1,6 @@
 package com.rejs.flashnote.global.gemini.config;
 
+import com.google.genai.Client;
 import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.global.gemini.context.PersonaContext;
 import com.rejs.flashnote.global.gemini.context.PersonaContextRegistry;
@@ -9,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -17,6 +19,8 @@ import static org.junit.jupiter.api.Assertions.*;
 @Import(TestcontainersConfiguration.class)
 @SpringBootTest
 class GeminiConfigTest {
+    @MockitoBean
+    private Client client;
 
     @Autowired
     private PersonaContextRegistry personaContextRegistry;

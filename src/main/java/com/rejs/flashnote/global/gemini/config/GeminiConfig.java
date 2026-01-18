@@ -2,6 +2,7 @@ package com.rejs.flashnote.global.gemini.config;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.genai.Client;
 import com.rejs.flashnote.global.gemini.context.PersonaContext;
 import com.rejs.flashnote.global.gemini.context.PersonaContextRegistry;
 import lombok.RequiredArgsConstructor;
@@ -9,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 import org.springframework.core.io.Resource;
 import org.springframework.util.StreamUtils;
 
@@ -54,5 +56,12 @@ public class GeminiConfig {
             log.error("Failed to initialize PersonaContextRegistry", e);
             throw new RuntimeException("Failed to initialize PersonaContextRegistry", e);
         }
+    }
+
+    @Bean
+    @Profile("!test")
+    public Client client(){
+        // env에서 자동 추출
+        return new Client();
     }
 }
