@@ -44,3 +44,7 @@ logging:
     org.springframework.security: DEBUG
     org.springframework.security.web: DEBUG
     org.springframework.web: DEBUG
+
+gemini:
+  api:
+    key: ${GEMINI_API_KEY}

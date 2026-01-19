@@ -69,8 +69,12 @@ dependencies {
 	// fixture 몽키
 	testImplementation("com.navercorp.fixturemonkey:fixture-monkey-starter:${fixtureMonkeyVersion}")
 	testImplementation("com.navercorp.fixturemonkey:fixture-monkey-jakarta-validation:${fixtureMonkeyVersion}")
+
+	// gemini
+	implementation 'com.google.genai:google-genai:1.35.0'
 }
 
 tasks.named('test') {
 	useJUnitPlatform()
 }
+

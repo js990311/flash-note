@@ -1,0 +1,23 @@
+{
+  "type": "object",
+  "properties": {
+    "cards": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "front": {
+            "type": "string",
+            "description": "The question or concept on the front of the card"
+          },
+          "back": {
+            "type": "string",
+            "description": "The detailed explanation or answer on the back"
+          }
+        },
+        "required": ["front", "back"]
+      }
+    }
+  },
+  "required": ["cards"]
+}

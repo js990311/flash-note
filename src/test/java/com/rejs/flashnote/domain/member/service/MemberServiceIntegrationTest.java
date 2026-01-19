@@ -36,7 +36,7 @@ class MemberServiceIntegrationTest {
     @Test
     @DisplayName("신규 회원은 Fixture Monkey로 생성된 임의의 데이터로 가입에 성공해야 한다")
     void getOrCreateAuthentication_NewMember() {
-        String email = fixtureMonkey.giveMeOne(String.class);
+        String email = fixtureMonkey.giveMeOne(Member.class).getEmail();
         String provider = "google";
 
         // when
