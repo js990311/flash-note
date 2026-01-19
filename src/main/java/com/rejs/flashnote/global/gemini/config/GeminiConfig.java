@@ -25,6 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 public class GeminiConfig {
     private final ObjectMapper objectMapper;
 
+    @Value("${gemini.api.key}")
+    private String geminiApiKey;
+
     @Value("classpath:gemini/prompts/persona.txt")
     private Resource chefSystemResource;
 
@@ -59,9 +62,9 @@ public class GeminiConfig {
     }
 
     @Bean
-    @Profile("!test")
     public Client client(){
-        // env에서 자동 추출
-        return new Client();
+        return Client.builder()
+                .apiKey(geminiApiKey)
+                .build();
     }
 }

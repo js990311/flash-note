@@ -4,6 +4,9 @@ server:
       development: true
 
 spring:
+  config:
+    import:
+      - application-test-gemini.yml
   application:
     name: flashnote
   web:
