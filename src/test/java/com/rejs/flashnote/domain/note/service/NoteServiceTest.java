@@ -3,12 +3,11 @@ package com.rejs.flashnote.domain.note.service;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.member.entity.Member;
+import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
-import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;
-import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NoteRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -41,7 +40,7 @@ class NoteServiceTest {
     private NoteRepository noteRepository;
 
     @Mock
-    private NoteGroupRepository noteGroupRepository;
+    private MemberRepository memberRepository;
 
     @Mock
     private MyNoteGroupRepository myNoteGroupRepository;
@@ -53,29 +52,29 @@ class NoteServiceTest {
     @DisplayName("노트 생성: 유효한 그룹 ID가 주어지면 노트가 저장되고 ID를 반환한다")
     void createNote_success() {
         // given
-        Long noteGroupId = 1L;
         Long generatedNoteId = 100L;
+        Long memberId = 100L;
 
-        NoteGroup mockNoteGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class)
-                .set("id", noteGroupId)
+        Member member = fixtureMonkey.giveMeBuilder(Member.class)
+                .set(javaGetter(Member::getId),memberId)
                 .sample();
 
         // 저장 후 반환될 노트 (ID가 있어야 함)
         Note savedNote = fixtureMonkey.giveMeBuilder(Note.class)
-                .set("id", generatedNoteId)
-                .set("noteGroup", mockNoteGroup)
+                .set(javaGetter(Note::getId), generatedNoteId)
+                .set(javaGetter(Note::getMember), member)
                 .sample();
 
-        given(noteGroupRepository.getReferenceById(noteGroupId)).willReturn(mockNoteGroup);
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
         // any(Note.class)를 사용하여 실제 Note.newNote() 로직으로 생성된 객체가 넘어가더라도 Mock 동작 보장
         given(noteRepository.save(any(Note.class))).willReturn(savedNote);
 
         // when
-        Long resultId = noteService.createNote(noteGroupId);
+        Long resultId = noteService.createNote(memberId);
 
         // then
         assertThat(resultId).isEqualTo(generatedNoteId);
-        then(noteGroupRepository).should().getReferenceById(noteGroupId);
+        then(memberRepository).should().getReferenceById(memberId);
         then(noteRepository).should().save(any(Note.class));
     }
 

@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 @Slf4j
 @Controller
-@RequestMapping("/note")
+@RequestMapping("/notes")
 @RequiredArgsConstructor
 public class NoteController {
     private final NoteService noteService;
@@ -27,23 +27,23 @@ public class NoteController {
     public String postNoteCreate(){
         Long memberId = PrincipalUtils.getMemberId();
         Long noteId = noteService.createNote(memberId);
-        return "redirect:/note/"+noteId + "/edit";
+        return "redirect:/notes/"+noteId + "/edit";
     }
 
     @GetMapping("/{id}")
     public String getNote(@PathVariable("id") Long noteId, Model model){
         NoteDto noteDto = noteService.readById(noteId);
         model.addAttribute("note", noteDto);
-        return "note/id";
+        return "notes/id";
     }
 
-    @GetMapping("/{id}")
+    @GetMapping()
     public String getNotePage(@PageableDefault Pageable pageable, Model model){
         Long memberId = PrincipalUtils.getMemberId();
         Page<NoteDto> noteDtos = noteService.readByPage(memberId, pageable);
         Pagination<NoteDto> notePage = Pagination.from(noteDtos);
         model.addAttribute("notes", notePage);
-        return "note/page";
+        return "notes/page";
     }
 
 
@@ -51,20 +51,21 @@ public class NoteController {
     public String getNoteEdit(@PathVariable("id") Long noteId, Model model){
         NoteDto noteDto = noteService.readById(noteId);
         model.addAttribute("noteForm", NoteEditRequest.from(noteDto));
-        return "note/edit";
+        return "notes/edit";
     }
 
     @PostMapping("/{id}/edit")
     public String postNoteEdit(@PathVariable("id") Long noteId, @Valid @ModelAttribute("noteForm") NoteEditRequest request, BindingResult bindingResult){
         if(bindingResult.hasErrors()){
-            return "note/edit";
+            return "notes/edit";
         }
         noteService.updateNote(noteId, request);
-        return "redirect:/note/"+noteId;
+        return "redirect:/notes/"+noteId;
     }
 
     @PostMapping("/{id}/delete")
     public String deleteNote(@PathVariable("id") Long noteId){
-        return "redirect:/";
+        noteService.deleteNote(noteId);
+        return "redirect:/notes";
     }
 }
