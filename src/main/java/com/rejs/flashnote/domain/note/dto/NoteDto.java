@@ -16,14 +16,14 @@ public class NoteDto {
     private Long id;
     private String title;
     private String content;
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 
     public static NoteDto from(Note note){
         return NoteDto.builder()
                 .id(note.getId())
                 .title(note.getTitle())
                 .content(note.getContent())
-                .updateAt(note.getUpdatedAt())
+                .updatedAt(note.getUpdatedAt())
                 .build();
     }
 }
