@@ -38,7 +38,7 @@ public class NoteService {
 
     @Transactional(readOnly = true)
     public Page<NoteDto> readByPage(Long memberId, Pageable pageable){
-        return myNoteGroupRepository.findNoteByNoteGroupId(memberId, pageable);
+        return myNoteGroupRepository.findByMemberId(memberId, pageable);
     }
 
     // ## Update

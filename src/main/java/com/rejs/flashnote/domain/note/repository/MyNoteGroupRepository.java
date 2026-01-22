@@ -25,7 +25,7 @@ public class MyNoteGroupRepository {
     private QNote note = QNote.note;
 
 
-    public Page<NoteDto> findNoteByNoteGroupId(Long memberId, Pageable pageable){
+    public Page<NoteDto> findByMemberId(Long memberId, Pageable pageable){
         List<NoteDto> content = jpaQueryFactory.select(
                         Projections.constructor(
                                 NoteDto.class,
