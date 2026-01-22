@@ -153,8 +153,6 @@ class NoteControllerTest {
         Long noteId = 100L;
         Long returnedGroupId = 555L;
 
-        given(noteService.deleteNote(noteId)).willReturn(returnedGroupId);
-
         // when & then
         mockMvc.perform(post("/note/{id}/delete", noteId)
                         .with(csrf())

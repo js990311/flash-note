@@ -35,11 +35,7 @@ import static org.mockito.ArgumentMatchers.any;
 @SpringBootTest
 class NoteServiceIntegrationTest {
 
-    @Autowired
-    private NoteGroupService noteGroupService;
     @Autowired private MemberRepository memberRepository;
-    @Autowired private NoteGroupRepository noteGroupRepository;
-    @Autowired private NotePermissionRepository notePermissionRepository;
     @Autowired private NoteService noteService;
     @Autowired private NoteRepository noteRepository;
     private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
@@ -50,16 +46,15 @@ class NoteServiceIntegrationTest {
         // given
         // 1. 부모 데이터(Member, NoteGroup) 미리 저장
         Member member = memberRepository.save(fixtureMonkey.giveMeOne(Member.class));
-        Long noteGroupId = noteGroupService.createNoteGroup(member.getId(), fixtureMonkey.giveMeOne(CreateNoteGroupRequest.class));
 
         // when
-        Long savedNoteId = noteService.createNote(noteGroupId);
+        Long savedNoteId = noteService.createNote(member.getId());
 
         // then
         Note foundNote = noteRepository.findById(savedNoteId).orElseThrow();
 
         assertThat(foundNote.getId()).isNotNull();
-        assertThat(foundNote.getGroup().getId()).isEqualTo(noteGroupId);
+        assertThat(foundNote.getMember().getId()).isEqualTo(member.getId());
     }
 
     @Test
@@ -67,11 +62,9 @@ class NoteServiceIntegrationTest {
     void readById_integration() {
         // given
         Member member = memberRepository.save(fixtureMonkey.giveMeOne(Member.class));
-        Long noteGroupId = noteGroupService.createNoteGroup(member.getId(), fixtureMonkey.giveMeOne(CreateNoteGroupRequest.class));
-        NoteGroup group = noteGroupRepository.findById(noteGroupId).orElseThrow();
 
         Note note = fixtureMonkey.giveMeBuilder(Note.class)
-                .set(javaGetter(Note::getGroup), group)
+                .set(javaGetter(Note::getMember), member)
                 .sample();
         Note savedNote = noteRepository.save(note);
 
@@ -83,40 +76,14 @@ class NoteServiceIntegrationTest {
         assertThat(result.getTitle()).isEqualTo(savedNote.getTitle());
     }
 
-    @Test
-    @DisplayName("노트 페이징 조회 통합 테스트: QueryDSL/JPQL이 정상 동작하여 페이지를 반환한다")
-    void readPageByNoteGroupId_integration() {
-        // given
-        Member member = memberRepository.save(fixtureMonkey.giveMeOne(Member.class));
-        Long noteGroupId = noteGroupService.createNoteGroup(member.getId(), fixtureMonkey.giveMeOne(CreateNoteGroupRequest.class));
-        NoteGroup group = noteGroupRepository.findById(noteGroupId).orElseThrow();
-
-        // 같은 그룹에 노트 15개 생성
-        List<Note> notes = fixtureMonkey.giveMeBuilder(Note.class)
-                .set(javaGetter(Note::getGroup), group)
-                .sampleList(15);
-        noteRepository.saveAll(notes);
-
-        PageRequest pageRequest = PageRequest.of(0, 10);
-
-        // when
-        Page<NoteDto> result = noteService.readPageByNoteGroupId(group.getId(), pageRequest);
-
-        // then
-        assertThat(result.getTotalElements()).isEqualTo(15);
-        assertThat(result.getContent()).hasSize(10);
-        assertThat(result.getNumber()).isEqualTo(0);
-    }
 
     @Test
     @DisplayName("노트 수정 통합 테스트: 더티 체킹(Dirty Checking)이 동작하여 DB 값이 변경되어야 한다")
     void updateNote_integration() {
         // given
         Member member = memberRepository.save(fixtureMonkey.giveMeOne(Member.class));
-        Long noteGroupId = noteGroupService.createNoteGroup(member.getId(), fixtureMonkey.giveMeOne(CreateNoteGroupRequest.class));
-        NoteGroup group = noteGroupRepository.findById(noteGroupId).orElseThrow();
         Note note = fixtureMonkey.giveMeBuilder(Note.class)
-                .set(javaGetter(Note::getGroup), group)
+                .set(javaGetter(Note::getMember), member)
                 .sample();
         Note savedNote = noteRepository.save(note);
 
@@ -139,23 +106,20 @@ class NoteServiceIntegrationTest {
     void deleteNote_integration() {
         // given
         Member member = memberRepository.save(fixtureMonkey.giveMeOne(Member.class));
-        Long noteGroupId = noteGroupService.createNoteGroup(member.getId(), fixtureMonkey.giveMeOne(CreateNoteGroupRequest.class));
-        NoteGroup group = noteGroupRepository.findById(noteGroupId).orElseThrow();
         Note note = fixtureMonkey.giveMeBuilder(Note.class)
-                .set(javaGetter(Note::getGroup), group)
+                .set(javaGetter(Note::getMember), member)
                 .sample();
         Note savedNote = noteRepository.save(note);
 
         Long noteId = savedNote.getId();
 
         // when
-        Long deleteNotesGroupId = noteService.deleteNote(noteId);
+        noteService.deleteNote(noteId);
 
         // then
         assertThatThrownBy(() -> noteService.readById(noteId))
                 .isInstanceOf(NoSuchElementException.class);
 
         assertThat(noteRepository.findById(noteId)).isEmpty();
-        assertThat(deleteNotesGroupId).isEqualTo(noteGroupId);
     }
 }

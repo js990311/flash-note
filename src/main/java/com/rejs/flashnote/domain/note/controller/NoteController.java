@@ -1,12 +1,16 @@
 package com.rejs.flashnote.domain.note.controller;
 
 import com.rejs.flashnote.domain.note.dto.NoteDto;
-import com.rejs.flashnote.domain.note.dto.request.note.CreateNoteRequest;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.service.NoteService;
+import com.rejs.flashnote.global.controller.dto.Pagination;
+import com.rejs.flashnote.global.security.utils.PrincipalUtils;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -20,8 +24,9 @@ public class NoteController {
     private final NoteService noteService;
 
     @PostMapping("/create")
-    public String postNoteCreate(@Valid @ModelAttribute CreateNoteRequest request){
-        Long noteId = noteService.createNote(request.getNoteGroupId());
+    public String postNoteCreate(){
+        Long memberId = PrincipalUtils.getMemberId();
+        Long noteId = noteService.createNote(memberId);
         return "redirect:/note/"+noteId + "/edit";
     }
 
@@ -31,6 +36,16 @@ public class NoteController {
         model.addAttribute("note", noteDto);
         return "note/id";
     }
+
+    @GetMapping("/{id}")
+    public String getNotePage(@PageableDefault Pageable pageable, Model model){
+        Long memberId = PrincipalUtils.getMemberId();
+        Page<NoteDto> noteDtos = noteService.readByPage(memberId, pageable);
+        Pagination<NoteDto> notePage = Pagination.from(noteDtos);
+        model.addAttribute("notes", notePage);
+        return "note/page";
+    }
+
 
     @GetMapping("/{id}/edit")
     public String getNoteEdit(@PathVariable("id") Long noteId, Model model){
@@ -50,7 +65,6 @@ public class NoteController {
 
     @PostMapping("/{id}/delete")
     public String deleteNote(@PathVariable("id") Long noteId){
-        Long groupId = noteService.deleteNote(noteId);
-        return "redirect:/note-groups/"+ groupId;
+        return "redirect:/";
     }
 }
