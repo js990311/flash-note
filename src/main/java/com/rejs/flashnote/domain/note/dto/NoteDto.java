@@ -14,18 +14,16 @@ import java.time.LocalDateTime;
 @Getter
 public class NoteDto {
     private Long id;
-    private Long groupId;
     private String title;
     private String content;
-    private LocalDateTime updateAt;
+    private LocalDateTime updatedAt;
 
     public static NoteDto from(Note note){
         return NoteDto.builder()
                 .id(note.getId())
-                .groupId(note.getGroup().getId())
                 .title(note.getTitle())
                 .content(note.getContent())
-                .updateAt(note.getUpdatedAt())
+                .updatedAt(note.getUpdatedAt())
                 .build();
     }
 }

@@ -1,6 +1,7 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
+<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
 
 <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom sticky-top">
     <div class="container">
@@ -18,7 +19,7 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav me-auto">
                 <li class="nav-item">
-                    <a class="nav-link" href="<c:url value="/note-groups"/>">내 노트그룹</a>
+                    <a class="nav-link" href="<c:url value="/notes"/>">내 노트</a>
                 </li>
             </ul>
 
@@ -34,10 +35,11 @@
                 <sec:authorize access="isAuthenticated()">
                     <%-- 로그인한 상태 --%>
                     <li class="nav-item me-3">
-                        <a class="btn btn-outline-primary btn-sm rounded-pill" href="<c:url value='/notes/new' />">
-                            <i class="bi bi-pencil-square me-1"></i> 새 노트
-                        </a>
-                    </li>
+                        <form:form action="${pageContext.request.contextPath}/notes/create" method="post" style="display:inline;">
+                            <button type="submit" class="btn btn-outline-primary btn-sm rounded-pill">
+                                <i class="bi bi-pencil-square me-1"></i> 새 노트
+                            </button>
+                        </form:form>                    </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle d-flex align-items-center" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown">
                             <span class="fw-medium"><sec:authentication property="principal.member.name" /></span>

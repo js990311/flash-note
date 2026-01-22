@@ -23,8 +23,7 @@
                     <div class="col-8">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-2 text-muted small">
-                                <li class="breadcrumb-item"><a href="/note-groups" class="text-decoration-none">그룹 목록</a></li>
-                                <li class="breadcrumb-item"><a href="/note-groups/${note.groupId}" class="text-decoration-none">현재 그룹</a></li>
+                                <li class="breadcrumb-item"><a href="/notes" class="text-decoration-none">노트 목록</a></li>
                                 <li class="breadcrumb-item active">노트 상세</li>
                             </ol>
                         </nav>
@@ -35,11 +34,11 @@
 
                         <%-- 오른쪽: 수정/삭제 버튼 그룹 --%>
                     <div class="col-4 d-flex justify-content-end gap-2">
-                        <a href="/note/${note.id}/edit" class="btn btn-outline-primary">
+                        <a href="/notes/${note.id}/edit" class="btn btn-outline-primary">
                             <i class="bi bi-pencil-square me-1"></i> 수정
                         </a>
 
-                        <form action="/note/${note.id}/delete" method="post">
+                        <form action="/notes/${note.id}/delete" method="post">
                              <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <button type="submit" class="btn btn-outline-danger">
                                 <i class="bi bi-trash me-1"></i> 삭제

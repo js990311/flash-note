@@ -2,12 +2,12 @@ package com.rejs.flashnote.domain.note.service;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
+import com.rejs.flashnote.domain.member.entity.Member;
+import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
-import com.rejs.flashnote.domain.note.entity.NoteGroup;
 import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;
-import com.rejs.flashnote.domain.note.repository.NoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NoteRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ class NoteServiceTest {
     private NoteRepository noteRepository;
 
     @Mock
-    private NoteGroupRepository noteGroupRepository;
+    private MemberRepository memberRepository;
 
     @Mock
     private MyNoteGroupRepository myNoteGroupRepository;
@@ -52,29 +52,29 @@ class NoteServiceTest {
     @DisplayName("노트 생성: 유효한 그룹 ID가 주어지면 노트가 저장되고 ID를 반환한다")
     void createNote_success() {
         // given
-        Long noteGroupId = 1L;
         Long generatedNoteId = 100L;
+        Long memberId = 100L;
 
-        NoteGroup mockNoteGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class)
-                .set("id", noteGroupId)
+        Member member = fixtureMonkey.giveMeBuilder(Member.class)
+                .set(javaGetter(Member::getId),memberId)
                 .sample();
 
         // 저장 후 반환될 노트 (ID가 있어야 함)
         Note savedNote = fixtureMonkey.giveMeBuilder(Note.class)
-                .set("id", generatedNoteId)
-                .set("noteGroup", mockNoteGroup)
+                .set(javaGetter(Note::getId), generatedNoteId)
+                .set(javaGetter(Note::getMember), member)
                 .sample();
 
-        given(noteGroupRepository.getReferenceById(noteGroupId)).willReturn(mockNoteGroup);
+        given(memberRepository.getReferenceById(memberId)).willReturn(member);
         // any(Note.class)를 사용하여 실제 Note.newNote() 로직으로 생성된 객체가 넘어가더라도 Mock 동작 보장
         given(noteRepository.save(any(Note.class))).willReturn(savedNote);
 
         // when
-        Long resultId = noteService.createNote(noteGroupId);
+        Long resultId = noteService.createNote(memberId);
 
         // then
         assertThat(resultId).isEqualTo(generatedNoteId);
-        then(noteGroupRepository).should().getReferenceById(noteGroupId);
+        then(memberRepository).should().getReferenceById(memberId);
         then(noteRepository).should().save(any(Note.class));
     }
 
@@ -112,29 +112,6 @@ class NoteServiceTest {
     }
 
     @Test
-    @DisplayName("노트 그룹별 페이지 조회: MyNoteGroupRepository로 위임하여 결과를 반환한다")
-    void readPageByNoteGroupId_success() {
-        // given
-        Long noteGroupId = 1L;
-        Pageable pageable = Pageable.ofSize(10);
-
-        // NoteDto 리스트 생성
-        List<NoteDto> dtoList = fixtureMonkey.giveMe(NoteDto.class, 5);
-        Page<NoteDto> expectedPage = new PageImpl<>(dtoList);
-
-        given(myNoteGroupRepository.findNoteByNoteGroupId(noteGroupId, pageable))
-                .willReturn(expectedPage);
-
-        // when
-        Page<NoteDto> result = noteService.readPageByNoteGroupId(noteGroupId, pageable);
-
-        // then
-        assertThat(result).hasSize(5);
-        assertThat(result).isEqualTo(expectedPage);
-        then(myNoteGroupRepository).should().findNoteByNoteGroupId(noteGroupId, pageable);
-    }
-
-    @Test
     @DisplayName("노트 수정: 제목과 내용을 수정하면 변경 사항이 반영되고 ID를 반환한다")
     void updateNote_success() {
         // given
@@ -167,27 +144,23 @@ class NoteServiceTest {
         Long noteId = 100L;
         Long expectedGroupId = 555L;
 
-        // 1. 삭제 후 반환할 그룹 ID를 가진 NoteGroup 생성
-        NoteGroup mockGroup = fixtureMonkey.giveMeBuilder(NoteGroup.class)
-                .set("id", expectedGroupId)
-                .sample();
+        Member member = fixtureMonkey.giveMeOne(Member.class);
 
         // 2. 삭제 대상 Note 생성 (위에서 만든 그룹과 연결)
         Note mockNote = fixtureMonkey.giveMeBuilder(Note.class)
-                .set("id", noteId)
-                .set(javaGetter(Note::getGroup), mockGroup)
+                .set(javaGetter(Note::getId), noteId)
+                .set(javaGetter(Note::getMember),member)
                 .sample();
 
         // 3. findById 호출 시 mockNote를 반환하도록 설정
         given(noteRepository.findById(noteId)).willReturn(Optional.of(mockNote));
 
         // when
-        Long resultGroupId = noteService.deleteNote(noteId);
+        noteService.deleteNote(noteId);
 
         // then
-        // 1. 반환된 그룹 ID가 예상값과 일치하는지 검증
-        assertThat(resultGroupId).isEqualTo(expectedGroupId);
 
-        // 2. (중요) deleteById(id)가 아니라 delete(entity)가 호출되었는지 검증
-        then(noteRepository).should().delete(mockNote);    }
+        // deleteById(id)가 아니라 delete(entity)가 호출되었는지 검증
+        then(noteRepository).should().delete(mockNote);
+    }
 }

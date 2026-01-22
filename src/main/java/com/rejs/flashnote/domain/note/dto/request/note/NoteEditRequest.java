@@ -13,8 +13,6 @@ import lombok.*;
 public class NoteEditRequest {
     @NotNull
     private Long noteId;
-    @NotNull
-    private Long noteGroupId;
     @NotEmpty
     private String title;
     @NotEmpty
@@ -23,7 +21,6 @@ public class NoteEditRequest {
     public static NoteEditRequest from(NoteDto noteDto) {
         return NoteEditRequest.builder()
                 .noteId(noteDto.getId())
-                .noteGroupId(noteDto.getGroupId())
                 .title(noteDto.getTitle())
                 .content(noteDto.getContent())
                 .build();

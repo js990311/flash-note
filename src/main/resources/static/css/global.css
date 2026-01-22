@@ -45,3 +45,18 @@ body {
 .btn-primary:hover {
     background-color: #4338ca;
 }
+.table thead th {
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+.table tbody td {
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+}
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 123, 255, 0.03);
+}
