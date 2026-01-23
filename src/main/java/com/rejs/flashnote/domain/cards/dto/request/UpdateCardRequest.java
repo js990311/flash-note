@@ -1,5 +1,6 @@
 package com.rejs.flashnote.domain.cards.dto.request;
 
+import com.rejs.flashnote.domain.cards.dto.CardDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,4 +19,12 @@ public class UpdateCardRequest {
     private String front;
     @NotEmpty
     private String back;
+
+    public static UpdateCardRequest from(CardDto cardDto) {
+        return UpdateCardRequest.builder()
+                .id(cardDto.getId())
+                .front(cardDto.getFront())
+                .back(cardDto.getBack())
+                .build();
+    }
 }

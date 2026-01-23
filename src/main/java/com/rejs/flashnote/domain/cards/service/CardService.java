@@ -55,8 +55,9 @@ public class CardService {
 
     // # Delete
     @Transactional
-    public void deleteCard(Long cardId){
+    public Long deleteCard(Long cardId){
         Card card = cardFetchReadRepository.findWithDeckById(cardId);
         card.delete();
+        return card.getDeck().getId();
     }
 }

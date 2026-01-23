@@ -1,5 +1,8 @@
 package com.rejs.flashnote.domain.decks.controller;
 
+import com.rejs.flashnote.domain.cards.dto.CardDto;
+import com.rejs.flashnote.domain.cards.dto.request.CreateCardRequest;
+import com.rejs.flashnote.domain.cards.service.CardService;
 import com.rejs.flashnote.domain.decks.dto.DeckDto;
 import com.rejs.flashnote.domain.decks.dto.request.CreateDeckRequest;
 import com.rejs.flashnote.domain.decks.dto.request.UpdateDeckRequest;
@@ -21,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @Controller
 public class DeckController {
     private final DeckService deckService;
+    private final CardService cardService;
 
     @GetMapping
     public String getPageDeckDto(@PageableDefault Pageable pageable, Model model){
@@ -32,9 +36,12 @@ public class DeckController {
     }
 
     @GetMapping("/{id}")
-    public String getDeckById(@PathVariable("id") Long id, Model model){
+    public String getDeckById(@PathVariable("id") Long id, @PageableDefault(size = 30) Pageable pageable,Model model){
         DeckDto deckDto = deckService.readDeckById(id);
+        Page<CardDto> cardDtos = cardService.readPageByDeckId(deckDto.getId(), pageable);
         model.addAttribute("deck", deckDto);
+        model.addAttribute("cards", Pagination.from(cardDtos));
+        model.addAttribute("createCardRequest", CreateCardRequest.of(deckDto.getId()));
         return "decks/id";
     }
 

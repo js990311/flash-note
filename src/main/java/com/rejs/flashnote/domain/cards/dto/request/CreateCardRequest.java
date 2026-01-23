@@ -18,4 +18,10 @@ public class CreateCardRequest {
     private String back;
     @NotNull
     private Long deckId;
+
+    public static CreateCardRequest of(Long deckId){
+        return CreateCardRequest.builder()
+                .deckId(deckId)
+                .build();
+    }
 }

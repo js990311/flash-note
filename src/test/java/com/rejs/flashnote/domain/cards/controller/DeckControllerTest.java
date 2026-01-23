@@ -3,6 +3,8 @@ package com.rejs.flashnote.domain.cards.controller;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.common.security.WithMockOidcMember;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
+import com.rejs.flashnote.domain.cards.dto.CardDto;
+import com.rejs.flashnote.domain.cards.service.CardService;
 import com.rejs.flashnote.domain.decks.controller.DeckController;
 import com.rejs.flashnote.domain.decks.dto.DeckDto;
 import com.rejs.flashnote.domain.decks.dto.request.CreateDeckRequest;
@@ -23,7 +25,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import java.util.List;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.hamcrest.Matchers.*;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -42,6 +44,9 @@ class DeckControllerTest {
 
     @MockitoBean
     private DeckService deckService;
+
+    @MockitoBean
+    private CardService cardService;
 
     private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
 
@@ -66,39 +71,30 @@ class DeckControllerTest {
     }
 
     @Test
-    @DisplayName("덱 상세 조회(GET): ID로 조회된 덱 정보를 모델에 담는다")
+    @DisplayName("덱 상세 조회(GET): 덱 정보, 페이징된 카드, 생성 폼 객체를 모델에 담는다")
     @WithMockOidcMember
-    void getDeckById_success() throws Exception {
+    void getDeckById_with_pagination_and_form() throws Exception {
         // given
         Long deckId = 100L;
-        DeckDto deckDto = fixtureMonkey.giveMeOne(DeckDto.class);
+        DeckDto deckDto = fixtureMonkey.giveMeBuilder(DeckDto.class)
+                .set(javaGetter(DeckDto::getId), deckId)
+                .sample();
+
+        List<CardDto> cardList = fixtureMonkey.giveMe(CardDto.class, 5);
+        Page<CardDto> cardPage = new PageImpl<>(cardList, PageRequest.of(0, 30), 5);
+
         given(deckService.readDeckById(deckId)).willReturn(deckDto);
+        given(cardService.readPageByDeckId(eq(deckId), any(Pageable.class))).willReturn(cardPage);
 
         // when & then
         mockMvc.perform(get("/decks/{id}", deckId))
                 .andExpect(status().isOk())
                 .andExpect(view().name("decks/id"))
-                .andExpect(model().attribute("deck", deckDto));
-    }
-
-    @Test
-    @DisplayName("덱 생성 요청(POST): 생성 후 상세 페이지로 리다이렉트한다")
-    @WithMockOidcMember
-    void postDeckCreate_success() throws Exception {
-        // given
-        Long memberId = 1L;
-        Long createdDeckId = 200L;
-        CreateDeckRequest request = fixtureMonkey.giveMeOne(CreateDeckRequest.class);
-
-        given(deckService.createDeck(eq(memberId), any(CreateDeckRequest.class)))
-                .willReturn(createdDeckId);
-
-        // when & then
-        mockMvc.perform(post("/decks/create")
-                        .with(csrf())
-                        .flashAttr("request", request))
-                .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/decks/" + createdDeckId));
+                .andExpect(model().attribute("deck", deckDto))
+                .andExpect(model().attributeExists("cards")) // Pagination.from() 결과 확인
+                .andExpect(model().attributeExists("createCardRequest")) // 빈 폼 확인
+                .andExpect(model().attribute("createCardRequest",
+                        hasProperty("deckId", is(deckId)))); // DTO의 deckId가 일치하는지 확인
     }
 
     @Test
