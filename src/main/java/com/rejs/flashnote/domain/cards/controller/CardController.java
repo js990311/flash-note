@@ -34,4 +34,10 @@ public class CardController {
         Long cardId = cardService.createCard(memberId, request);
         return "redirect:/decks/" + request.getDeckId();
     }
+
+    @PostMapping("/{id}/delete")
+    public String postCardDelete(@PathVariable("id") Long id){
+        Long deckId = cardService.deleteCard(id);
+        return "redirect:/decks/" + deckId;
+    }
 }

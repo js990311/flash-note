@@ -18,6 +18,7 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -72,5 +73,24 @@ class CardControllerTest {
                 .andExpect(redirectedUrl("/decks/" + deckId))
                 .andExpect(flash().attributeExists(BindingResult.MODEL_KEY_PREFIX + "createCardRequest"))
                 .andExpect(flash().attributeExists("createCardRequest"));
+    }
+
+    @Test
+    @WithMockOidcMember
+    @DisplayName("카드 삭제 후 해당 덱 상세 페이지로 리다이렉트되어야 한다")
+    void postCardDelete_test() throws Exception {
+        // given
+        Long cardId = 1L;
+        Long deckId = 10L;
+        given(cardService.deleteCard(cardId)).willReturn(deckId);
+
+        // when & then
+        mockMvc.perform(post("/cards/{id}/delete", cardId)
+                        .with(csrf())) // 시큐리티 CSRF 토큰 추가
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/decks/" + deckId));
+
+        // 서비스가 실제로 호출되었는지 검증
+        verify(cardService).deleteCard(cardId);
     }
 }
