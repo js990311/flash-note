@@ -35,7 +35,7 @@ public class DeckController {
     public String getDeckById(@PathVariable("id") Long id, Model model){
         DeckDto deckDto = deckService.readDeckById(id);
         model.addAttribute("deck", deckDto);
-        return "decks/{id}";
+        return "decks/id";
     }
 
     @GetMapping("/create")
@@ -44,7 +44,7 @@ public class DeckController {
         return "decks/create";
     }
 
-            @PostMapping("/create")
+    @PostMapping("/create")
     public String postDeckCreate(
             @Valid @ModelAttribute("request") CreateDeckRequest request,
             BindingResult bindingResult,
@@ -58,12 +58,15 @@ public class DeckController {
         return "redirect:/decks/" + deckId;
     }
 
-    @GetMapping("/update")
-    public String getDeckUpdate(Model model){
-        model.addAttribute("request", new UpdateDeckRequest());
+    @GetMapping("/{id}/update")
+    public String getDeckUpdate(
+            @PathVariable("id") Long id,
+            Model model
+    ){
+        DeckDto deckDto = deckService.readDeckById(id);
+        model.addAttribute("request", UpdateDeckRequest.from(deckDto));
         return "decks/update";
     }
-
 
     @PostMapping("/{id}/update")
     public String postDeckUpdate(

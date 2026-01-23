@@ -21,11 +21,13 @@ import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.List;
 
+import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.hamcrest.Matchers.instanceOf;
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.then;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -74,7 +76,7 @@ class DeckControllerTest {
         // when & then
         mockMvc.perform(get("/decks/{id}", deckId))
                 .andExpect(status().isOk())
-                .andExpect(view().name("decks/{id}")) // 컨트롤러에 작성된 경로 기준
+                .andExpect(view().name("decks/id"))
                 .andExpect(model().attribute("deck", deckDto));
     }
 
@@ -96,6 +98,39 @@ class DeckControllerTest {
                         .flashAttr("request", request))
                 .andExpect(status().is3xxRedirection())
                 .andExpect(redirectedUrl("/decks/" + createdDeckId));
+    }
+
+    @Test
+    @DisplayName("덱 수정 폼 조회(GET): 존재하는 ID 조회 시 기존 정보를 모델에 담아 수정 페이지를 반환한다")
+    @WithMockOidcMember
+    void getDeckUpdate_success() throws Exception {
+        // given
+        Long deckId = 100L;
+        String deckName = "덱원래이름";
+        DeckDto deckDto = fixtureMonkey.giveMeBuilder(DeckDto.class)
+                .set(javaGetter(DeckDto::getId), deckId)
+                .set(javaGetter(DeckDto::getName), deckName)
+                .sample();
+
+        // 서비스에서 해당 덱을 찾아 반환하도록 설정
+        given(deckService.readDeckById(deckId)).willReturn(deckDto);
+
+        // when & then
+        mockMvc.perform(get("/decks/{id}/update", deckId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("decks/update"))
+                .andExpect(model().attributeExists("request"))
+                .andExpect(result -> {
+                    // 모델에 담긴 request가 UpdateDeckRequest 타입인지, 데이터가 복사되었는지 검증
+                    Object attribute = result.getModelAndView().getModel().get("request");
+                    assertEquals(UpdateDeckRequest.class, attribute.getClass());
+
+                    // UpdateDeckRequest.from(deckDto)가 제대로 작동했는지 확인
+                    UpdateDeckRequest request = (UpdateDeckRequest) attribute;
+                    assertEquals(deckName, request.getName());
+                });
+
+        then(deckService).should().readDeckById(deckId);
     }
 
     @Test

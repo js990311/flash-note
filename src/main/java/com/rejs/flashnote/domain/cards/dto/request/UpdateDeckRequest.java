@@ -1,19 +1,24 @@
 package com.rejs.flashnote.domain.cards.dto.request;
 
+import com.rejs.flashnote.domain.cards.dto.DeckDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@Getter
+@Data
 public class UpdateDeckRequest {
     @NotNull
     private Long id;
     @NotEmpty
     private String name;
+
+    public static UpdateDeckRequest from(DeckDto deckDto) {
+        return UpdateDeckRequest.builder()
+                .id(deckDto.getId())
+                .name(deckDto.getName())
+                .build();
+    }
 }
