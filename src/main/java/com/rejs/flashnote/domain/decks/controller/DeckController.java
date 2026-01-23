@@ -41,7 +41,9 @@ public class DeckController {
         Page<CardDto> cardDtos = cardService.readPageByDeckId(deckDto.getId(), pageable);
         model.addAttribute("deck", deckDto);
         model.addAttribute("cards", Pagination.from(cardDtos));
-        model.addAttribute("createCardRequest", CreateCardRequest.of(deckDto.getId()));
+        if(!model.containsAttribute("createCardRequest")){
+            model.addAttribute("createCardRequest", CreateCardRequest.of(deckDto.getId()));
+        }
         return "decks/id";
     }
 

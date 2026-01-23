@@ -42,6 +42,7 @@
                     <div class="col-md-5">
                         <label class="form-label">뒷면 (정답)</label>
                         <form:input path="back" class="form-control" placeholder="예: 사과" />
+                        <form:errors path="back" class="text-danger small" />
                     </div>
 
                     <div class="col-md-2 d-flex align-items-end">
