@@ -39,15 +39,23 @@ public class Deck extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public void update(String name) {
+        this.name = name;
+    }
+
+    public void addCards(){
+        cardCounts++;
+    }
+
+    public void deleteCards() {
+        cardCounts--;
+    }
+
     public static Deck create(String name, Member member) {
         return Deck.builder()
                 .name(name)
                 .originalType(DeckOriginalType.ORIGINAL)
                 .member(member)
                 .build();
-    }
-
-    public void update(String name) {
-        this.name = name;
     }
 }
