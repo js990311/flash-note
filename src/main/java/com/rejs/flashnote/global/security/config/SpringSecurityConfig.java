@@ -22,6 +22,8 @@ public class SpringSecurityConfig {
                 // 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                        .requestMatchers("notes/**").authenticated()
+                        .requestMatchers("decks/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 // 로그아웃 설정
