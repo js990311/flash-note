@@ -1,0 +1,86 @@
+package com.rejs.flashnote.domain.cards.controller;
+
+import com.rejs.flashnote.domain.cards.dto.DeckDto;
+import com.rejs.flashnote.domain.cards.dto.request.CreateDeckRequest;
+import com.rejs.flashnote.domain.cards.dto.request.UpdateDeckRequest;
+import com.rejs.flashnote.domain.cards.service.DeckService;
+import com.rejs.flashnote.global.controller.dto.Pagination;
+import com.rejs.flashnote.global.security.utils.PrincipalUtils;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.*;
+
+@RequiredArgsConstructor
+@RequestMapping("/decks")
+@Controller
+public class DeckController {
+    private final DeckService deckService;
+
+    @GetMapping
+    public String getPageDeckDto(@PageableDefault Pageable pageable, Model model){
+        Long memberId = PrincipalUtils.getMemberId();
+        Page<DeckDto> deckDtos = deckService.readDeckPageByMemberId(memberId, pageable);
+        Pagination<DeckDto> decks = Pagination.from(deckDtos);
+        model.addAttribute("decks", decks);
+        return "decks/page";
+    }
+
+    @GetMapping("/{id}")
+    public String getDeckById(@PathVariable("id") Long id, Model model){
+        DeckDto deckDto = deckService.readDeckById(id);
+        model.addAttribute("deck", deckDto);
+        return "decks/{id}";
+    }
+
+    @GetMapping("/create")
+    public String getDeckCreate(Model model){
+        model.addAttribute("request", new CreateDeckRequest());
+        return "decks/create";
+    }
+
+            @PostMapping("/create")
+    public String postDeckCreate(
+            @Valid @ModelAttribute("request") CreateDeckRequest request,
+            BindingResult bindingResult,
+            Model model
+    ){
+        if(bindingResult.hasErrors()){
+            return "decks/create";
+        }
+        Long memberId = PrincipalUtils.getMemberId();
+        Long deckId = deckService.createDeck(memberId, request);
+        return "redirect:/decks/" + deckId;
+    }
+
+    @GetMapping("/update")
+    public String getDeckUpdate(Model model){
+        model.addAttribute("request", new UpdateDeckRequest());
+        return "decks/update";
+    }
+
+
+    @PostMapping("/{id}/update")
+    public String postDeckUpdate(
+            @Valid @ModelAttribute UpdateDeckRequest request,
+            BindingResult bindingResult,
+            Model model
+    ){
+        if(bindingResult.hasErrors()){
+            return "decks/update";
+        }
+        Long deckId = deckService.updateDeck(request);
+        return "redirect:/decks/" + deckId;
+    }
+
+    @PostMapping("/{id}/delete")
+    public String postDeckDelete(@PathVariable("id") Long id){
+        deckService.deleteDeck(id);
+        return "redirect:/decks";
+    }
+}

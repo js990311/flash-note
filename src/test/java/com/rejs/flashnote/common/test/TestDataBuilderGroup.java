@@ -7,6 +7,7 @@ import com.navercorp.fixturemonkey.jakarta.validation.plugin.JakartaValidationPl
 import com.navercorp.fixturemonkey.resolver.ArbitraryBuilderCandidateFactory;
 import com.navercorp.fixturemonkey.resolver.ArbitraryBuilderCandidateList;
 import com.rejs.flashnote.domain.cards.entity.Deck;
+import com.rejs.flashnote.domain.cards.entity.DeckOriginalType;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.entity.MemberRole;
 import com.rejs.flashnote.domain.note.entity.Note;
@@ -46,6 +47,7 @@ public class TestDataBuilderGroup implements ArbitraryBuilderGroup {
                                         builder->builder
                                                 .setNull(javaGetter(Deck::getId))
                                                 .set(javaGetter(Deck::getName), Arbitraries.strings().ofMaxLength(50))
+                                                .set(javaGetter(Deck::getOriginalType), DeckOriginalType.ORIGINAL)
                                                 .setNull(javaGetter(Deck::getDeletedAt))
                                 )
                 )
