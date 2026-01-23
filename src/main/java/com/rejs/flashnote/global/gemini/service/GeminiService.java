@@ -8,7 +8,7 @@ import com.google.genai.types.GenerateContentResponse;
 import com.google.genai.types.Part;
 import com.rejs.flashnote.global.gemini.context.PersonaContext;
 import com.rejs.flashnote.global.gemini.context.PersonaContextRegistry;
-import com.rejs.flashnote.global.gemini.dto.DeckDto;
+import com.rejs.flashnote.global.gemini.dto.GeneratedDeckDto;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class GeminiService {
     private final Client client;
     private final ObjectMapper objectMapper;
 
-    public DeckDto readCards(String userPrompt){
+    public GeneratedDeckDto readCards(String userPrompt){
         try {
             PersonaContext context = personaContextRegistry.getContext("FLASHCARD");
             GenerateContentConfig config = GenerateContentConfig.builder()
@@ -38,7 +38,7 @@ public class GeminiService {
             );
 
             String jsonResult = response.text();
-            return objectMapper.readValue(jsonResult, DeckDto.class);
+            return objectMapper.readValue(jsonResult, GeneratedDeckDto.class);
         }catch (Exception e){
             log.error("플래시카드 생성 중 오류 발생", e);
             throw new RuntimeException("AI 응답 처리 실패", e);

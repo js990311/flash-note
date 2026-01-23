@@ -1,33 +1,17 @@
 package com.rejs.flashnote.global.gemini.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.google.genai.Client;
-import com.google.genai.Models;
-import com.google.genai.types.GenerateContentConfig;
-import com.google.genai.types.GenerateContentResponse;
 import com.rejs.flashnote.TestcontainersConfiguration;
-import com.rejs.flashnote.global.gemini.context.PersonaContext;
-import com.rejs.flashnote.global.gemini.context.PersonaContextRegistry;
-import com.rejs.flashnote.global.gemini.dto.DeckDto;
+import com.rejs.flashnote.global.gemini.dto.GeneratedDeckDto;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
-import org.mockito.Spy;
-import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 
-import java.util.Map;
-
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.Mockito.*;
 
 /**
  * 평상시에는 실행하지 말것.
@@ -78,7 +62,7 @@ class GeminiServiceTest {
 
         // When
         // 실제 구글 서버와 통신하므로 네트워크 상태에 따라 1~3초 정도 소요될 수 있습니다.
-        DeckDto result = geminiService.readCards(userPrompt);
+        GeneratedDeckDto result = geminiService.readCards(userPrompt);
 
         // Then
         // 1. 결과 객체가 null이 아닌지 확인
