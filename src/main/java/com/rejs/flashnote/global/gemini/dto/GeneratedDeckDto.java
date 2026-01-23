@@ -5,6 +5,6 @@ import lombok.Data;
 import java.util.List;
 
 @Data
-public class DeckDto {
-    private List<CardDto> cards;
+public class GeneratedDeckDto {
+    private List<GeneratedCardDto> cards;
 }

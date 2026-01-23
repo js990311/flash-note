@@ -21,6 +21,9 @@
                 <li class="nav-item">
                     <a class="nav-link" href="<c:url value="/notes"/>">내 노트</a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="<c:url value="/decks"/>">내 카드</a>
+                </li>
             </ul>
 
             <ul class="navbar-nav align-items-center">

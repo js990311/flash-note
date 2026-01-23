@@ -3,7 +3,6 @@ CREATE TABLE notes (
                        title VARCHAR(255) NOT NULL,
                         member_id BIGINT NOT NULL,
                        content MEDIUMTEXT,
-                       note_group_id BIGINT,
                        created_at   DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6),
                        updated_at   DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
                        deleted_at   DATETIME(6)  NULL,
