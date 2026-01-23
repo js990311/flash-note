@@ -3,7 +3,9 @@ package com.rejs.flashnote.domain.cards.controller;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.common.security.WithMockOidcMember;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
+import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.dto.request.CreateCardRequest;
+import com.rejs.flashnote.domain.cards.dto.request.UpdateCardRequest;
 import com.rejs.flashnote.domain.cards.service.CardService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -20,7 +22,7 @@ import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(CardController.class)
@@ -92,5 +94,66 @@ class CardControllerTest {
 
         // 서비스가 실제로 호출되었는지 검증
         verify(cardService).deleteCard(cardId);
+    }
+
+    @Test
+    @WithMockOidcMember
+    @DisplayName("수정 페이지 진입 시 기존 카드 데이터를 모델에 담아 전송해야 한다")
+    void getCardUpdate_test() throws Exception {
+        // given
+        Long cardId = 1L;
+        CardDto cardDto = CardDto.builder()
+                .id(cardId)
+                .front("Old Front")
+                .back("Old Back")
+                .deckId(10L)
+                .build();
+
+        given(cardService.readById(cardId)).willReturn(cardDto);
+
+        // when & then
+        mockMvc.perform(get("/cards/{id}/update", cardId))
+                .andExpect(status().isOk())
+                .andExpect(view().name("cards/update"))
+                .andExpect(model().attributeExists("updateCardRequest"));
+    }
+
+    // 2. 수정 실행 테스트 (POST - 성공 시 PRG 확인)
+    @Test
+    @WithMockOidcMember
+    @DisplayName("카드 수정 성공 시 해당 덱 상세 페이지로 리다이렉트되어야 한다")
+    void postCardUpdate_success_test() throws Exception {
+        // given
+        Long cardId = 1L;
+        Long deckId = 10L;
+        given(cardService.updateCard(any(UpdateCardRequest.class))).willReturn(deckId);
+
+        // when & then
+        mockMvc.perform(post("/cards/{id}/update", cardId)
+                        .param("id", cardId.toString())
+                        .param("front", "New Front")
+                        .param("back", "New Back")
+                        .param("deckId", deckId.toString())
+                        .with(csrf())) // CSRF 필수
+                .andExpect(status().is3xxRedirection())
+                .andExpect(redirectedUrl("/decks/" + deckId));
+    }
+
+    // 3. 수정 실패 테스트 (POST - Validation 에러 시 페이지 유지)
+    @Test
+    @WithMockOidcMember
+    @DisplayName("검증 에러 발생 시 리다이렉트 하지 않고 수정 폼에 머물러야 한다")
+    void postCardUpdate_fail_test() throws Exception {
+        Long cardId = 1L;
+
+        // when & then
+        mockMvc.perform(post("/cards/{id}/update", cardId)
+                        .param("id", cardId.toString())
+                        .param("front", "")
+                        .param("back", "Some Back")
+                        .with(csrf()))
+                .andExpect(status().isOk()) // 리다이렉트(302)가 아닌 200 OK
+                .andExpect(view().name("cards/update"))
+                .andExpect(model().hasErrors());
     }
 }

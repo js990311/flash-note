@@ -40,4 +40,21 @@ public class CardController {
         Long deckId = cardService.deleteCard(id);
         return "redirect:/decks/" + deckId;
     }
+
+    @GetMapping("/{id}/update")
+    public String getCardUpdate(@PathVariable("id") Long id, Model model){
+        CardDto cardDto = cardService.readById(id);
+        model.addAttribute("deckId", cardDto.getDeckId());
+        model.addAttribute("updateCardRequest", UpdateCardRequest.from(cardDto));
+        return "cards/update";
+    }
+
+    @PostMapping("/{id}/update")
+    public String postCardUpdate(@PathVariable("id") Long id,@Valid @ModelAttribute("updateCardRequest") UpdateCardRequest request, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "cards/update";
+        }
+        Long deckId = cardService.updateCard(request);
+        return "redirect:/decks/" + deckId;
+    }
 }

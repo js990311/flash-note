@@ -48,9 +48,10 @@ public class CardService {
 
     // # Update
     @Transactional
-    public void updateCard(UpdateCardRequest request){
+    public Long updateCard(UpdateCardRequest request){
         Card card = cardRepository.findById(request.getId()).orElseThrow();
         card.update(request.getFront(), request.getBack());
+        return card.getDeck().getId();
     }
 
     // # Delete

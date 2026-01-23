@@ -67,7 +67,7 @@
                         <td>${card.front}</td>
                         <td>${card.back}</td>
                         <td class="text-center">
-                            <button class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></button>
+                            <a href="/cards/${card.id}/update" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
                             <form action="/cards/${card.id}/delete" method="post" class="d-inline">
                                 <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                                 <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('삭제하시겠습니까?')">
