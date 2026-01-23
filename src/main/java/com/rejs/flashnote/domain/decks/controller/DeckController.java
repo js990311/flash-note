@@ -1,9 +1,9 @@
-package com.rejs.flashnote.domain.cards.controller;
+package com.rejs.flashnote.domain.decks.controller;
 
-import com.rejs.flashnote.domain.cards.dto.DeckDto;
-import com.rejs.flashnote.domain.cards.dto.request.CreateDeckRequest;
-import com.rejs.flashnote.domain.cards.dto.request.UpdateDeckRequest;
-import com.rejs.flashnote.domain.cards.service.DeckService;
+import com.rejs.flashnote.domain.decks.dto.DeckDto;
+import com.rejs.flashnote.domain.decks.dto.request.CreateDeckRequest;
+import com.rejs.flashnote.domain.decks.dto.request.UpdateDeckRequest;
+import com.rejs.flashnote.domain.decks.service.DeckService;
 import com.rejs.flashnote.global.controller.dto.Pagination;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;
 import jakarta.validation.Valid;

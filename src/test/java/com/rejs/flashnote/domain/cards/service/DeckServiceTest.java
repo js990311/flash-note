@@ -3,11 +3,12 @@ package com.rejs.flashnote.domain.cards.service;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
-import com.rejs.flashnote.domain.cards.dto.DeckDto;
-import com.rejs.flashnote.domain.cards.dto.request.CreateDeckRequest;
-import com.rejs.flashnote.domain.cards.dto.request.UpdateDeckRequest;
-import com.rejs.flashnote.domain.cards.entity.Deck;
-import com.rejs.flashnote.domain.cards.repository.DeckRepository;
+import com.rejs.flashnote.domain.decks.dto.DeckDto;
+import com.rejs.flashnote.domain.decks.dto.request.CreateDeckRequest;
+import com.rejs.flashnote.domain.decks.dto.request.UpdateDeckRequest;
+import com.rejs.flashnote.domain.decks.entity.Deck;
+import com.rejs.flashnote.domain.decks.repository.DeckRepository;
+import com.rejs.flashnote.domain.decks.service.DeckService;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -24,7 +25,6 @@ import java.util.List;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @Import({TestcontainersConfiguration.class})
 @ActiveProfiles("test")

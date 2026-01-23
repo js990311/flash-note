@@ -1,6 +1,7 @@
 package com.rejs.flashnote.domain.cards.entity;
 
 import com.rejs.flashnote.domain.cards.dto.request.CreateCardRequest;
+import com.rejs.flashnote.domain.decks.entity.Deck;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.global.repository.entity.BaseEntity;
 import jakarta.persistence.*;

@@ -1,4 +1,4 @@
-package com.rejs.flashnote.domain.cards.entity;
+package com.rejs.flashnote.domain.decks.entity;
 
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.global.repository.entity.BaseEntity;

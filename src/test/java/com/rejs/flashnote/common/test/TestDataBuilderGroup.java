@@ -7,8 +7,8 @@ import com.navercorp.fixturemonkey.jakarta.validation.plugin.JakartaValidationPl
 import com.navercorp.fixturemonkey.resolver.ArbitraryBuilderCandidateFactory;
 import com.navercorp.fixturemonkey.resolver.ArbitraryBuilderCandidateList;
 import com.rejs.flashnote.domain.cards.entity.Card;
-import com.rejs.flashnote.domain.cards.entity.Deck;
-import com.rejs.flashnote.domain.cards.entity.DeckOriginalType;
+import com.rejs.flashnote.domain.decks.entity.Deck;
+import com.rejs.flashnote.domain.decks.entity.DeckOriginalType;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.entity.MemberRole;
 import com.rejs.flashnote.domain.note.entity.Note;

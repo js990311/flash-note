@@ -1,7 +1,7 @@
-package com.rejs.flashnote.domain.cards.dto;
+package com.rejs.flashnote.domain.decks.dto;
 
-import com.rejs.flashnote.domain.cards.entity.Deck;
-import com.rejs.flashnote.domain.cards.entity.DeckOriginalType;
+import com.rejs.flashnote.domain.decks.entity.Deck;
+import com.rejs.flashnote.domain.decks.entity.DeckOriginalType;
 import lombok.Builder;
 import lombok.Getter;
 

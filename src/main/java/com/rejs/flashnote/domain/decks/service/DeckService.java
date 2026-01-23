@@ -1,11 +1,11 @@
-package com.rejs.flashnote.domain.cards.service;
+package com.rejs.flashnote.domain.decks.service;
 
-import com.rejs.flashnote.domain.cards.dto.DeckDto;
-import com.rejs.flashnote.domain.cards.dto.request.CreateDeckRequest;
-import com.rejs.flashnote.domain.cards.dto.request.UpdateDeckRequest;
-import com.rejs.flashnote.domain.cards.entity.Deck;
+import com.rejs.flashnote.domain.decks.dto.DeckDto;
+import com.rejs.flashnote.domain.decks.dto.request.CreateDeckRequest;
+import com.rejs.flashnote.domain.decks.dto.request.UpdateDeckRequest;
+import com.rejs.flashnote.domain.decks.entity.Deck;
 import com.rejs.flashnote.domain.cards.repository.CardRepository;
-import com.rejs.flashnote.domain.cards.repository.DeckRepository;
+import com.rejs.flashnote.domain.decks.repository.DeckRepository;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import lombok.RequiredArgsConstructor;

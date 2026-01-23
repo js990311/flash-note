@@ -1,6 +1,6 @@
-package com.rejs.flashnote.domain.cards.dto.request;
+package com.rejs.flashnote.domain.decks.dto.request;
 
-import com.rejs.flashnote.domain.cards.dto.DeckDto;
+import com.rejs.flashnote.domain.decks.dto.DeckDto;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import lombok.*;

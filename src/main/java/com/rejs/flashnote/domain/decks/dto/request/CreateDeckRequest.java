@@ -1,4 +1,4 @@
-package com.rejs.flashnote.domain.cards.dto.request;
+package com.rejs.flashnote.domain.decks.dto.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;

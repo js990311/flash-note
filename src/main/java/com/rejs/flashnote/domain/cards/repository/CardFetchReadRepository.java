@@ -4,7 +4,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rejs.flashnote.domain.cards.entity.Card;
 import com.rejs.flashnote.domain.cards.entity.QCard;
-import com.rejs.flashnote.domain.cards.entity.QDeck;
+import com.rejs.flashnote.domain.decks.entity.QDeck;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
