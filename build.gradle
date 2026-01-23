@@ -72,6 +72,9 @@ dependencies {
 
 	// gemini
 	implementation 'com.google.genai:google-genai:1.35.0'
+
+	// fsrs
+	implementation("io.github.open-spaced-repetition:fsrs:1.0.0")
 }
 
 tasks.named('test') {
