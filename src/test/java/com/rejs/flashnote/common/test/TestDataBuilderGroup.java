@@ -12,7 +12,10 @@ import com.rejs.flashnote.domain.decks.entity.DeckOriginalType;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.entity.MemberRole;
 import com.rejs.flashnote.domain.note.entity.Note;
+import io.github.openspacedrepetition.State;
 import net.jqwik.api.Arbitraries;
+
+import java.time.Instant;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 
@@ -27,7 +30,7 @@ public class TestDataBuilderGroup implements ArbitraryBuilderGroup {
                                         builder->builder
                                                 .setNull(javaGetter(Member::getId))
                                                 .set(javaGetter(Member::getName), Arbitraries.strings().ofMaxLength(50))
-                                                .set(javaGetter(Member::getEmail), Arbitraries.strings().alpha().ofMaxLength(200))
+                                                .set(javaGetter(Member::getEmail), Arbitraries.strings().alpha().ofMinLength(10).ofMaxLength(200))
                                                 .set(javaGetter(Member::getRole), MemberRole.ROLE_USER)
                                                 .set(javaGetter(Member::getProvider), "google")
                                                 .setNull(javaGetter(Member::getDeletedAt))
@@ -60,6 +63,11 @@ public class TestDataBuilderGroup implements ArbitraryBuilderGroup {
                                                 .setNull(javaGetter(Card::getId))
                                                 .set(javaGetter(Card::getFront), Arbitraries.strings().ofMaxLength(50))
                                                 .set(javaGetter(Card::getBack), Arbitraries.strings().ofMaxLength(50))
+                                                .setNull(javaGetter(Card::getDeletedAt))
+                                                .set(javaGetter(Card::getState), State.LEARNING)
+                                                .set(javaGetter(Card::getDue), Instant.now())
+                                                .set(javaGetter(Card::getLastReviewAt), Instant.now())
+                                                .set(javaGetter(Card::getFsrsJson), "{}")
                                                 .setNull(javaGetter(Card::getDeletedAt))
                                 )
                 )
