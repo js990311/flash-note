@@ -6,6 +6,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.Instant;
+
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
@@ -15,6 +17,9 @@ public class CardDto {
     private String front;
     private String back;
     private Long deckId;
+    private String state;
+    private Instant due;
+    private Instant lastReviewAt;
 
     public static CardDto from(Card card){
         return CardDto.builder()
@@ -22,6 +27,9 @@ public class CardDto {
                 .front(card.getFront())
                 .back(card.getBack())
                 .deckId(card.getDeck().getId())
+                .due(card.getDue())
+                .lastReviewAt(card.getLastReviewAt())
+                .state(card.getState().toString())
                 .build();
     }
 }
