@@ -31,8 +31,8 @@ public class FlashCardService {
         Rating rating = switch (ratingValue){
             case 1 -> Rating.AGAIN;
             case 2 -> Rating.HARD;
-            case 3 -> Rating.AGAIN;
-            case 4 -> Rating.HARD;
+            case 3 -> Rating.GOOD;
+            case 4 -> Rating.EASY;
             default -> throw new IllegalArgumentException();
         };
         Card card = cardRepository.findById(cardId).orElseThrow();
