@@ -95,4 +95,11 @@ public class DeckController {
         deckService.deleteDeck(id);
         return "redirect:/decks";
     }
+
+    @GetMapping("/{id}/study")
+    public String getStudy(@PathVariable("id") Long id, Model model){
+        DeckDto deckDto = deckService.readDeckById(id);
+        model.addAttribute("deckId", deckDto.getId());
+        return "flash/study";
+    }
 }
