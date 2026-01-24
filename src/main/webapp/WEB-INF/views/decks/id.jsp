@@ -18,7 +18,7 @@
                 <p class="text-muted mb-0">학습을 시작하거나 새로운 카드를 추가해보세요.</p>
             </div>
             <div class="btn-group">
-                <a href="/study/${deck.id}" class="btn btn-success">
+                <a href="/decks/${deck.id}/study" class="btn btn-success">
                     <i class="bi bi-play-fill"></i> 학습하기
                 </a>
             </div>

@@ -33,7 +33,15 @@
         <jsp:doBody/>
     </div>
 </main>
-
+<footer class="container mt-5 py-3 text-center border-top">
+    <p class="text-muted" style="font-size: 0.9rem;">
+        © 2026 Flashnote.
+        Licensed under the <a href="/license" class="text-decoration-none text-primary">MIT License</a>
+        <br>
+        <span style="font-size: 0.8rem;">Copyright (c) 2025 Open Spaced Repetition</span>
+    </p>
+</footer>
+<script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <jsp:invoke fragment="script"/>
 </body>
