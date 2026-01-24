@@ -10,6 +10,7 @@ import com.rejs.flashnote.domain.decks.entity.Deck;
 import com.rejs.flashnote.domain.decks.repository.DeckRepository;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
+import com.rejs.flashnote.global.fsrs.FsrsUtils;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -110,7 +111,30 @@ class FlashCardServiceTest {
         // then
         assertEquals(limit, result.size());
     }
+    @Test
+    @DisplayName("학습 수행 통합 테스트: 사용자가 GOOD(3)을 누르면 due가 미래로 갱신되어야 한다")
+    void studyCard_Integration_Success() {
+        // given
+        Card card = fixtureMonkey.giveMeBuilder(Card.class)
+                .set(javaGetter(Card::getMember), savedMember)
+                .set(javaGetter(Card::getDeck), savedDeck)
+                .set(javaGetter(Card::getDue), Instant.now())
+                .set(javaGetter(Card::getFsrsJson), FsrsUtils.create().getJson())
+                .sample();
+        Card savedCard = cardRepository.saveAndFlush(card);
+        Instant originalDue = savedCard.getDue();
 
+        // when
+        flashCardService.studyCard(savedCard.getId(), 3); // 3 = GOOD
+
+        // then
+        Card updatedCard = cardRepository.findById(savedCard.getId()).orElseThrow();
+
+        // 검증: due가 최소한 기존보다 뒤로 밀려났는가?
+        assertTrue(updatedCard.getDue().isAfter(originalDue));
+        // 검증: 상태가 업데이트 되었는가? (NEW에서 LEARNING 혹은 REVIEW로)
+        assertNotNull(updatedCard.getLastReviewAt());
+    }
     private Card createCardWithDue(Instant due) {
         return fixtureMonkey.giveMeBuilder(Card.class)
                 .set(javaGetter(Card::getMember), savedMember)
@@ -118,4 +142,5 @@ class FlashCardServiceTest {
                 .set(javaGetter(Card::getDue), due)
                 .setNull(javaGetter(Card::getDeletedAt))
                 .sample();
-    }}
+    }
+}

@@ -6,6 +6,7 @@ import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.global.fsrs.FsrsMetadata;
 import com.rejs.flashnote.global.fsrs.FsrsUtils;
 import com.rejs.flashnote.global.repository.entity.BaseEntity;
+import io.github.openspacedrepetition.Rating;
 import io.github.openspacedrepetition.State;
 import jakarta.persistence.*;
 import lombok.*;
@@ -78,6 +79,14 @@ public class Card extends BaseEntity {
     public void update(String front, String back){
         this.front = front;
         this.back = back;
+    }
+
+    public void study(Rating rating){
+        FsrsMetadata afterStudy = FsrsUtils.study(this.fsrsJson, rating);
+        this.due = afterStudy.getDue();
+        this.lastReviewAt = afterStudy.getLastReviewAt();
+        this.state = afterStudy.getState();
+        this.fsrsJson = afterStudy.getJson();
     }
 
     public static Card create(Deck deck, Member member, CreateCardRequest request){
