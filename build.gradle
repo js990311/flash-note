@@ -75,6 +75,9 @@ dependencies {
 
 	// fsrs
 	implementation("io.github.open-spaced-repetition:fsrs:1.0.0")
+
+	// tsid 등
+	implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.14.1'
 }
 
 tasks.named('test') {
