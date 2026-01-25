@@ -36,6 +36,10 @@ public class Deck extends BaseEntity {
     @Column(nullable = false)
     private Integer cardCounts = 0;
 
+    @Enumerated(EnumType.STRING)
+    @Column
+    private DeckState state;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
@@ -56,6 +60,7 @@ public class Deck extends BaseEntity {
         return Deck.builder()
                 .name(name)
                 .originalType(DeckOriginalType.ORIGINAL)
+                .state(DeckState.COMPLETED)
                 .member(member)
                 .build();
     }
