@@ -5,6 +5,7 @@ import com.rejs.flashnote.domain.decks.entity.Deck;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.global.fsrs.FsrsMetadata;
 import com.rejs.flashnote.global.fsrs.FsrsUtils;
+import com.rejs.flashnote.global.gemini.dto.GeneratedCardDto;
 import com.rejs.flashnote.global.repository.entity.BaseEntity;
 import io.github.openspacedrepetition.Rating;
 import io.github.openspacedrepetition.State;
@@ -95,6 +96,21 @@ public class Card extends BaseEntity {
         Card card = Card.builder()
                 .front(request.getFront())
                 .back(request.getBack())
+                .due(fsrsMetadata.getDue())
+                .state(fsrsMetadata.getState())
+                .lastReviewAt(fsrsMetadata.getLastReviewAt())
+                .fsrsJson(fsrsMetadata.getJson())
+                .build();
+        card.mapDeck(deck);
+        card.mapMember(member);
+        return card;
+    }
+
+    public static Card from(Deck deck, Member member, GeneratedCardDto generatedCard){
+        FsrsMetadata fsrsMetadata = FsrsUtils.create();
+        Card card = Card.builder()
+                .front(generatedCard.getFront())
+                .back(generatedCard.getBack())
                 .due(fsrsMetadata.getDue())
                 .state(fsrsMetadata.getState())
                 .lastReviewAt(fsrsMetadata.getLastReviewAt())

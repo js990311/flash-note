@@ -1,6 +1,7 @@
 package com.rejs.flashnote.domain.decks.entity;
 
 import com.rejs.flashnote.domain.member.entity.Member;
+import com.rejs.flashnote.domain.note.entity.Note;
 import com.rejs.flashnote.global.repository.entity.BaseEntity;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
@@ -44,6 +45,14 @@ public class Deck extends BaseEntity {
     @JoinColumn(name = "member_id")
     private Member member;
 
+    public void complete(){
+        this.state = DeckState.COMPLETED;
+    }
+
+    public void fail(){
+        this.state = DeckState.AI_GEN_FAILED;
+    }
+
     public void update(String name) {
         this.name = name;
     }
@@ -64,4 +73,15 @@ public class Deck extends BaseEntity {
                 .member(member)
                 .build();
     }
+
+    public static Deck from(Note note, Member member) {
+        return Deck.builder()
+                .name(note.getTitle() + "의 카드들")
+                .originalType(DeckOriginalType.DECK)
+                .state(DeckState.AI_GENERATING)
+                .member(member)
+                .build()
+        ;
+    }
+
 }
