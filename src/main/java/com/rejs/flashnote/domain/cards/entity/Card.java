@@ -8,6 +8,7 @@ import com.rejs.flashnote.global.fsrs.FsrsUtils;
 import com.rejs.flashnote.global.repository.entity.BaseEntity;
 import io.github.openspacedrepetition.Rating;
 import io.github.openspacedrepetition.State;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.SQLDelete;
@@ -25,7 +26,7 @@ import java.time.Instant;
 @Getter
 public class Card extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Tsid
     @Column(name = "card_id")
     private Long id;
 

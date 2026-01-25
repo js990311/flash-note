@@ -1,6 +1,7 @@
 package com.rejs.flashnote.domain.member.entity;
 
 import com.rejs.flashnote.global.repository.entity.BaseEntity;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -19,7 +20,7 @@ import org.hibernate.annotations.SQLRestriction;
 @Table(name = "members")
 public class Member extends BaseEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Tsid
     @Column(name = "member_id")
     private Long id;
 
