@@ -12,7 +12,7 @@ public class GenerateDeckFromNoteDto {
     private String notes;
 
     public static GenerateDeckFromNoteDto from(Deck deck, Note note){
-        String notes = String.format("title:{}\n\ncontent:{}", note.getTitle(), note.getContent());
+        String notes = String.format("title:%s\n\ncontent:%s", note.getTitle(), note.getContent());
         return GenerateDeckFromNoteDto.builder()
                 .deckId(deck.getId())
                 .notes(notes)

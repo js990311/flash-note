@@ -12,6 +12,33 @@
     </jsp:attribute>
 
     <jsp:body>
+        <div class="mb-4">
+            <c:choose>
+                <%-- AI 생성 중인 경우 --%>
+                <c:when test="${deck.state == 'AI_GENERATING'}">
+                    <div class="alert alert-info shadow-sm border-0 py-4 text-center">
+                        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                            <span class="visually-hidden">Loading...</span>
+                        </div>
+                        <h4 class="alert-heading fw-bold">AI가 카드를 생성하고 있습니다</h4>
+                        <p class="mb-0 text-muted">노트 내용을 바탕으로 플래시카드를 만들고 있어요. 잠시만 기다려 주세요!</p>
+                            <%-- 자동 새로고침을 원할 경우 head에 meta 태그 유지 혹은 아래 주석 해제 --%>
+                            <%-- <script>setTimeout(() => location.reload(), 5000);</script> --%>
+                    </div>
+                </c:when>
+
+                <%-- AI 생성 실패한 경우 --%>
+                <c:when test="${deck.state == 'AI_GEN_FAILED'}">
+                    <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center p-4">
+                        <i class="bi bi-exclamation-octagon-fill fs-1 me-4"></i>
+                        <div>
+                            <h4 class="alert-heading fw-bold mb-1">카드 생성 실패</h4>
+                            <p class="mb-0">AI 서비스와의 연결이 원활하지 않아 생성을 완료하지 못했습니다. 수동으로 추가하거나 다시 시도해 주세요.</p>
+                        </div>
+                    </div>
+                </c:when>
+            </c:choose>
+        </div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
                 <span class="badge bg-primary deck-info-badge mb-2">총 ${deck.cardCounts}개의 카드</span>
