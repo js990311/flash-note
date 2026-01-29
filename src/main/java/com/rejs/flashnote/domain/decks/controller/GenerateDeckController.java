@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequiredArgsConstructor
 @Controller
 public class GenerateDeckController {
-    private GenerateDeckFacade generateDeckFacade;
+    private final GenerateDeckFacade generateDeckFacade;
 
     @PostMapping("/notes/{id}/generate")
     public String postGenerate(@PathVariable("id") Long noteId){
