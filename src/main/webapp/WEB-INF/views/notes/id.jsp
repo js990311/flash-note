@@ -32,14 +32,21 @@
                         </h1>
                     </div>
 
-                        <%-- 오른쪽: 수정/삭제 버튼 그룹 --%>
+                    <%-- 오른쪽: 수정/삭제 버튼 그룹 --%>
                     <div class="col-4 d-flex justify-content-end gap-2">
+                        <form id="generateForm" action="/notes/${note.id}/generate" method="post">
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                            <button type="submit" class="btn btn-success" id="generateBtn">
+                                <i class="bi bi-cpu me-1"></i> AI 카드 생성
+                            </button>
+                        </form>
+
                         <a href="/notes/${note.id}/edit" class="btn btn-outline-primary">
                             <i class="bi bi-pencil-square me-1"></i> 수정
                         </a>
 
                         <form action="/notes/${note.id}/delete" method="post">
-                             <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
                             <button type="submit" class="btn btn-outline-danger">
                                 <i class="bi bi-trash me-1"></i> 삭제
                             </button>

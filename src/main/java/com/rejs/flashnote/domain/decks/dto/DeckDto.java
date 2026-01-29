@@ -2,6 +2,7 @@ package com.rejs.flashnote.domain.decks.dto;
 
 import com.rejs.flashnote.domain.decks.entity.Deck;
 import com.rejs.flashnote.domain.decks.entity.DeckOriginalType;
+import com.rejs.flashnote.domain.decks.entity.DeckState;
 import lombok.Builder;
 import lombok.Getter;
 
@@ -14,6 +15,7 @@ public class DeckDto {
     private Long originalId;
     private Integer cardCounts;
     private Long memberId;
+    private DeckState state;
 
     public static DeckDto from(Deck deck){
         return DeckDto.builder()
@@ -22,6 +24,7 @@ public class DeckDto {
                 .originalType(deck.getOriginalType())
                 .originalId(deck.getOriginalId())
                 .cardCounts(deck.getCardCounts())
+                .state(deck.getState())
                 .memberId(deck.getMember().getId())
                 .build();
     }

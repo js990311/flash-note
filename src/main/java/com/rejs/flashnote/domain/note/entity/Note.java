@@ -28,7 +28,8 @@ public class Note extends BaseEntity {
     @Column
     private String title;
 
-    @Column
+    @Lob
+    @Column(name = "content", columnDefinition = "MEDIUMTEXT")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)

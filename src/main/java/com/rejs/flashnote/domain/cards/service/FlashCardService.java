@@ -6,12 +6,14 @@ import com.rejs.flashnote.domain.cards.repository.CardRepository;
 import com.rejs.flashnote.domain.cards.repository.FlashCardRepository;
 import io.github.openspacedrepetition.Rating;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class FlashCardService {
@@ -28,6 +30,7 @@ public class FlashCardService {
 
     @Transactional
     public void studyCard(Long cardId, int ratingValue){
+        log.info("[card.study] cardId {} -> ratingValue {}", cardId, ratingValue);
         Rating rating = switch (ratingValue){
             case 1 -> Rating.AGAIN;
             case 2 -> Rating.HARD;
