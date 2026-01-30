@@ -29,13 +29,7 @@
 
                 <%-- AI 생성 실패한 경우 --%>
                 <c:when test="${deck.state == 'AI_GEN_FAILED'}">
-                    <div class="alert alert-danger shadow-sm border-0 d-flex align-items-center p-4">
-                        <i class="bi bi-exclamation-octagon-fill fs-1 me-4"></i>
-                        <div>
-                            <h4 class="alert-heading fw-bold mb-1">카드 생성 실패</h4>
-                            <p class="mb-0">AI 서비스와의 연결이 원활하지 않아 생성을 완료하지 못했습니다. 수동으로 추가하거나 다시 시도해 주세요.</p>
-                        </div>
-                    </div>
+                    <jsp:include page="fragments/ai_gen_failed.jsp" />
                 </c:when>
             </c:choose>
         </div>
@@ -79,42 +73,7 @@
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light">
-                <tr>
-                    <th style="width: 40%">앞면</th>
-                    <th style="width: 40%">뒷면</th>
-                    <th style="width: 20%" class="text-center">관리</th>
-                </tr>
-                </thead>
-                <tbody>
-                <c:forEach items="${cards.contents}" var="card">
-                    <tr class="card-item">
-                        <td>${card.front}</td>
-                        <td>${card.back}</td>
-                        <td class="text-center">
-                            <a href="/cards/${card.id}/update" class="btn btn-sm btn-outline-secondary"><i class="bi bi-pencil"></i></a>
-                            <form action="/cards/${card.id}/delete" method="post" class="d-inline">
-                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                <button type="submit" class="btn btn-sm btn-outline-danger" onclick="return confirm('삭제하시겠습니까?')">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </form>
-                        </td>
-                    </tr>
-                </c:forEach>
-                <c:if test="${empty cards.contents}">
-                    <tr>
-                        <td colspan="3" class="text-center py-4 text-muted">아직 등록된 카드가 없습니다.</td>
-                    </tr>
-                </c:if>
-                </tbody>
-            </table>
-        </div>
+        <jsp:include page="fragments/cards_fragments.jsp" />
 
-        <div class="mt-4">
-            <t:pagination meta="${cards.paginationMetadata}" />
-        </div>
     </jsp:body>
 </t:layout>
