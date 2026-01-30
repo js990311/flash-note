@@ -9,29 +9,38 @@
             .card-item:hover { background-color: #f8f9fa; }
             .deck-info-badge { font-size: 0.9rem; }
         </style>
+        <meta name="_csrf" content="${_csrf.token}"/>
+        <meta name="_csrf_header" content="${_csrf.headerName}"/>
     </jsp:attribute>
+
+    <jsp:attribute name="script">
+        <script src="<c:url value='/js/deck/polling.js'/>"></script>
+    </jsp:attribute>
+
 
     <jsp:body>
         <div class="mb-4">
-            <c:choose>
-                <%-- AI 생성 중인 경우 --%>
-                <c:when test="${deck.state == 'AI_GENERATING'}">
-                    <div class="alert alert-info shadow-sm border-0 py-4 text-center">
-                        <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
-                            <span class="visually-hidden">Loading...</span>
+            <div id="ai-gen-status" data-state="">
+                <c:choose>
+                    <%-- AI 생성 중인 경우 --%>
+                    <c:when test="${deck.state == 'AI_GENERATING'}">
+                        <div class="alert alert-info shadow-sm border-0 py-4 text-center">
+                            <div class="spinner-border text-primary mb-3" role="status" style="width: 3rem; height: 3rem;">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <h4 class="alert-heading fw-bold">AI가 카드를 생성하고 있습니다</h4>
+                            <p class="mb-0 text-muted">노트 내용을 바탕으로 플래시카드를 만들고 있어요. 잠시만 기다려 주세요!</p>
+                                <%-- 자동 새로고침을 원할 경우 head에 meta 태그 유지 혹은 아래 주석 해제 --%>
+                                <%-- <script>setTimeout(() => location.reload(), 5000);</script> --%>
                         </div>
-                        <h4 class="alert-heading fw-bold">AI가 카드를 생성하고 있습니다</h4>
-                        <p class="mb-0 text-muted">노트 내용을 바탕으로 플래시카드를 만들고 있어요. 잠시만 기다려 주세요!</p>
-                            <%-- 자동 새로고침을 원할 경우 head에 meta 태그 유지 혹은 아래 주석 해제 --%>
-                            <%-- <script>setTimeout(() => location.reload(), 5000);</script> --%>
-                    </div>
-                </c:when>
+                    </c:when>
 
-                <%-- AI 생성 실패한 경우 --%>
-                <c:when test="${deck.state == 'AI_GEN_FAILED'}">
-                    <jsp:include page="fragments/ai_gen_failed.jsp" />
-                </c:when>
-            </c:choose>
+                    <%-- AI 생성 실패한 경우 --%>
+                    <c:when test="${deck.state == 'AI_GEN_FAILED'}">
+                        <jsp:include page="fragments/ai_gen_failed.jsp" />
+                    </c:when>
+                </c:choose>
+            </div>
         </div>
         <div class="d-flex justify-content-between align-items-center mb-4">
             <div>
@@ -73,7 +82,9 @@
             </div>
         </div>
 
-        <jsp:include page="fragments/cards_fragments.jsp" />
+        <div id="cards-container">
+            <jsp:include page="fragments/cards_fragments.jsp" />
+        </div>
 
     </jsp:body>
 </t:layout>

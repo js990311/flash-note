@@ -4,6 +4,7 @@ import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.service.CardService;
 import com.rejs.flashnote.domain.decks.dto.DeckDto;
 import com.rejs.flashnote.domain.decks.service.DeckService;
+import com.rejs.flashnote.global.controller.dto.Pagination;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -39,7 +40,7 @@ public class DeckFragmentController {
     @GetMapping("/{id}/cards")
     public String getDeckFragmentCards(@PathVariable("id") Long id, @PageableDefault Pageable pageableDefault, Model model){
         Page<CardDto> cardDtos = cardService.readPageByDeckId(id, pageableDefault);
-        model.addAttribute("cards", cardDtos);
+        model.addAttribute("cards", Pagination.from(cardDtos));
         return "decks/fragments/cards_fragments";
     }
 }
