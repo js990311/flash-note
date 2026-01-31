@@ -16,7 +16,7 @@
 
             <button onclick="location.reload()" class="btn btn-primary px-4">다시 시도</button>
 
-            <e:error-docs-link type="${type}" />
+            <e:docs-link type="${type}" />
         </div>
     </jsp:body>
 </t:layout>

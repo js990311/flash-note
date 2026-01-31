@@ -11,7 +11,7 @@
             <p class="text-secondary mb-5">${detail}</p>
 
             <a href="/" class="btn btn-outline-primary px-4">홈으로 돌아가기</a>
-            <e:error-docs-link type="${type}" />
+            <e:docs-link type="${type}" />
         </div>
     </jsp:body>
 </t:layout>

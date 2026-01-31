@@ -18,11 +18,18 @@ public class BusinessExceptionController {
         return createErrorModelAndView(ec, e.getMessage(), request);
     }
 
+    @ExceptionHandler(Exception.class)
+    public ModelAndView handleUncaughtException(Exception e, HttpServletRequest request) {
+        log.error("Uncaught Exception: ", e);
+        ErrorCode ec = CommonErrorCode.INTERNAL_SERVER_ERROR;
+        return createErrorModelAndView(ec, ec.getDetail(), request);
+    }
+
     private ModelAndView createErrorModelAndView(ErrorCode ec, String message, HttpServletRequest request) {
         HttpStatus status = ec.getStatus();
         String viewGroup = status.is4xxClientError() ? "4xx" : "5xx";
 
-        ModelAndView mav = new ModelAndView("errors/" + viewGroup);
+        ModelAndView mav = new ModelAndView("error/" + viewGroup);
         mav.addObject("type", ec.getType());
         mav.addObject("title", ec.getTitle());
         mav.addObject("status", status.value());
@@ -34,10 +41,4 @@ public class BusinessExceptionController {
         return mav;
     }
 
-    @ExceptionHandler(Exception.class)
-    public ModelAndView handleUncaughtException(Exception e, HttpServletRequest request) {
-        log.error("Uncaught Exception: ", e);
-        ErrorCode ec = CommonErrorCode.INTERNAL_SERVER_ERROR;
-        return createErrorModelAndView(ec, ec.getDetail(), request);
-    }
 }

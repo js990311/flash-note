@@ -4,6 +4,7 @@ import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.dto.request.CreateCardRequest;
 import com.rejs.flashnote.domain.cards.dto.request.UpdateCardRequest;
 import com.rejs.flashnote.domain.cards.entity.Card;
+import com.rejs.flashnote.domain.cards.error.CardException;
 import com.rejs.flashnote.domain.decks.entity.Deck;
 import com.rejs.flashnote.domain.cards.repository.CardRepository;
 import com.rejs.flashnote.domain.cards.repository.CardFetchReadRepository;
@@ -27,7 +28,7 @@ public class CardService {
     // # Create
     @Transactional
     public Long createCard(Long memberId, CreateCardRequest request){
-        Deck deck = deckRepository.findById(request.getDeckId()).orElseThrow();
+        Deck deck = deckRepository.findById(request.getDeckId()).orElseThrow(CardException::notFound);
         Member member = memberRepository.getReferenceById(memberId);
         Card card = Card.create(deck, member, request);
         card = cardRepository.save(card);
@@ -37,7 +38,7 @@ public class CardService {
     // # Read
     @Transactional(readOnly = true)
     public CardDto readById(Long cardId){
-        Card card = cardRepository.findById(cardId).orElseThrow();
+        Card card = cardRepository.findById(cardId).orElseThrow(CardException::notFound);
         return CardDto.from(card);
     }
 
@@ -49,7 +50,7 @@ public class CardService {
     // # Update
     @Transactional
     public Long updateCard(UpdateCardRequest request){
-        Card card = cardRepository.findById(request.getId()).orElseThrow();
+        Card card = cardRepository.findById(request.getId()).orElseThrow(CardException::notFound);
         card.update(request.getFront(), request.getBack());
         return card.getDeck().getId();
     }

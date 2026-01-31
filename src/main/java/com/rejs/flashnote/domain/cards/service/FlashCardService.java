@@ -2,6 +2,7 @@ package com.rejs.flashnote.domain.cards.service;
 
 import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.entity.Card;
+import com.rejs.flashnote.domain.cards.error.CardException;
 import com.rejs.flashnote.domain.cards.repository.CardRepository;
 import com.rejs.flashnote.domain.cards.repository.FlashCardRepository;
 import io.github.openspacedrepetition.Rating;
@@ -38,7 +39,7 @@ public class FlashCardService {
             case 4 -> Rating.EASY;
             default -> throw new IllegalArgumentException();
         };
-        Card card = cardRepository.findById(cardId).orElseThrow();
+        Card card = cardRepository.findById(cardId).orElseThrow(CardException::notFound);
         card.study(rating);
     }
 }
