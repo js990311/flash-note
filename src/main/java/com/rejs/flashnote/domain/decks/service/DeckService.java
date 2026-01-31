@@ -5,6 +5,7 @@ import com.rejs.flashnote.domain.decks.dto.request.CreateDeckRequest;
 import com.rejs.flashnote.domain.decks.dto.request.UpdateDeckRequest;
 import com.rejs.flashnote.domain.decks.entity.Deck;
 import com.rejs.flashnote.domain.cards.repository.CardRepository;
+import com.rejs.flashnote.domain.decks.error.DeckException;
 import com.rejs.flashnote.domain.decks.repository.DeckRepository;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
@@ -35,7 +36,7 @@ public class DeckService {
     // # Read
     @Transactional(readOnly = true)
     public DeckDto readDeckById(Long deckId){
-        Deck deck = deckRepository.findById(deckId).orElseThrow();
+        Deck deck = deckRepository.findById(deckId).orElseThrow(DeckException::notFound);
         return DeckDto.from(deck);
     }
 
@@ -48,7 +49,7 @@ public class DeckService {
     // # Update
     @Transactional
     public Long updateDeck(UpdateDeckRequest request){
-        Deck deck = deckRepository.findById(request.getId()).orElseThrow();
+        Deck deck = deckRepository.findById(request.getId()).orElseThrow(DeckException::notFound);
         deck.update(request.getName());
         return deck.getId();
     }

@@ -5,6 +5,7 @@ import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
+import com.rejs.flashnote.domain.note.error.NoteException;
 import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NoteRepository;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +33,7 @@ public class NoteService {
     // ## Read
     @Transactional(readOnly = true)
     public NoteDto readById(Long noteId){
-        Note note = noteRepository.findById(noteId).orElseThrow();
+        Note note = noteRepository.findById(noteId).orElseThrow(NoteException::notFound);
         return NoteDto.from(note);
     }
 
@@ -44,7 +45,7 @@ public class NoteService {
     // ## Update
     @Transactional
     public Long updateNote(Long noteId, NoteEditRequest request){
-        Note note = noteRepository.findById(noteId).orElseThrow();
+        Note note = noteRepository.findById(noteId).orElseThrow(NoteException::notFound);
         note.edit(request.getTitle(), request.getContent());
         return note.getId();
     }
@@ -52,7 +53,7 @@ public class NoteService {
     // ## Delete
     @Transactional
     public void deleteNote(Long noteId){
-        Note note = noteRepository.findById(noteId).orElseThrow();
+        Note note = noteRepository.findById(noteId).orElseThrow(NoteException::notFound);
         noteRepository.delete(note);
     }
 }
