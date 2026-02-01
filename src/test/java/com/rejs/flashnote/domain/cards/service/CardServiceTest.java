@@ -3,10 +3,12 @@ package com.rejs.flashnote.domain.cards.service;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
+import com.rejs.flashnote.domain.cards.authorization.CardAuthorizationStrategy;
 import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.dto.request.CreateCardRequest;
 import com.rejs.flashnote.domain.cards.dto.request.UpdateCardRequest;
 import com.rejs.flashnote.domain.cards.entity.Card;
+import com.rejs.flashnote.domain.cards.error.CardException;
 import com.rejs.flashnote.domain.decks.entity.Deck;
 import com.rejs.flashnote.domain.cards.repository.CardRepository;
 import com.rejs.flashnote.domain.decks.repository.DeckRepository;
@@ -21,6 +23,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -28,6 +31,10 @@ import java.util.NoSuchElementException;
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @Import({TestcontainersConfiguration.class})
 @ActiveProfiles("test")
@@ -47,8 +54,18 @@ class CardServiceTest {
     @Autowired
     private MemberRepository memberRepository;
 
+    @MockitoBean
+    private CardAuthorizationStrategy cardAuthorizationStrategy;
+
     private Member savedMember;
     private Deck savedDeck;
+
+    @BeforeEach
+    void preAuthorize(){
+        when(cardAuthorizationStrategy.getStrategy(anyString(), anyString())).thenReturn(cardAuthorizationStrategy);
+        doNothing().when(cardAuthorizationStrategy).authorize(anyString(), anyString(), anyLong());
+    }
+
 
     @BeforeEach
     void setUp() {
@@ -106,7 +123,7 @@ class CardServiceTest {
     @DisplayName("카드 단건 조회 실패: 존재하지 않는 ID 조회 시 예외가 발생해야 한다")
     void readById_Fail_NotFound() {
         // when & then
-        assertThrows(NoSuchElementException.class, () -> cardService.readById(9999L));
+        assertThrows(CardException.class, () -> cardService.readById(9999L));
     }
 
     @Test
@@ -149,7 +166,7 @@ class CardServiceTest {
                 .sample();
 
         // when
-        cardService.updateCard(request);
+        cardService.updateCard(card.getId(), request);
         cardRepository.flush(); // DB 반영 강제
 
         // then

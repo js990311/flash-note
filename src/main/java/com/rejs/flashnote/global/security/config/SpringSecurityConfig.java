@@ -6,12 +6,14 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.Customizer;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.web.SecurityFilterChain;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity
 @RequiredArgsConstructor
 public class SpringSecurityConfig {
     private final CustomOidcService oidcService;
@@ -24,6 +26,8 @@ public class SpringSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("notes/**").authenticated()
                         .requestMatchers("decks/**").authenticated()
+                        .requestMatchers("cards/**").authenticated()
+                        .requestMatchers("/api/study/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 // 로그아웃 설정

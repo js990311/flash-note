@@ -5,24 +5,27 @@ import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
+import com.rejs.flashnote.domain.note.authorization.NoteAuthorizationStrategy;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
+import com.rejs.flashnote.domain.note.error.NoteException;
 import com.rejs.flashnote.domain.note.repository.NoteRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
-
-import java.util.List;
-import java.util.NoSuchElementException;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @Import({TestcontainersConfiguration.class})
 @ActiveProfiles("test")
@@ -33,6 +36,14 @@ class NoteServiceIntegrationTest {
     @Autowired private NoteService noteService;
     @Autowired private NoteRepository noteRepository;
     private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
+    @MockitoBean
+    private NoteAuthorizationStrategy noteAuthorizationstrategy;
+
+    @BeforeEach
+    void setup(){
+        when(noteAuthorizationstrategy.getStrategy(anyString(), anyString())).thenReturn(noteAuthorizationstrategy);
+        doNothing().when(noteAuthorizationstrategy).authorize(anyString(), anyString(), anyLong());
+    }
 
     @Test
     @DisplayName("노트 생성 통합 테스트: DB에 정상적으로 저장되어야 한다")
@@ -112,7 +123,7 @@ class NoteServiceIntegrationTest {
 
         // then
         assertThatThrownBy(() -> noteService.readById(noteId))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(NoteException.class);
 
         assertThat(noteRepository.findById(noteId)).isEmpty();
     }

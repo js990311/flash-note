@@ -1,5 +1,6 @@
 package com.rejs.flashnote.domain.cards.service;
 
+import com.rejs.flashnote.domain.cards.authorization.PreCardAuthorize;
 import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.dto.request.CreateCardRequest;
 import com.rejs.flashnote.domain.cards.dto.request.UpdateCardRequest;
@@ -37,6 +38,7 @@ public class CardService {
 
     // # Read
     @Transactional(readOnly = true)
+    @PreCardAuthorize
     public CardDto readById(Long cardId){
         Card card = cardRepository.findById(cardId).orElseThrow(CardException::notFound);
         return CardDto.from(card);
@@ -49,14 +51,16 @@ public class CardService {
 
     // # Update
     @Transactional
-    public Long updateCard(UpdateCardRequest request){
-        Card card = cardRepository.findById(request.getId()).orElseThrow(CardException::notFound);
+    @PreCardAuthorize
+    public Long updateCard(Long cardId, UpdateCardRequest request){
+        Card card = cardRepository.findById(cardId).orElseThrow(CardException::notFound);
         card.update(request.getFront(), request.getBack());
         return card.getDeck().getId();
     }
 
     // # Delete
     @Transactional
+    @PreCardAuthorize
     public Long deleteCard(Long cardId){
         Card card = cardFetchReadRepository.findWithDeckById(cardId);
         card.delete();

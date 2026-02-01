@@ -54,7 +54,7 @@ public class CardController {
         if(bindingResult.hasErrors()){
             return "cards/update";
         }
-        Long deckId = cardService.updateCard(request);
+        Long deckId = cardService.updateCard(id, request);
         return "redirect:/decks/" + deckId;
     }
 }

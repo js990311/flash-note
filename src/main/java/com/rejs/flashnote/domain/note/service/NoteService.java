@@ -2,6 +2,8 @@ package com.rejs.flashnote.domain.note.service;
 
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
+import com.rejs.flashnote.domain.note.authorization.PreNoteReadAuthorize;
+import com.rejs.flashnote.domain.note.authorization.PreNoteWriteAuthorize;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
@@ -32,6 +34,7 @@ public class NoteService {
 
     // ## Read
     @Transactional(readOnly = true)
+    @PreNoteReadAuthorize
     public NoteDto readById(Long noteId){
         Note note = noteRepository.findById(noteId).orElseThrow(NoteException::notFound);
         return NoteDto.from(note);
@@ -44,6 +47,7 @@ public class NoteService {
 
     // ## Update
     @Transactional
+    @PreNoteWriteAuthorize
     public Long updateNote(Long noteId, NoteEditRequest request){
         Note note = noteRepository.findById(noteId).orElseThrow(NoteException::notFound);
         note.edit(request.getTitle(), request.getContent());
@@ -52,6 +56,7 @@ public class NoteService {
 
     // ## Delete
     @Transactional
+    @PreNoteWriteAuthorize
     public void deleteNote(Long noteId){
         Note note = noteRepository.findById(noteId).orElseThrow(NoteException::notFound);
         noteRepository.delete(note);

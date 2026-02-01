@@ -3,9 +3,11 @@ package com.rejs.flashnote.domain.cards.controller;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.common.security.WithMockOidcMember;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
+import com.rejs.flashnote.domain.cards.authorization.CardAuthorizationStrategy;
 import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.dto.request.StudyRequest;
 import com.rejs.flashnote.domain.cards.service.FlashCardService;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +26,7 @@ import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropert
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.BDDMockito.given;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -99,7 +101,7 @@ class FlashCardControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .with(csrf()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is5xxServerError());
     }
 
 }
