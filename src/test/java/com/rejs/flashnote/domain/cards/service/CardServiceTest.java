@@ -7,6 +7,7 @@ import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.dto.request.CreateCardRequest;
 import com.rejs.flashnote.domain.cards.dto.request.UpdateCardRequest;
 import com.rejs.flashnote.domain.cards.entity.Card;
+import com.rejs.flashnote.domain.cards.error.CardException;
 import com.rejs.flashnote.domain.decks.entity.Deck;
 import com.rejs.flashnote.domain.cards.repository.CardRepository;
 import com.rejs.flashnote.domain.decks.repository.DeckRepository;
@@ -106,7 +107,7 @@ class CardServiceTest {
     @DisplayName("카드 단건 조회 실패: 존재하지 않는 ID 조회 시 예외가 발생해야 한다")
     void readById_Fail_NotFound() {
         // when & then
-        assertThrows(NoSuchElementException.class, () -> cardService.readById(9999L));
+        assertThrows(CardException.class, () -> cardService.readById(9999L));
     }
 
     @Test

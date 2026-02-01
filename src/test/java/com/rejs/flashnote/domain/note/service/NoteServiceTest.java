@@ -7,6 +7,7 @@ import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
+import com.rejs.flashnote.domain.note.error.NoteException;
 import com.rejs.flashnote.domain.note.repository.MyNoteGroupRepository;
 import com.rejs.flashnote.domain.note.repository.NoteRepository;
 import org.junit.jupiter.api.DisplayName;
@@ -108,7 +109,7 @@ class NoteServiceTest {
 
         // when & then
         assertThatThrownBy(() -> noteService.readById(noteId))
-                .isInstanceOf(NoSuchElementException.class);
+                .isInstanceOf(NoteException.class);
     }
 
     @Test

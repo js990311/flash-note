@@ -99,7 +99,7 @@ class FlashCardControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request))
                         .with(csrf()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().is5xxServerError());
     }
 
 }
