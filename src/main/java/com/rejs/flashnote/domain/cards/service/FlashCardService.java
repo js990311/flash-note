@@ -1,5 +1,6 @@
 package com.rejs.flashnote.domain.cards.service;
 
+import com.rejs.flashnote.domain.cards.authorization.PreCardAuthorize;
 import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.entity.Card;
 import com.rejs.flashnote.domain.cards.error.CardException;
@@ -30,6 +31,7 @@ public class FlashCardService {
     }
 
     @Transactional
+    @PreCardAuthorize
     public void studyCard(Long cardId, int ratingValue){
         log.info("[card.study] cardId {} -> ratingValue {}", cardId, ratingValue);
         Rating rating = switch (ratingValue){

@@ -126,7 +126,7 @@ class CardControllerTest {
         // given
         Long cardId = 1L;
         Long deckId = 10L;
-        given(cardService.updateCard(any(UpdateCardRequest.class))).willReturn(deckId);
+        given(cardService.updateCard(anyLong(), any(UpdateCardRequest.class))).willReturn(deckId);
 
         // when & then
         mockMvc.perform(post("/cards/{id}/update", cardId)

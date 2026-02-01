@@ -3,6 +3,7 @@ package com.rejs.flashnote.domain.cards.service;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
+import com.rejs.flashnote.domain.cards.authorization.CardAuthorizationStrategy;
 import com.rejs.flashnote.domain.cards.dto.CardDto;
 import com.rejs.flashnote.domain.cards.entity.Card;
 import com.rejs.flashnote.domain.cards.repository.CardRepository;
@@ -18,6 +19,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.time.Duration;
 import java.time.Instant;
@@ -25,6 +27,10 @@ import java.util.List;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @Import({TestcontainersConfiguration.class})
 @ActiveProfiles("test")
@@ -45,6 +51,18 @@ class FlashCardServiceTest {
     private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
     private Member savedMember;
     private Deck savedDeck;
+
+
+    @MockitoBean
+    private CardAuthorizationStrategy cardAuthorizationStrategy;
+
+
+    @BeforeEach
+    void preAuthorize(){
+        when(cardAuthorizationStrategy.getStrategy(anyString(), anyString())).thenReturn(cardAuthorizationStrategy);
+        doNothing().when(cardAuthorizationStrategy).authorize(anyString(), anyString(), anyLong());
+    }
+
 
     @BeforeEach
     void setUp() {
