@@ -2,11 +2,10 @@ package com.rejs.flashnote.domain.note.service;
 
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.TestcontainersConfiguration;
-import com.rejs.flashnote.common.security.WithMockOidcMember;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
-import com.rejs.flashnote.domain.note.authorization.NoteAuthorizationstrategy;
+import com.rejs.flashnote.domain.note.authorization.NoteAuthorizationStrategy;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
@@ -20,9 +19,6 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-
-import java.util.List;
-import java.util.NoSuchElementException;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.assertj.core.api.Assertions.assertThat;
@@ -41,7 +37,7 @@ class NoteServiceIntegrationTest {
     @Autowired private NoteRepository noteRepository;
     private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
     @MockitoBean
-    private NoteAuthorizationstrategy noteAuthorizationstrategy;
+    private NoteAuthorizationStrategy noteAuthorizationstrategy;
 
     @BeforeEach
     void setup(){

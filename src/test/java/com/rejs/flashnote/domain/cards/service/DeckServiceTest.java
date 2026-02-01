@@ -3,6 +3,7 @@ package com.rejs.flashnote.domain.cards.service;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
+import com.rejs.flashnote.domain.decks.authorization.DeckAuthorizationStrategy;
 import com.rejs.flashnote.domain.decks.dto.DeckDto;
 import com.rejs.flashnote.domain.decks.dto.request.CreateDeckRequest;
 import com.rejs.flashnote.domain.decks.dto.request.UpdateDeckRequest;
@@ -20,11 +21,16 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 import java.util.List;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
 
 @Import({TestcontainersConfiguration.class})
 @ActiveProfiles("test")
@@ -42,6 +48,16 @@ class DeckServiceTest {
     private MemberRepository memberRepository;
 
     private Member savedMember;
+
+    @MockitoBean
+    private DeckAuthorizationStrategy deckAuthorizationStrategy;
+
+    @BeforeEach
+    void preAuthorize(){
+        when(deckAuthorizationStrategy.getStrategy(anyString(), anyString())).thenReturn(deckAuthorizationStrategy);
+        doNothing().when(deckAuthorizationStrategy).authorize(anyString(), anyString(), anyLong());
+    }
+
 
     @BeforeEach
     void setup(){

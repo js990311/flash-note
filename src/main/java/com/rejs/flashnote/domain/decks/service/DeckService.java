@@ -1,5 +1,6 @@
 package com.rejs.flashnote.domain.decks.service;
 
+import com.rejs.flashnote.domain.decks.authorization.PreDeckAuthorize;
 import com.rejs.flashnote.domain.decks.dto.DeckDto;
 import com.rejs.flashnote.domain.decks.dto.request.CreateDeckRequest;
 import com.rejs.flashnote.domain.decks.dto.request.UpdateDeckRequest;
@@ -35,12 +36,14 @@ public class DeckService {
 
     // # Read
     @Transactional(readOnly = true)
+    @PreDeckAuthorize
     public DeckDto readDeckById(Long deckId){
         Deck deck = deckRepository.findById(deckId).orElseThrow(DeckException::notFound);
         return DeckDto.from(deck);
     }
 
     @Transactional(readOnly = true)
+    @PreDeckAuthorize
     public Page<DeckDto> readDeckPageByMemberId(Long memberId, Pageable pageable){
         Member member = memberRepository.getReferenceById(memberId);
         return deckRepository.findByMember(member, pageable).map(DeckDto::from);
@@ -48,6 +51,7 @@ public class DeckService {
 
     // # Update
     @Transactional
+    @PreDeckAuthorize
     public Long updateDeck(UpdateDeckRequest request){
         Deck deck = deckRepository.findById(request.getId()).orElseThrow(DeckException::notFound);
         deck.update(request.getName());
@@ -56,6 +60,7 @@ public class DeckService {
 
     // # Delete
     @Transactional
+    @PreDeckAuthorize
     public void deleteDeck(Long deckId){
         deckRepository.deleteById(deckId);
     }

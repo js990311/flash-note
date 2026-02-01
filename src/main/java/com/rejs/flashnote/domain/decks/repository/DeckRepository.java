@@ -8,4 +8,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface DeckRepository extends JpaRepository<Deck, Long> {
     Page<Deck> findByMember(Member member, Pageable pageable);
+
+    boolean existsByMemberIdAndId(Long memberId, Long id);
 }

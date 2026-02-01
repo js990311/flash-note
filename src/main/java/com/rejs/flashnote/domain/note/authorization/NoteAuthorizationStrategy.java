@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Component
 @RequiredArgsConstructor
-public class NoteAuthorizationstrategy implements CrudMethodAuthorizationStrategy {
+public class NoteAuthorizationStrategy implements CrudMethodAuthorizationStrategy {
     public static final String DOMAIN_TYPE = "note";
     private final NoteRepository noteRepository;
 

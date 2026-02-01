@@ -2,6 +2,7 @@ package com.rejs.flashnote.domain.decks.service.generate;
 
 import com.rejs.flashnote.domain.decks.dto.generate.GenerateDeckFromNoteDto;
 import com.rejs.flashnote.domain.decks.service.DeckService;
+import com.rejs.flashnote.domain.note.authorization.PreNoteWriteAuthorize;
 import com.rejs.flashnote.domain.note.service.NoteService;
 import com.rejs.flashnote.global.gemini.dto.GeneratedDeckDto;
 import com.rejs.flashnote.global.gemini.service.GeminiService;
@@ -18,6 +19,7 @@ public class GenerateDeckFacade {
     private final GeminiService geminiService;
     private final GenerateDeckService generateDeckService;
 
+    @PreNoteWriteAuthorize
     public Long generateFlashCardFromNoteId(Long noteId, Long memberId){
         GenerateDeckFromNoteDto generateDeckFromNoteDto = generateDeckService.generateDeckFromNote(noteId, memberId);
         final Long deckId = generateDeckFromNoteDto.getDeckId();
