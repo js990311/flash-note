@@ -43,7 +43,6 @@ public class DeckService {
     }
 
     @Transactional(readOnly = true)
-    @PreDeckAuthorize
     public Page<DeckDto> readDeckPageByMemberId(Long memberId, Pageable pageable){
         Member member = memberRepository.getReferenceById(memberId);
         return deckRepository.findByMember(member, pageable).map(DeckDto::from);

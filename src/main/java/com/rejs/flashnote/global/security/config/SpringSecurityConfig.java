@@ -26,6 +26,8 @@ public class SpringSecurityConfig {
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                         .requestMatchers("notes/**").authenticated()
                         .requestMatchers("decks/**").authenticated()
+                        .requestMatchers("cards/**").authenticated()
+                        .requestMatchers("/api/study/**").authenticated()
                         .anyRequest().permitAll()
                 )
                 // 로그아웃 설정
