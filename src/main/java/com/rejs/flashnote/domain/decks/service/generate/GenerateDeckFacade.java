@@ -8,16 +8,26 @@ import com.rejs.flashnote.global.gemini.dto.GeneratedDeckDto;
 import com.rejs.flashnote.global.gemini.service.GeminiService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
 
 @Slf4j
-@RequiredArgsConstructor
 @Service
 public class GenerateDeckFacade {
     private final GeminiService geminiService;
     private final GenerateDeckService generateDeckService;
+    private final Executor geminiExecutor;
+
+    @Autowired
+    public GenerateDeckFacade(GeminiService geminiService, GenerateDeckService generateDeckService,@Qualifier("geminiExecutor") Executor geminiExecutor) {
+        this.geminiService = geminiService;
+        this.generateDeckService = generateDeckService;
+        this.geminiExecutor = geminiExecutor;
+    }
 
     @PreNoteWriteAuthorize
     public Long generateFlashCardFromNoteId(Long noteId, Long memberId){
@@ -25,9 +35,10 @@ public class GenerateDeckFacade {
         final Long deckId = generateDeckFromNoteDto.getDeckId();
         CompletableFuture
                 .supplyAsync(
-                    ()->geminiService.readCards(generateDeckFromNoteDto.getNotes())
+                    ()->geminiService.readCards(generateDeckFromNoteDto.getNotes()),
+                        geminiExecutor
                 )
-                .thenAcceptAsync(generatedDeckDto -> {
+                .thenAccept(generatedDeckDto -> {
                     generateDeckService.generateCard(deckId, memberId, generatedDeckDto);
                     log.info("Deck {} 생성 성공", deckId);
                 })
