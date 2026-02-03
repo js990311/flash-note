@@ -1,0 +1,130 @@
+package com.rejs.flashnote.domain.note.service;
+
+import com.navercorp.fixturemonkey.FixtureMonkey;
+import com.rejs.flashnote.TestcontainersConfiguration;
+import com.rejs.flashnote.common.test.TestDataBuilderGroup;
+import com.rejs.flashnote.domain.member.entity.Member;
+import com.rejs.flashnote.domain.member.repository.MemberRepository;
+import com.rejs.flashnote.domain.note.authorization.NoteAuthorizationStrategy;
+import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
+import com.rejs.flashnote.domain.note.entity.Note;
+import com.rejs.flashnote.domain.note.error.NoteException;
+import com.rejs.flashnote.domain.note.repository.NoteRepository;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.context.annotation.Import;
+import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
+
+import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.*;
+import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.when;
+
+@Import({TestcontainersConfiguration.class})
+@ActiveProfiles("test")
+@SpringBootTest
+class NoteServiceIntegrationTest {
+
+    @Autowired private MemberRepository memberRepository;
+    @Autowired private NoteService noteService;
+    @Autowired private NoteRepository noteRepository;
+    private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
+    @MockitoBean
+    private NoteAuthorizationStrategy noteAuthorizationstrategy;
+
+    @BeforeEach
+    void setup(){
+        when(noteAuthorizationstrategy.getStrategy(anyString(), anyString())).thenReturn(noteAuthorizationstrategy);
+        doNothing().when(noteAuthorizationstrategy).authorize(anyString(), anyString(), anyLong());
+    }
+
+    @Test
+    @DisplayName("노트 생성 통합 테스트: DB에 정상적으로 저장되어야 한다")
+    void createNote_integration() {
+        // given
+        // 1. 부모 데이터(Member, NoteGroup) 미리 저장
+        Member member = memberRepository.save(fixtureMonkey.giveMeOne(Member.class));
+
+        // when
+        Long savedNoteId = noteService.createNote(member.getId());
+
+        // then
+        Note foundNote = noteRepository.findById(savedNoteId).orElseThrow();
+
+        assertThat(foundNote.getId()).isNotNull();
+        assertThat(foundNote.getMember().getId()).isEqualTo(member.getId());
+    }
+
+    @Test
+    @DisplayName("노트 조회 통합 테스트: 저장된 노트를 DTO로 변환하여 반환한다")
+    void readById_integration() {
+        // given
+        Member member = memberRepository.save(fixtureMonkey.giveMeOne(Member.class));
+
+        Note note = fixtureMonkey.giveMeBuilder(Note.class)
+                .set(javaGetter(Note::getMember), member)
+                .sample();
+        Note savedNote = noteRepository.save(note);
+
+        // when
+        NoteDto result = noteService.readById(savedNote.getId());
+
+        // then
+        assertThat(result.getId()).isEqualTo(savedNote.getId());
+        assertThat(result.getTitle()).isEqualTo(savedNote.getTitle());
+    }
+
+
+    @Test
+    @DisplayName("노트 수정 통합 테스트: 더티 체킹(Dirty Checking)이 동작하여 DB 값이 변경되어야 한다")
+    void updateNote_integration() {
+        // given
+        Member member = memberRepository.save(fixtureMonkey.giveMeOne(Member.class));
+        Note note = fixtureMonkey.giveMeBuilder(Note.class)
+                .set(javaGetter(Note::getMember), member)
+                .sample();
+        Note savedNote = noteRepository.save(note);
+
+        NoteEditRequest request = fixtureMonkey.giveMeOne(NoteEditRequest.class);
+
+        // when
+        noteService.updateNote(savedNote.getId(), request);
+
+        // then
+        // 영속성 컨텍스트 초기화 (혹은 flush) 후 다시 조회해야 확실한 DB 반영 확인 가능
+        // @Transactional 안에서는 1차 캐시 조회일 수 있으나, 값 변경 확인은 가능함
+        Note updatedNote = noteRepository.findById(savedNote.getId()).orElseThrow();
+
+        assertThat(updatedNote.getTitle()).isEqualTo(request.getTitle());
+        assertThat(updatedNote.getContent()).isEqualTo(request.getContent());
+    }
+
+    @Test
+    @DisplayName("노트 삭제 통합 테스트: DB에서 데이터가 사라져야 한다")
+    void deleteNote_integration() {
+        // given
+        Member member = memberRepository.save(fixtureMonkey.giveMeOne(Member.class));
+        Note note = fixtureMonkey.giveMeBuilder(Note.class)
+                .set(javaGetter(Note::getMember), member)
+                .sample();
+        Note savedNote = noteRepository.save(note);
+
+        Long noteId = savedNote.getId();
+
+        // when
+        noteService.deleteNote(noteId);
+
+        // then
+        assertThatThrownBy(() -> noteService.readById(noteId))
+                .isInstanceOf(NoteException.class);
+
+        assertThat(noteRepository.findById(noteId)).isEmpty();
+    }
+}

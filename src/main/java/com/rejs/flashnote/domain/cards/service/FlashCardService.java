@@ -1,0 +1,47 @@
+package com.rejs.flashnote.domain.cards.service;
+
+import com.rejs.flashnote.domain.cards.authorization.PreCardAuthorize;
+import com.rejs.flashnote.domain.cards.dto.CardDto;
+import com.rejs.flashnote.domain.cards.entity.Card;
+import com.rejs.flashnote.domain.cards.error.CardException;
+import com.rejs.flashnote.domain.cards.repository.CardRepository;
+import com.rejs.flashnote.domain.cards.repository.FlashCardRepository;
+import io.github.openspacedrepetition.Rating;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.time.Instant;
+import java.util.List;
+
+@Slf4j
+@RequiredArgsConstructor
+@Service
+public class FlashCardService {
+    private final FlashCardRepository flashCardRepository;
+    private final CardRepository cardRepository;
+
+    @Transactional(readOnly = true)
+    public List<CardDto> getTodayFlashCards(Long memberId, Long deckId, Integer limit){
+        return flashCardRepository.findCardsToStudy(memberId, deckId, Instant.now(),limit)
+                .stream().map(
+                        CardDto::from
+                ).toList();
+    }
+
+    @Transactional
+    @PreCardAuthorize
+    public void studyCard(Long cardId, int ratingValue){
+        log.info("[card.study] cardId {} -> ratingValue {}", cardId, ratingValue);
+        Rating rating = switch (ratingValue){
+            case 1 -> Rating.AGAIN;
+            case 2 -> Rating.HARD;
+            case 3 -> Rating.GOOD;
+            case 4 -> Rating.EASY;
+            default -> throw new IllegalArgumentException();
+        };
+        Card card = cardRepository.findById(cardId).orElseThrow(CardException::notFound);
+        card.study(rating);
+    }
+}
