@@ -154,7 +154,7 @@ class NoteControllerTest {
     void postNoteEdit_success() throws Exception {
         // given
         NoteEditRequest noteForm = fixtureMonkey.giveMeOne(NoteEditRequest.class);
-        Long noteId = noteForm.getNoteId();
+        Long noteId = 100L;
 
         // when & then
         mockMvc.perform(post("/notes/{id}/edit", noteId)
@@ -178,7 +178,7 @@ class NoteControllerTest {
         NoteEditRequest noteForm = FixtureMonkey.create().giveMeBuilder(NoteEditRequest.class)
                 .setNull(javaGetter(NoteEditRequest::getTitle))
                 .sample();
-        Long noteId = noteForm.getNoteId();
+        Long noteId = 100L;
 
         // when & then
         mockMvc.perform(post("/notes/{id}/edit", noteId)

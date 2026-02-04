@@ -30,7 +30,7 @@ public class TestDataBuilderGroup implements ArbitraryBuilderGroup {
                                         builder->builder
                                                 .setNull(javaGetter(Member::getId))
                                                 .set(javaGetter(Member::getName), Arbitraries.strings().ofMaxLength(50))
-                                                .set(javaGetter(Member::getEmail), Arbitraries.strings().alpha().ofMinLength(10).ofMaxLength(200))
+                                                .set(javaGetter(Member::getEmail), Arbitraries.strings().alpha().ofMinLength(10).ofMaxLength(99))
                                                 .set(javaGetter(Member::getRole), MemberRole.ROLE_USER)
                                                 .set(javaGetter(Member::getProvider), "google")
                                                 .setNull(javaGetter(Member::getDeletedAt))

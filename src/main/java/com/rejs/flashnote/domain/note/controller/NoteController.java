@@ -50,12 +50,14 @@ public class NoteController {
     @GetMapping("/{id}/edit")
     public String getNoteEdit(@PathVariable("id") Long noteId, Model model){
         NoteDto noteDto = noteService.readById(noteId);
+        model.addAttribute("noteId", noteId);
         model.addAttribute("noteForm", NoteEditRequest.from(noteDto));
         return "notes/edit";
     }
 
     @PostMapping("/{id}/edit")
-    public String postNoteEdit(@PathVariable("id") Long noteId, @Valid @ModelAttribute("noteForm") NoteEditRequest request, BindingResult bindingResult){
+    public String postNoteEdit(@PathVariable("id") Long noteId, @Valid @ModelAttribute("noteForm") NoteEditRequest request, BindingResult bindingResult, Model model){
+        model.addAttribute("noteId", noteId);
         if(bindingResult.hasErrors()){
             return "notes/edit";
         }
