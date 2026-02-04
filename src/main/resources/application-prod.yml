@@ -1,3 +1,8 @@
+server:
+  tomcat:
+    max-http-form-post-size: 30MB
+
+
 spring:
   application:
     name: flashnote

@@ -2,6 +2,8 @@ server:
   jsp-servlet:
     init-parameters:
       development: true
+  tomcat:
+    max-http-form-post-size: 30MB
 
 spring:
   application:
