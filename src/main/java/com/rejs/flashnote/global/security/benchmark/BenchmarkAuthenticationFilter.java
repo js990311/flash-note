@@ -35,7 +35,7 @@ public class BenchmarkAuthenticationFilter extends OncePerRequestFilter {
         String testMemberEmail = request.getHeader("X-Test-Member-Email");
         if (testMemberEmail != null) {
             MemberAuthentication orCreateAuthentication = memberService.getOrCreateAuthentication(testMemberEmail, "test");
-            OidcMember oidcMember = new OidcMember(null, orCreateAuthentication);
+            OidcMember oidcMember = new BenchmarkOidcMember(orCreateAuthentication);
             SecurityContextHolder.getContext().setAuthentication(new UsernamePasswordAuthenticationToken(oidcMember, null, Collections.singletonList(new SimpleGrantedAuthority("ROLE_USER"))));
         }
         filterChain.doFilter(request,response);

@@ -10,8 +10,10 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AnonymousAuthenticationFilter;
 
 import java.util.Optional;
 
@@ -25,8 +27,12 @@ public class SpringSecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        if(benchmarkAuthenticationFilter.isPresent()){
+            http.csrf(AbstractHttpConfigurer::disable);
+        }else {
+            http.csrf(Customizer.withDefaults());
+        }
         http
-                .csrf(Customizer.withDefaults())
                 // 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
@@ -48,7 +54,7 @@ public class SpringSecurityConfig {
                 );
 
         benchmarkAuthenticationFilter.ifPresent((filter)->{
-            http.addFilterBefore(filter, OAuth2LoginAuthenticationFilter.class);
+            http.addFilterBefore(filter, AnonymousAuthenticationFilter.class);
         });
 
         return http.build();
