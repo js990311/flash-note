@@ -1,5 +1,6 @@
 package com.rejs.flashnote.global.security.config;
 
+import com.rejs.flashnote.global.security.benchmark.BenchmarkAuthenticationFilter;
 import com.rejs.flashnote.global.security.service.CustomOidcService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
@@ -9,7 +10,10 @@ import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+
+import java.util.Optional;
 
 @Configuration
 @EnableWebSecurity
@@ -17,6 +21,8 @@ import org.springframework.security.web.SecurityFilterChain;
 @RequiredArgsConstructor
 public class SpringSecurityConfig {
     private final CustomOidcService oidcService;
+    private final Optional<BenchmarkAuthenticationFilter> benchmarkAuthenticationFilter;
+
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         http
@@ -40,6 +46,10 @@ public class SpringSecurityConfig {
                                 .loginPage("/login")
                                 .userInfoEndpoint(userinfo->userinfo.oidcUserService(oidcService))
                 );
+
+        benchmarkAuthenticationFilter.ifPresent((filter)->{
+            http.addFilterBefore(filter, OAuth2LoginAuthenticationFilter.class);
+        });
 
         return http.build();
     }
