@@ -1,4 +1,4 @@
-package com.rejs.flashnote.global.exception;
+package com.rejs.flashnote.global.exception.code;
 
 import org.springframework.http.HttpStatus;
 
