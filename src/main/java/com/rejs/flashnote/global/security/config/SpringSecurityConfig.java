@@ -40,6 +40,7 @@ public class SpringSecurityConfig {
                         .requestMatchers("decks/**").authenticated()
                         .requestMatchers("cards/**").authenticated()
                         .requestMatchers("/api/study/**").authenticated()
+                        .requestMatchers("/actuator/prometheus/**").permitAll()
                         .anyRequest().permitAll()
                 )
                 // 로그아웃 설정

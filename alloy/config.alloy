@@ -1,0 +1,28 @@
+prometheus.remote_write "metrics_service" {
+  endpoint {
+    url = ""
+
+    basic_auth {
+      username = "키값사용하기"
+      password = "키값사용하기"
+    }
+  }
+}
+
+discovery.relabel "metrics_integrations_integrations_spring_boot" {
+  targets = [{
+    __address__ = "note-app:8080",
+  }]
+
+  rule {
+    target_label = "instance"
+    replacement  = constants.hostname
+  }
+}
+
+prometheus.scrape "metrics_integrations_integrations_spring_boot" {
+  targets      = discovery.relabel.metrics_integrations_integrations_spring_boot.output
+  forward_to   = [prometheus.remote_write.metrics_service.receiver]
+  job_name     = "integrations/spring-boot"
+  metrics_path = "/actuator/prometheus"
+}
