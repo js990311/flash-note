@@ -48,6 +48,12 @@ logging:
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql.BasicBinder: WARN
 
+# 프로메테우스. actuator를 전부 오픈
+management:
+  endpoints:
+    web:
+      exposure:
+        include: *
 gemini:
   api:
     key: ${GEMINI_API_KEY}
