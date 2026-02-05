@@ -1,6 +1,7 @@
 server:
   tomcat:
     max-http-form-post-size: 30MB
+  forward-headers-strategy: framework
 
 
 spring:
