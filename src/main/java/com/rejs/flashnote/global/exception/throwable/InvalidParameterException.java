@@ -1,17 +1,30 @@
 package com.rejs.flashnote.global.exception.throwable;
 
+import com.rejs.flashnote.global.exception.code.CommonErrorCode;
 import com.rejs.flashnote.global.exception.code.ErrorCode;
+import lombok.Getter;
+import org.springframework.validation.BindingResult;
 
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Collectors;
+
+@Getter
 public class InvalidParameterException extends BusinessException{
-    public InvalidParameterException(ErrorCode errorCode) {
-        super(errorCode);
+    private final List<Map<String, String>> invalidParameters;
+
+    public InvalidParameterException(List<Map<String, String>> invalidParameters) {
+        super(CommonErrorCode.INVALID_PARAMETER_ERROR);
+        this.invalidParameters = invalidParameters;
     }
 
-    public InvalidParameterException(String message, ErrorCode errorCode) {
-        super(message, errorCode);
-    }
-
-    public InvalidParameterException(Throwable cause, ErrorCode errorCode) {
-        super(cause, errorCode);
+    public static InvalidParameterException from(BindingResult bindingResult){
+        List<Map<String, String>> invalidParameters = bindingResult.getFieldErrors().stream()
+                .map(error -> Map.of(
+                        "field", error.getField(),
+                        "reason", Objects.requireNonNullElse(error.getDefaultMessage(), "")
+                )).toList();
+        return new InvalidParameterException(invalidParameters);
     }
 }

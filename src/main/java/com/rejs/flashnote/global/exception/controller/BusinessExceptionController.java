@@ -4,6 +4,7 @@ import com.rejs.flashnote.global.exception.controller.response.ErrorResponse;
 import com.rejs.flashnote.global.exception.throwable.BusinessException;
 import com.rejs.flashnote.global.exception.code.CommonErrorCode;
 import com.rejs.flashnote.global.exception.code.ErrorCode;
+import com.rejs.flashnote.global.exception.throwable.InvalidParameterException;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -36,6 +37,11 @@ public class BusinessExceptionController {
         return createErrorModelAndView(ec, ec.getDetail(), request);
     }
 
+    @ExceptionHandler(InvalidParameterException.class)
+    public Object handleInvalidParameterException(InvalidParameterException e, HttpServletRequest request){
+        return createErrorResponseEntity(e, request);
+    }
+
     private ModelAndView createErrorModelAndView(ErrorCode ec, String message, HttpServletRequest request) {
         HttpStatus status = ec.getStatus();
         String viewGroup = status.is4xxClientError() ? "4xx" : "5xx";
@@ -62,6 +68,17 @@ public class BusinessExceptionController {
 
     private ResponseEntity<ErrorResponse> createErrorResponseEntity(ErrorCode ec, HttpServletRequest request){
         return ResponseEntity.status(ec.getStatus()).body(ErrorResponse.from(ec, request.getRequestURI()));
+    }
+
+
+    /**
+     * InvalidParameterException 전용
+     * @param ex
+     * @param request
+     * @return
+     */
+    private ResponseEntity<ErrorResponse> createErrorResponseEntity(InvalidParameterException ex, HttpServletRequest request){
+        return ResponseEntity.status(ex.getErrorCode().getStatus()).body(ErrorResponse.invalidParameter(ex, request.getRequestURI()));
     }
 
 }

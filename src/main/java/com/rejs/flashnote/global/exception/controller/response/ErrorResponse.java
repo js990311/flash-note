@@ -1,6 +1,7 @@
 package com.rejs.flashnote.global.exception.controller.response;
 
 import com.rejs.flashnote.global.exception.code.ErrorCode;
+import com.rejs.flashnote.global.exception.throwable.InvalidParameterException;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -22,6 +23,16 @@ public class ErrorResponse {
                 .title(errorCode.getTitle())
                 .status(errorCode.getStatus().value())
                 .detail(errorCode.getDetail())
+                .instance(instance)
+                .build();
+    }
+
+    public static ErrorResponse invalidParameter(InvalidParameterException ex, String instance){
+        return ErrorResponse.builder()
+                .type(ex.getErrorCode().getType())
+                .title(ex.getErrorCode().getTitle())
+                .status(ex.getErrorCode().getStatus().value())
+                .detail(ex.getInvalidParameters())
                 .instance(instance)
                 .build();
     }
