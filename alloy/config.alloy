@@ -1,3 +1,30 @@
+otelcol.receiver.otlp "otlp_receiver" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [otelcol.exporter.otlp.grafanacloud.input,]
+  }
+}
+
+otelcol.exporter.otlp "grafanacloud" {
+  client {
+    endpoint = "엔드포인트"
+    auth = otelcol.auth.basic.grafanacloud.handler
+  }
+}
+
+otelcol.auth.basic "grafanacloud" {
+  username = "1209163"
+  password = "<Your Grafana.com API Token>"
+}
+
+// 프로메테우스
+
 prometheus.remote_write "metrics_service" {
   endpoint {
     url = ""

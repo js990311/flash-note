@@ -47,6 +47,9 @@ logging:
     org.springframework.web: WARN
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql.BasicBinder: WARN
+  pattern:
+    console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
+    level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
 
 # 프로메테우스. actuator를 전부 오픈
 management:
@@ -54,6 +57,21 @@ management:
     web:
       exposure:
         include: "*"
+  metrics:
+    tags:
+      application: ${spring.application.name}
+      environment: ${spring.profiles.active}
+    distribution:
+      percentiles-histogram:
+        http.server.requests: true
+  tracing:
+    sampling:
+      probability: 1.0
+  otlp:
+    tracing:
+      endpoint: http://note-alloy:4318/v1/traces
+      timeout: 10s
+
 gemini:
   api:
     key: ${GEMINI_API_KEY}

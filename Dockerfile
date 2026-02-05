@@ -19,8 +19,6 @@ RUN ./gradlew bootWar -x test --no-daemon
 FROM amazoncorretto:21-alpine
 WORKDIR /app
 
-RUN wget -O agent.jar https://github.com/grafana/grafana-opentelemetry-java/releases/latest/download/grafana-opentelemetry-java.jar
-
 COPY --from=builder /app/build/libs/*.war app.war
 
-ENTRYPOINT ["java", "-javaagent:agent.jar", "-Dspring.profiles.active=prod", "-jar", "app.war"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.war"]
