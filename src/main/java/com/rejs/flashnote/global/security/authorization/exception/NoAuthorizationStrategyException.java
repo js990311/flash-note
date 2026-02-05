@@ -1,8 +1,7 @@
 package com.rejs.flashnote.global.security.authorization.exception;
 
-import com.rejs.flashnote.global.exception.BusinessException;
-import com.rejs.flashnote.global.exception.CommonErrorCode;
-import com.rejs.flashnote.global.exception.ErrorCode;
+import com.rejs.flashnote.global.exception.throwable.BusinessException;
+import com.rejs.flashnote.global.exception.code.CommonErrorCode;
 
 public class NoAuthorizationStrategyException extends BusinessException {
     public NoAuthorizationStrategyException(String domainType, String methodType) {

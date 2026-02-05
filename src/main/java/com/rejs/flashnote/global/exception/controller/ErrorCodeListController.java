@@ -1,9 +1,11 @@
-package com.rejs.flashnote.global.exception;
+package com.rejs.flashnote.global.exception.controller;
 
 import com.rejs.flashnote.domain.cards.error.CardErrorCode;
 import com.rejs.flashnote.domain.decks.error.DeckErrorCode;
 import com.rejs.flashnote.domain.member.error.MemberErrorCode;
 import com.rejs.flashnote.domain.note.error.NoteErrorCode;
+import com.rejs.flashnote.global.exception.code.CommonErrorCode;
+import com.rejs.flashnote.global.exception.code.ErrorCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;

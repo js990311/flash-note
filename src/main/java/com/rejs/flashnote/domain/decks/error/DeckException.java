@@ -1,8 +1,7 @@
 package com.rejs.flashnote.domain.decks.error;
 
-import com.rejs.flashnote.domain.cards.error.CardErrorCode;
-import com.rejs.flashnote.global.exception.BusinessException;
-import com.rejs.flashnote.global.exception.ErrorCode;
+import com.rejs.flashnote.global.exception.throwable.BusinessException;
+import com.rejs.flashnote.global.exception.code.ErrorCode;
 
 public class DeckException extends BusinessException {
     public DeckException(ErrorCode errorCode) {
