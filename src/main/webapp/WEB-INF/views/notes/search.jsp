@@ -43,7 +43,7 @@
             </div>
 
                 <%-- 통합 목록 출력 --%>
-            <n:noteList notes="${notes.contents}" />
+            <n:noteList notes="${notes.contents}" showActions="false"/>
 
                 <%-- 페이징 --%>
             <div class="mt-4">

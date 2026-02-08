@@ -28,19 +28,31 @@
                         <p class="text-secondary mb-0">오늘은 어떤 지식을 번개처럼 저장해볼까요?</p>
                     </div>
 
-                    <!-- 버튼 섹션 -->
-                    <div class="d-flex flex-column flex-sm-row gap-2">
-                        <form action="<c:url value='/notes/create'/>" method="post" class="flex-fill m-0">
-                            <sec:csrfInput/>
-                            <button type="submit" class="btn btn-primary rounded-pill px-4 w-100">
-                                <i class="bi bi-pencil-square me-1"></i> 새 노트
-                            </button>
-                        </form>
-                        <a href="<c:url value='/decks'/>" class="btn btn-success rounded-pill px-4 flex-fill text-center">
-                            <i class="bi bi-collection me-1"></i> 내 덱 보기
-                        </a>
-                    </div>
-                </div>
+                    <div class="row g-2 row-cols-1 row-cols-sm-2 row-cols-lg-4">
+                        <div class="col">
+                            <form action="<c:url value='/notes/create'/>" method="post" class="m-0 h-100">
+                                <sec:csrfInput/>
+                                <button type="submit" class="btn btn-primary rounded-pill px-3 w-100 h-100">
+                                    <i class="bi bi-pencil-square me-1"></i> 새 노트
+                                </button>
+                            </form>
+                        </div>
+                        <div class="col">
+                            <a href="<c:url value='/decks'/>" class="btn btn-success rounded-pill px-3 w-100 h-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-collection me-1"></i> 내 덱 보기
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="<c:url value='/notes'/>" class="btn btn-outline-dark rounded-pill px-3 w-100 h-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-journal-text me-1"></i> 내 노트 보기
+                            </a>
+                        </div>
+                        <div class="col">
+                            <a href="<c:url value='/notes/search'/>" class="btn btn-outline-primary rounded-pill px-3 w-100 h-100 d-flex align-items-center justify-content-center">
+                                <i class="bi bi-globe me-1"></i> 공개 노트 보기
+                            </a>
+                        </div>
+                    </div>                </div>
             </sec:authorize>
 
 
