@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="n" tagdir="/WEB-INF/tags/notes" %>
 
 <t:layout title="${note.title} - Flashnote">
     <jsp:attribute name="head">
@@ -19,7 +20,7 @@
             <div class="mb-4 pb-3 border-bottom">
                 <div class="d-flex justify-content-between align-items-start">
 
-                        <%-- 왼쪽: 네비게이션 및 제목 --%>
+                    <%-- 왼쪽: 네비게이션 및 제목 --%>
                     <div class="col-8">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-2 text-muted small">
@@ -27,9 +28,13 @@
                                 <li class="breadcrumb-item active">노트 상세</li>
                             </ol>
                         </nav>
-                        <h1 class="fw-bold text-dark mb-0 text-break">
-                            <c:out value="${note.title}" />
-                        </h1>
+                            <%-- 제목과 공개 상태 배지를 한 줄에 배치 --%>
+                        <div class="d-flex align-items-center gap-2">
+                            <h1 class="fw-bold text-dark mb-0 text-break">
+                                <c:out value="${note.title}" />
+                            </h1>
+                            <n:publicBadge isPublic="${note.published}" />
+                        </div>
                     </div>
 
                     <%-- 오른쪽: 수정/삭제 버튼 그룹 --%>
