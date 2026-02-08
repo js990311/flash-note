@@ -1,0 +1,3 @@
+ALTER TABLE notes
+ADD COLUMN published boolean NOT NULL DEFAULT FALSE;
+

@@ -17,6 +17,7 @@ public class NoteDto {
     private String title;
     private String content;
     private LocalDateTime updatedAt;
+    private boolean published;
 
     public static NoteDto from(Note note){
         return NoteDto.builder()
@@ -24,6 +25,7 @@ public class NoteDto {
                 .title(note.getTitle())
                 .content(note.getContent())
                 .updatedAt(note.getUpdatedAt())
+                .published(note.isPublished())
                 .build();
     }
 }

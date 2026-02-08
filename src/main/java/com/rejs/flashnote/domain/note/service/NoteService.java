@@ -50,7 +50,7 @@ public class NoteService {
     @PreNoteWriteAuthorize
     public Long updateNote(Long noteId, NoteEditRequest request){
         Note note = noteRepository.findById(noteId).orElseThrow(NoteException::notFound);
-        note.edit(request.getTitle(), request.getContent());
+        note.edit(request.getTitle(), request.getContent(), request.getPublished());
         return note.getId();
     }
 
