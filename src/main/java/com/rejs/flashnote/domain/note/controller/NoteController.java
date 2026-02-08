@@ -2,6 +2,8 @@ package com.rejs.flashnote.domain.note.controller;
 
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
+import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
+import com.rejs.flashnote.domain.note.service.NoteSearchService;
 import com.rejs.flashnote.domain.note.service.NoteService;
 import com.rejs.flashnote.global.controller.dto.Pagination;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;
@@ -22,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class NoteController {
     private final NoteService noteService;
+    private final NoteSearchService noteSearchService;
 
     @PostMapping("/create")
     public String postNoteCreate(){
@@ -38,11 +41,18 @@ public class NoteController {
     }
 
     @GetMapping()
-    public String getNotePage(@PageableDefault Pageable pageable, Model model){
+    public String getNotePage(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false, defaultValue = "TITLE_CONTENT") NoteSearchOption searchOption,
+            @PageableDefault Pageable pageable,
+            Model model){
         Long memberId = PrincipalUtils.getMemberId();
-        Page<NoteDto> noteDtos = noteService.readByPage(memberId, pageable);
-        Pagination<NoteDto> notePage = Pagination.from(noteDtos);
-        model.addAttribute("notes", notePage);
+        Page<NoteDto> results = noteSearchService.readById(memberId, keyword, searchOption, pageable);
+
+        model.addAttribute("notes", Pagination.from(results));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("searchOption", searchOption);
+        model.addAttribute("searchOptions", NoteSearchOption.values());
         return "notes/page";
     }
 

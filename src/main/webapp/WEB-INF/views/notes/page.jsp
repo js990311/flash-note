@@ -2,16 +2,14 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
+<%@ taglib prefix="n" tagdir="/WEB-INF/tags/notes" %>
 
-<t:layout title="노트 목록 - Flashnote">
+<t:layout title="내 노트 - Flashnote">
     <jsp:body>
         <div class="container py-5">
-                <%-- 상단 헤더 영역 --%>
+                <%-- 상단 헤더: 제목과 글쓰기 버튼 --%>
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <div>
-                    <h2 class="fw-bold mb-1">내 노트 목록</h2>
-                    <p class="text-muted small mb-0">총 ${notes.paginationMetadata.totalElements}개의 노트가 있습니다.</p>
-                </div>
+                <h2 class="fw-bold mb-0">내 노트</h2>
                 <form action="<c:url value='/notes/create'/>" method="post">
                     <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
                     <button type="submit" class="btn btn-primary shadow-sm">
@@ -20,64 +18,41 @@
                 </form>
             </div>
 
-                <%-- 테이블 목록 영역 --%>
-            <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
-                <div class="table-responsive">
-                    <table class="table table-hover align-middle mb-0">
-                        <thead class="table-light">
-                        <tr>
-                            <th scope="col" class="ps-4" style="width: 10%">ID</th>
-                            <th scope="col" style="width: 50%">제목</th>
-                            <th scope="col" style="width: 25%">수정일</th>
-                            <th scope="col" class="pe-4 text-center" style="width: 15%">관리</th>
-                        </tr>
-                        </thead>
-                        <tbody>
-                        <c:choose>
-                            <c:when test="${not empty notes.contents}">
-                                <c:forEach var="note" items="${notes.contents}">
-                                    <tr>
-                                        <td class="ps-4 text-muted small">#${note.id}</td>
-                                        <td>
-                                            <a href="<c:url value='/notes/${note.id}'/>" class="text-decoration-none text-dark fw-semibold d-block text-truncate" style="max-width: 400px;">
-                                                <c:out value="${note.title}"/>
-                                            </a>
-                                        </td>
-                                        <td class="text-muted small">
-                                                <%-- DTO 필드명에 맞춰 updatedAt로 수정함 --%>
-                                            <i class="bi bi-clock me-1"></i> ${note.updatedAt}
-                                        </td>
-                                        <td class="pe-4 text-center">
-                                            <div class="btn-group">
-                                                <a href="<c:url value='/notes/${note.id}/edit'/>" class="btn btn-sm btn-outline-secondary border-0">
-                                                    <i class="bi bi-pencil"></i>
-                                                </a>
-                                                    <%-- 개별 삭제를 위해 간단한 form 구성 가능 --%>
-                                                <form action="<c:url value='/notes/${note.id}/delete'/>" method="post" style="display:inline;" onsubmit="return confirm('정말 삭제하시겠습니까?');">
-                                                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                                                    <button type="submit" class="btn btn-sm btn-outline-danger border-0">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </div>
-                                        </td>
-                                    </tr>
+                <%-- 검색창 영역 --%>
+            <div class="card border-0 shadow-sm mb-4">
+                <div class="card-body p-3">
+                    <form action="<c:url value='/notes'/>" method="get" class="row g-2">
+                        <div class="col-auto">
+                            <select name="searchOption" class="form-select border-0 bg-light">
+                                <c:forEach var="option" items="${searchOptions}">
+                                    <option value="${option}" ${option == searchOption ? 'selected' : ''}>
+                                        <c:choose>
+                                            <c:when test="${option == 'TITLE'}">제목</c:when>
+                                            <c:when test="${option == 'CONTENT'}">내용</c:when>
+                                            <c:when test="${option == 'TITLE_CONTENT'}">제목+내용</c:when>
+                                        </c:choose>
+                                    </option>
                                 </c:forEach>
-                            </c:when>
-                            <c:otherwise>
-                                <tr>
-                                    <td colspan="4" class="text-center py-5 text-muted">
-                                        작성된 노트가 없습니다.
-                                    </td>
-                                </tr>
-                            </c:otherwise>
-                        </c:choose>
-                        </tbody>
-                    </table>
+                            </select>
+                        </div>
+                        <div class="col">
+                            <input type="text" name="keyword" class="form-control border-0 bg-light"
+                                   placeholder="검색어를 입력하세요..." value="<c:out value='${keyword}'/>">
+                        </div>
+                        <div class="col-auto">
+                            <button type="submit" class="btn btn-dark px-4">검색</button>
+                            <c:if test="${not empty keyword}">
+                                <a href="<c:url value='/notes'/>" class="btn btn-outline-secondary">초기화</a>
+                            </c:if>
+                        </div>
+                    </form>
                 </div>
             </div>
 
-                <%-- 페이징 영역 --%>
+                <%-- 통합 목록 출력 --%>
+            <n:noteList notes="${notes.contents}" />
+
+                <%-- 페이징 --%>
             <div class="mt-4">
                 <t:pagination meta="${notes.paginationMetadata}" />
             </div>
