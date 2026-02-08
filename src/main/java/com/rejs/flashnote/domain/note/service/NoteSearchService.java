@@ -15,7 +15,14 @@ public class NoteSearchService {
     private final NoteSearchRepository noteSearchRepository;
 
     @Transactional(readOnly = true)
-    public Page<NoteDto> readById(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable){
-        return noteSearchRepository.searchNote(memberId, keyword, searchOption, pageable);
+    public Page<NoteDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable){
+        return noteSearchRepository.searchMyNote(memberId, keyword, searchOption, pageable);
     }
+
+    @Transactional(readOnly = true)
+    public Page<NoteDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable){
+        return noteSearchRepository.searchPublicNote(keyword, searchOption, pageable);
+    }
+
+
 }

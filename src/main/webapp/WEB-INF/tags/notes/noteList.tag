@@ -1,6 +1,7 @@
-<%-- src/main/webapp/WEB-INF/tags/noteList.tag --%>
 <%@ tag language="java" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib prefix="n" tagdir="/WEB-INF/tags/notes" %>
+
 <%@ attribute name="notes" type="java.util.List" required="true" rtexprvalue="true" %>
 <%@ attribute name="showActions" type="java.lang.Boolean" required="false" %>
 <%@ attribute name="emptyMessage" type="java.lang.String" required="false" %>
@@ -18,7 +19,7 @@
         <table class="table table-hover align-middle mb-0">
             <thead class="table-light">
             <tr>
-                <th scope="col" style="width: 50%">제목</th>
+                <th scope="col" class="ps-4" style="width: 50%">제목</th>
                 <th scope="col" style="width: 25%">수정일</th>
                 <c:if test="${showActions}">
                     <th scope="col" class="pe-4 text-center" style="width: 15%">관리</th>
@@ -30,12 +31,18 @@
                 <c:when test="${not empty notes}">
                     <c:forEach var="note" items="${notes}">
                         <tr>
-                            <td>
-                                <a href="<c:url value='/notes/${note.id}'/>"
-                                   class="text-decoration-none text-dark fw-semibold d-block text-truncate"
-                                   style="max-width: 400px;">
-                                    <c:out value="${note.title}"/>
-                                </a>
+                            <td class="ps-4">
+                                <div class="d-flex align-items-center">
+                                    <a href="<c:url value='/notes/${note.id}'/>"
+                                       class="text-decoration-none text-dark fw-semibold text-truncate"
+                                       style="max-width: 350px;">
+                                        <c:out value="${note.title}"/>
+                                    </a>
+                                        <%-- 공개 여부 배지 (아이콘만 표시) --%>
+                                    <div class="ms-2">
+                                        <n:publicBadge isPublic="${note.published}" showText="false" />
+                                    </div>
+                                </div>
                                     <%-- 내용 미리보기 --%>
                                 <c:if test="${not empty note.content}">
                                     <small class="text-muted d-block text-truncate" style="max-width: 500px;">

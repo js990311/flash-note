@@ -18,6 +18,8 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @Slf4j
 @Controller
 @RequestMapping("/notes")
@@ -36,6 +38,7 @@ public class NoteController {
     @GetMapping("/{id}")
     public String getNote(@PathVariable("id") Long noteId, Model model){
         NoteDto noteDto = noteService.readById(noteId);
+        model.addAttribute("isOwner", Objects.equals(noteDto.getOwnerId(), PrincipalUtils.getMemberId()));
         model.addAttribute("note", noteDto);
         return "notes/id";
     }
@@ -45,9 +48,10 @@ public class NoteController {
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false, defaultValue = "TITLE_CONTENT") NoteSearchOption searchOption,
             @PageableDefault Pageable pageable,
-            Model model){
+            Model model
+    ){
         Long memberId = PrincipalUtils.getMemberId();
-        Page<NoteDto> results = noteSearchService.readById(memberId, keyword, searchOption, pageable);
+        Page<NoteDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
 
         model.addAttribute("notes", Pagination.from(results));
         model.addAttribute("keyword", keyword);
@@ -79,5 +83,21 @@ public class NoteController {
     public String deleteNote(@PathVariable("id") Long noteId){
         noteService.deleteNote(noteId);
         return "redirect:/notes";
+    }
+
+    @GetMapping("/search")
+    public String searchPublicNote(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false, defaultValue = "TITLE_CONTENT") NoteSearchOption searchOption,
+            @PageableDefault Pageable pageable,
+            Model model
+    ){
+        Page<NoteDto> results = noteSearchService.searchPublicNote(keyword, searchOption, pageable);
+
+        model.addAttribute("notes", Pagination.from(results));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("searchOption", searchOption);
+        model.addAttribute("searchOptions", NoteSearchOption.values());
+        return "notes/search";
     }
 }

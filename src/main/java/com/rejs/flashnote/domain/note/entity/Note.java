@@ -29,23 +29,29 @@ public class Note extends BaseEntity {
     private String title;
 
     @Lob
-    @Column(name = "content", columnDefinition = "MEDIUMTEXT")
+    @Column(name = "content", columnDefinition = "TEXT")
     private String content;
+
+    @Builder.Default
+    @Column
+    private boolean published = false;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "member_id")
     private Member member;
 
-    public void edit(String title, String content) {
+    public void edit(String title, String content, boolean published) {
         this.title = title;
         this.content = content;
+        this.published = published;
     }
 
-    public static Note of(Member member, String title, String content){
+    public static Note of(Member member, String title, String content, boolean published){
         return Note.builder()
                 .member(member)
                 .title(title)
                 .content(content)
+                .published(published)
                 .build();
     }
 
