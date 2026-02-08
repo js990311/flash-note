@@ -23,7 +23,7 @@ public class NoteSearchQueryDslRepository implements NoteSearchRepository{
     private final JPAQueryFactory queryFactory;
     private QNote note = QNote.note;
 
-    public Page<NoteDto> searchNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable){
+    public Page<NoteDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable){
         List<Note> content = queryFactory
                 .selectFrom(note)
                 .where(
@@ -40,6 +40,31 @@ public class NoteSearchQueryDslRepository implements NoteSearchRepository{
                 .from(note)
                 .where(
                         note.member.id.eq(memberId),
+                        note.deletedAt.isNull(),
+                        keywordCondition(keyword, searchOption)
+                );
+
+        return PageableExecutionUtils.getPage(content.stream().map(NoteDto::from).toList(), pageable, countQuery::fetchOne);
+    }
+
+    @Override
+    public Page<NoteDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable) {
+        List<Note> content = queryFactory
+                .selectFrom(note)
+                .where(
+                        note.published.isTrue(),
+                        note.deletedAt.isNull(),
+                        keywordCondition(keyword, searchOption)
+                )
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        JPAQuery<Long> countQuery = queryFactory
+                .select(note.count())
+                .from(note)
+                .where(
+                        note.published.isTrue(),
                         note.deletedAt.isNull(),
                         keywordCondition(keyword, searchOption)
                 );

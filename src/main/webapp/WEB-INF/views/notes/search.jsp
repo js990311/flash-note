@@ -8,13 +8,7 @@
     <jsp:body>
         <div class="container py-5">
             <div class="d-flex justify-content-between align-items-center mb-4">
-                <h2 class="fw-bold mb-0">내 노트</h2>
-                <form action="<c:url value='/notes/create'/>" method="post">
-                    <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}"/>
-                    <button type="submit" class="btn btn-primary shadow-sm">
-                        <i class="bi bi-plus-lg me-1"></i> 새 노트 작성
-                    </button>
-                </form>
+                <h2 class="fw-bold mb-0">전체 목록</h2>
             </div>
 
                 <%-- 검색창 영역 --%>

@@ -6,5 +6,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface NoteSearchRepository {
-    Page<NoteDto> searchNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable);
+    Page<NoteDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable);
+
+    Page<NoteDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable);
 }

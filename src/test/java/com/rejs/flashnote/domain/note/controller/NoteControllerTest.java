@@ -17,10 +17,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.shaded.org.hamcrest.Matchers;
 
 import java.util.List;
 
@@ -105,7 +103,7 @@ class NoteControllerTest {
 
         // 2. 서비스 Mocking (수정된 부분: noteSearchService를 Mocking함)
         // 컨트롤러에서 사용하는 파라미터(memberId, keyword, searchOption, pageable)에 맞춰 stubbing
-        given(noteSearchService.readById(eq(memberId), any(), any(), any(Pageable.class)))
+        given(noteSearchService.searchMyNote(eq(memberId), any(), any(), any(Pageable.class)))
                 .willReturn(noteDtoPage);
 
         // when & then
@@ -123,7 +121,7 @@ class NoteControllerTest {
                 });
 
         // then: 호출 검증도 noteSearchService로 변경
-        then(noteSearchService).should().readById(eq(memberId), any(), any(), any(Pageable.class));
+        then(noteSearchService).should().searchMyNote(eq(memberId), any(), any(), any(Pageable.class));
     }
     @Test
     @DisplayName("노트 수정 폼 조회(GET): DTO를 폼 객체로 변환하여 모델에 담는다")
