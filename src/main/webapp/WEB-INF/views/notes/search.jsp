@@ -14,7 +14,7 @@
                 <%-- 검색창 영역 --%>
             <div class="card border-0 shadow-sm mb-4">
                 <div class="card-body p-3">
-                    <form action="<c:url value='/notes'/>" method="get" class="row g-2">
+                    <form action="<c:url value='/notes/search'/>" method="get" class="row g-2">
                         <div class="col-auto">
                             <select name="searchOption" class="form-select border-0 bg-light">
                                 <c:forEach var="option" items="${searchOptions}">

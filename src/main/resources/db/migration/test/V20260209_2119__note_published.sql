@@ -1,0 +1,4 @@
+ALTER TABLE notes MODIFY COLUMN content TEXT;
+ALTER TABLE notes
+    ADD COLUMN published boolean NOT NULL DEFAULT FALSE;
+
