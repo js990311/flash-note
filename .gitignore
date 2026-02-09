@@ -39,3 +39,6 @@ out/
 .env
 .env.*
 application-test-gemini.yml
+
+test/test_data_builder/sample
+test/test_data_builder/test_data
