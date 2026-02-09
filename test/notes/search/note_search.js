@@ -2,6 +2,8 @@ import http from 'k6/http';
 import { check, sleep } from 'k6';
 import { randomString } from 'https://jslib.k6.io/k6-utils/1.2.0/index.js';
 
+const BASE_URL = __ENV.BASE_URL || 'http://localhost:8080';
+
 export const options = {
   scenarios: {
     warmup_1: {
@@ -66,7 +68,7 @@ const ALL_KEYWORDS = open('./test_keywords.txt').split('\n').filter(k => k.trim(
 export function setup() {
   console.log(`총 ${ALL_KEYWORDS.length}개의 키워드 로드됨`);
   const email = `${randomString(18)}@example.com`;
-  http.get('http://localhost:8080/', {
+  http.get(`${BASE_URL}`, {
     headers: { 'X-Test-Member-Email': email }
   });
   // 사용자 생성
@@ -83,7 +85,7 @@ export default function(data) {
   const searchOption = 'TITLE_CONTENT';
 
   const page = 0;
-  const url = `http://localhost:8080/notes/search?keyword=${encodeURIComponent(keyword)}&searchOption=${searchOption}&page=${page}`;
+  const url = `${BASE_URL}/notes/search?keyword=${encodeURIComponent(keyword)}&searchOption=${searchOption}&page=${page}`;
   const res = http.get(url, {
     headers: { 'X-Test-Member-Email': email },
   });

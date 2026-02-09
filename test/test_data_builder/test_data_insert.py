@@ -29,7 +29,7 @@ def get_db_connection():
         return None
 
 def get_or_insert_member(cursor, conn, email, provider, name="TestUser"):
-    # 먼저 해당 유저가 있는지 조회
+    # 1. 먼저 조회
     sql_select = "SELECT member_id FROM members WHERE email = ? AND provider = ?"
     cursor.execute(sql_select, (email, provider))
     result = cursor.fetchone()
@@ -37,17 +37,24 @@ def get_or_insert_member(cursor, conn, email, provider, name="TestUser"):
     if result:
         print(f"기존 회원 발견 (ID: {result[0]})")
         return result[0]
-    else:
-        # 없으면 새로 삽입
-        print(f"새 회원 생성 중: {email} ({provider})")
-        sql_insert = "INSERT INTO members (email, provider, name, role) VALUES (?, ?, ?, 'ROLE_USER')"
-        try:
-            cursor.execute(sql_insert, (email, provider, name))
-            conn.commit()
-            return cursor.lastrowid
-        except mariadb.Error as e:
-            print(f"회원 생성 실패: {e}")
-            return None
+
+    # 2. 없으면 삽입 (RETURNING 사용으로 ID 직접 받기)
+    print(f"새 회원 생성 중: {email} ({provider})")
+    try:
+        sql_insert = "INSERT INTO members (email, provider, name, role) VALUES (?, ?, ?, 'ROLE_USER') RETURNING member_id"
+        cursor.execute(sql_insert, (email, provider, name))
+        new_id = cursor.fetchone()[0]
+        conn.commit()
+        print(f"새 회원 생성 완료 (ID: {new_id})")
+        return new_id
+    except mariadb.Error as e:
+        conn.rollback()
+        cursor.execute(sql_select, (email, provider))
+        result = cursor.fetchone()
+        if result:
+            return result[0]
+        print(f"회원 생성 실패: {e}")
+        return None
 
 def bulk_insert_notes(data_dir="./test_data"):
     # 고정된 테스트 계정 정보
