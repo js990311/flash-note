@@ -34,6 +34,7 @@ public class MyNoteGroupRepository {
                                 note.title,
                                 note.content,
                                 note.updatedAt,
+                                note.member.id,
                                 note.published
                         )
                 )
