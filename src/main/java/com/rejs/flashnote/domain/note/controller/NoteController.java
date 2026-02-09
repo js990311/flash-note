@@ -7,6 +7,7 @@ import com.rejs.flashnote.domain.note.service.NoteSearchService;
 import com.rejs.flashnote.domain.note.service.NoteService;
 import com.rejs.flashnote.global.controller.dto.Pagination;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;
+import io.micrometer.observation.annotation.Observed;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -85,6 +86,7 @@ public class NoteController {
         return "redirect:/notes";
     }
 
+    @Observed(name = "note.controller.search.public")
     @GetMapping("/search")
     public String searchPublicNote(
             @RequestParam(required = false) String keyword,

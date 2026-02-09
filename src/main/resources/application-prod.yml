@@ -14,7 +14,6 @@ spring:
     view:
       prefix: /WEB-INF/views/
       suffix: .jsp
-
   security:
     oauth2:
       client:
@@ -40,6 +39,24 @@ spring:
   flyway:
     locations:
       - classpath:db/migration/prod
+
+jdbc:
+  datasource-proxy:
+    enabled: true
+    include-parameter-values: false
+    query:
+      enable-logging: true
+      log-level: DEBUG
+      logger-name: net.ttddyy.dsproxy.listener
+    slow-query:
+      enable-logging: true
+      threshold: 300
+      log-level: WARN
+      logger-name: net.ttddyy.dsproxy.listener.SlowQueryListener
+    logging: slf4j
+    multiline: false
+    json-format: false
+
 logging:
   level:
     root: INFO
@@ -48,6 +65,7 @@ logging:
     org.springframework.web: WARN
     org.hibernate.SQL: WARN
     org.hibernate.type.descriptor.sql.BasicBinder: WARN
+    net.ttddyy.dsproxy.listener: DEBUG
   pattern:
     console: "%d{yyyy-MM-dd HH:mm:ss} - %msg%n"
     level: "%5p [${spring.application.name:},%X{traceId:-},%X{spanId:-}]"
