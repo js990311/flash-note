@@ -41,6 +41,24 @@ spring:
   flyway:
     locations:
       - classpath:db/migration/dev
+jdbc:
+  datasource-proxy:
+    enabled: true
+    include-parameter-values: true
+    query:
+      enable-logging: true
+      log-level: DEBUG
+      logger-name: net.ttddyy.dsproxy.listener
+    slow-query:
+      enable-logging: true
+      threshold: 300
+      log-level: WARN
+      logger-name: net.ttddyy.dsproxy.listener.SlowQueryListener
+    logging: slf4j
+    multiline: true
+    json-format: false
+
+
 logging:
   level:
     org.springframework.security: DEBUG

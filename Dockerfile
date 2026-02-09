@@ -21,4 +21,4 @@ WORKDIR /app
 
 COPY --from=builder /app/build/libs/*.war app.war
 
-ENTRYPOINT ["java", "-Dspring.profiles.active=prod", "-jar", "app.war"]
+ENTRYPOINT ["java", "-Dspring.profiles.active=prod,benchmark", "-jar", "app.war"]

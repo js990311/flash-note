@@ -2,6 +2,7 @@ package com.rejs.flashnote.global.security.authorization;
 
 import com.rejs.flashnote.global.security.authorization.exception.NoAuthorizationStrategyException;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;
+import io.micrometer.observation.annotation.Observed;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,7 @@ public class CrudMethodAuthorizationManager {
      * @return 해당하는 인가 전략 객체
      * @throws NoAuthorizationStrategyException 적절한 전략을 차지 못하는 경우
      */
+    @Observed(name = "cm.auth.get.strategy")
     public CrudMethodAuthorizationStrategy getStrategy(String domainType, String methodType) {
         for(CrudMethodAuthorizationStrategy strategy : strategies){
             CrudMethodAuthorizationStrategy ret = strategy.getStrategy(domainType, methodType);
@@ -37,6 +39,7 @@ public class CrudMethodAuthorizationManager {
      * @throws NoAuthorizationStrategyException 적절한 전략을 차지 못하는 경우
      * @throws org.springframework.security.access.AccessDeniedException 인가를 받지 못한 경우
      */
+    @Observed(name = "cm.auth.get.authorize")
     public void authorize(String domainType, String methodType, Long entityId) {
         getStrategy(domainType, methodType).authorize(domainType, methodType, entityId);
     }
