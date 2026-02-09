@@ -2,6 +2,8 @@ package com.rejs.flashnote.domain.note.controller;
 
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
+import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
+import com.rejs.flashnote.domain.note.service.NoteSearchService;
 import com.rejs.flashnote.domain.note.service.NoteService;
 import com.rejs.flashnote.global.controller.dto.Pagination;
 import com.rejs.flashnote.global.security.utils.PrincipalUtils;
@@ -16,12 +18,15 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Objects;
+
 @Slf4j
 @Controller
 @RequestMapping("/notes")
 @RequiredArgsConstructor
 public class NoteController {
     private final NoteService noteService;
+    private final NoteSearchService noteSearchService;
 
     @PostMapping("/create")
     public String postNoteCreate(){
@@ -33,16 +38,25 @@ public class NoteController {
     @GetMapping("/{id}")
     public String getNote(@PathVariable("id") Long noteId, Model model){
         NoteDto noteDto = noteService.readById(noteId);
+        model.addAttribute("isOwner", Objects.equals(noteDto.getOwnerId(), PrincipalUtils.getMemberId()));
         model.addAttribute("note", noteDto);
         return "notes/id";
     }
 
     @GetMapping()
-    public String getNotePage(@PageableDefault Pageable pageable, Model model){
+    public String getNotePage(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false, defaultValue = "TITLE_CONTENT") NoteSearchOption searchOption,
+            @PageableDefault Pageable pageable,
+            Model model
+    ){
         Long memberId = PrincipalUtils.getMemberId();
-        Page<NoteDto> noteDtos = noteService.readByPage(memberId, pageable);
-        Pagination<NoteDto> notePage = Pagination.from(noteDtos);
-        model.addAttribute("notes", notePage);
+        Page<NoteDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
+
+        model.addAttribute("notes", Pagination.from(results));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("searchOption", searchOption);
+        model.addAttribute("searchOptions", NoteSearchOption.values());
         return "notes/page";
     }
 
@@ -50,12 +64,14 @@ public class NoteController {
     @GetMapping("/{id}/edit")
     public String getNoteEdit(@PathVariable("id") Long noteId, Model model){
         NoteDto noteDto = noteService.readById(noteId);
+        model.addAttribute("noteId", noteId);
         model.addAttribute("noteForm", NoteEditRequest.from(noteDto));
         return "notes/edit";
     }
 
     @PostMapping("/{id}/edit")
-    public String postNoteEdit(@PathVariable("id") Long noteId, @Valid @ModelAttribute("noteForm") NoteEditRequest request, BindingResult bindingResult){
+    public String postNoteEdit(@PathVariable("id") Long noteId, @Valid @ModelAttribute("noteForm") NoteEditRequest request, BindingResult bindingResult, Model model){
+        model.addAttribute("noteId", noteId);
         if(bindingResult.hasErrors()){
             return "notes/edit";
         }
@@ -67,5 +83,21 @@ public class NoteController {
     public String deleteNote(@PathVariable("id") Long noteId){
         noteService.deleteNote(noteId);
         return "redirect:/notes";
+    }
+
+    @GetMapping("/search")
+    public String searchPublicNote(
+            @RequestParam(required = false) String keyword,
+            @RequestParam(required = false, defaultValue = "TITLE_CONTENT") NoteSearchOption searchOption,
+            @PageableDefault Pageable pageable,
+            Model model
+    ){
+        Page<NoteDto> results = noteSearchService.searchPublicNote(keyword, searchOption, pageable);
+
+        model.addAttribute("notes", Pagination.from(results));
+        model.addAttribute("keyword", keyword);
+        model.addAttribute("searchOption", searchOption);
+        model.addAttribute("searchOptions", NoteSearchOption.values());
+        return "notes/search";
     }
 }

@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="t" tagdir="/WEB-INF/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="n" tagdir="/WEB-INF/tags/notes" %>
 
 <t:layout title="${note.title} - Flashnote">
     <jsp:attribute name="head">
@@ -19,7 +20,7 @@
             <div class="mb-4 pb-3 border-bottom">
                 <div class="d-flex justify-content-between align-items-start">
 
-                        <%-- 왼쪽: 네비게이션 및 제목 --%>
+                    <%-- 왼쪽: 네비게이션 및 제목 --%>
                     <div class="col-8">
                         <nav aria-label="breadcrumb">
                             <ol class="breadcrumb mb-2 text-muted small">
@@ -27,30 +28,36 @@
                                 <li class="breadcrumb-item active">노트 상세</li>
                             </ol>
                         </nav>
-                        <h1 class="fw-bold text-dark mb-0 text-break">
-                            <c:out value="${note.title}" />
-                        </h1>
+                            <%-- 제목과 공개 상태 배지를 한 줄에 배치 --%>
+                        <div class="d-flex align-items-center gap-2">
+                            <h1 class="fw-bold text-dark mb-0 text-break">
+                                <c:out value="${note.title}" />
+                            </h1>
+                            <n:publicBadge isPublic="${note.published}" />
+                        </div>
                     </div>
 
                     <%-- 오른쪽: 수정/삭제 버튼 그룹 --%>
                     <div class="col-4 d-flex justify-content-end gap-2">
-                        <form id="generateForm" action="/notes/${note.id}/generate" method="post">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                            <button type="submit" class="btn btn-success" id="generateBtn">
-                                <i class="bi bi-cpu me-1"></i> AI 카드 생성
-                            </button>
-                        </form>
+                        <c:if test="${isOwner}">
+                            <form id="generateForm" action="/notes/${note.id}/generate" method="post">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                                <button type="submit" class="btn btn-success" id="generateBtn">
+                                    <i class="bi bi-cpu me-1"></i> AI 카드 생성
+                                </button>
+                            </form>
 
-                        <a href="/notes/${note.id}/edit" class="btn btn-outline-primary">
-                            <i class="bi bi-pencil-square me-1"></i> 수정
-                        </a>
+                            <a href="/notes/${note.id}/edit" class="btn btn-outline-primary">
+                                <i class="bi bi-pencil-square me-1"></i> 수정
+                            </a>
 
-                        <form action="/notes/${note.id}/delete" method="post">
-                            <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
-                            <button type="submit" class="btn btn-outline-danger">
-                                <i class="bi bi-trash me-1"></i> 삭제
-                            </button>
-                        </form>
+                            <form action="/notes/${note.id}/delete" method="post">
+                                <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}" />
+                                <button type="submit" class="btn btn-outline-danger">
+                                    <i class="bi bi-trash me-1"></i> 삭제
+                                </button>
+                            </form>
+                        </c:if>
                     </div>
                 </div>
             </div>

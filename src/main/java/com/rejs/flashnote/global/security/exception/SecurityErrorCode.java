@@ -1,6 +1,6 @@
 package com.rejs.flashnote.global.security.exception;
 
-import com.rejs.flashnote.global.exception.ErrorCode;
+import com.rejs.flashnote.global.exception.code.ErrorCode;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;

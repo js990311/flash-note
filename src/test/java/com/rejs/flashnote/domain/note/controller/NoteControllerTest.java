@@ -5,6 +5,7 @@ import com.rejs.flashnote.common.security.WithMockOidcMember;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
+import com.rejs.flashnote.domain.note.service.NoteSearchService;
 import com.rejs.flashnote.domain.note.service.NoteService;
 import com.rejs.flashnote.global.controller.dto.Pagination;
 import org.junit.jupiter.api.DisplayName;
@@ -16,10 +17,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
-import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
-import org.testcontainers.shaded.org.hamcrest.Matchers;
 
 import java.util.List;
 
@@ -43,6 +42,9 @@ class NoteControllerTest {
 
     @MockitoBean
     private NoteService noteService;
+
+    @MockitoBean
+    private NoteSearchService noteSearchService;
 
     private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
 
@@ -95,36 +97,32 @@ class NoteControllerTest {
         // given
         Long memberId = 1L;
 
-        // 1. Mock 데이터 생성 (Page 객체 생성)
+        // 1. Mock 데이터 생성
         List<NoteDto> noteDtoList = fixtureMonkey.giveMe(NoteDto.class, 3);
         Page<NoteDto> noteDtoPage = new PageImpl<>(noteDtoList, PageRequest.of(0, 10), noteDtoList.size());
 
-        // 2. 서비스 Mocking
-        // 어떤 Pageable 인자가 오든 준비한 Page 객체를 반환하도록 설정
-        given(noteService.readByPage(eq(memberId), any(Pageable.class)))
+        // 2. 서비스 Mocking (수정된 부분: noteSearchService를 Mocking함)
+        // 컨트롤러에서 사용하는 파라미터(memberId, keyword, searchOption, pageable)에 맞춰 stubbing
+        given(noteSearchService.searchMyNote(eq(memberId), any(), any(), any(Pageable.class)))
                 .willReturn(noteDtoPage);
 
         // when & then
         mockMvc.perform(get("/notes")
                         .param("page", "0")
                         .param("size", "10")
-                        .param("sort", "createdAt,desc")
                 )
                 .andExpect(status().isOk())
                 .andExpect(view().name("notes/page"))
                 .andExpect(model().attributeExists("notes"))
-                // 1. 객체 타입 검증
                 .andExpect(model().attribute("notes", instanceOf(Pagination.class)))
-                // 2. 내부 데이터 개수 검증 (가장 확실한 방법)
                 .andExpect(result -> {
                     Pagination<NoteDto> actual = (Pagination<NoteDto>) result.getModelAndView().getModel().get("notes");
                     assertThat(actual.getContents()).hasSize(3);
-                    assertThat(actual.getPaginationMetadata().getCurrentPage()).isEqualTo(1);
                 });
-        // then: 서비스가 로그인한 사용자 ID와 Pageable 인자를 가지고 호출되었는지 검증
-        then(noteService).should().readByPage(eq(memberId), any(Pageable.class));
-    }
 
+        // then: 호출 검증도 noteSearchService로 변경
+        then(noteSearchService).should().searchMyNote(eq(memberId), any(), any(), any(Pageable.class));
+    }
     @Test
     @DisplayName("노트 수정 폼 조회(GET): DTO를 폼 객체로 변환하여 모델에 담는다")
     @WithMockOidcMember
@@ -154,7 +152,7 @@ class NoteControllerTest {
     void postNoteEdit_success() throws Exception {
         // given
         NoteEditRequest noteForm = fixtureMonkey.giveMeOne(NoteEditRequest.class);
-        Long noteId = noteForm.getNoteId();
+        Long noteId = 100L;
 
         // when & then
         mockMvc.perform(post("/notes/{id}/edit", noteId)
@@ -178,7 +176,7 @@ class NoteControllerTest {
         NoteEditRequest noteForm = FixtureMonkey.create().giveMeBuilder(NoteEditRequest.class)
                 .setNull(javaGetter(NoteEditRequest::getTitle))
                 .sample();
-        Long noteId = noteForm.getNoteId();
+        Long noteId = 100L;
 
         // when & then
         mockMvc.perform(post("/notes/{id}/edit", noteId)

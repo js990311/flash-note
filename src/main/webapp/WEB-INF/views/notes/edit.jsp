@@ -2,6 +2,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="sec" uri="http://www.springframework.org/security/tags" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
+<%@ taglib prefix="n" tagdir="/WEB-INF/tags/notes" %>
 
 <!DOCTYPE html>
 <html lang="ko">
@@ -17,7 +18,7 @@
     <link rel="stylesheet" href="<c:url value='/css/global.css' />">
 </head>
 <body>
-<form:form modelAttribute="noteForm" action="/notes/${noteForm.noteId}/edit" method="post" id="writeForm">
+<form:form modelAttribute="noteForm" action="/notes/${noteId}/edit" method="post" id="writeForm">
 
     <div class="mb-4">
         <form:input path="title"
@@ -31,10 +32,20 @@
     <div id="editor" class="mb-5"></div>
 
     <form:hidden path="content" id="content" />
-    <form:hidden path="noteId" id="noteId" />
 
     <nav class="navbar fixed-bottom bg-white border-top py-3" style="z-index: 1000;">
         <div class="container d-flex justify-content-end">
+            <div class="form-check form-switch m-0">
+                <form:checkbox path="published"
+                               cssClass="form-check-input"
+                               role="switch"
+                               id="flexSwitchCheckDefault"
+                               cssStyle="cursor: pointer; width: 3em; height: 1.5em;"/>
+                <label class="form-check-label ms-2 fw-semibold text-secondary" for="flexSwitchCheckDefault">
+                    공개로 설정
+                </label>
+                <form:errors path="published" cssClass="text-danger d-block small" />
+            </div>
             <button type="button" class="btn btn-primary px-4 fw-bold" id="btnSubmit">
                 저장하기
             </button>

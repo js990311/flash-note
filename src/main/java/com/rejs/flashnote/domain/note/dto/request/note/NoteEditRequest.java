@@ -11,18 +11,18 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class NoteEditRequest {
-    @NotNull
-    private Long noteId;
     @NotEmpty
     private String title;
     @NotEmpty
     private String content;
+    @NotNull
+    private Boolean published;
 
     public static NoteEditRequest from(NoteDto noteDto) {
         return NoteEditRequest.builder()
-                .noteId(noteDto.getId())
                 .title(noteDto.getTitle())
                 .content(noteDto.getContent())
+                .published(noteDto.isPublished())
                 .build();
     }
 }

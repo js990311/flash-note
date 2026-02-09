@@ -1,0 +1,55 @@
+otelcol.receiver.otlp "otlp_receiver" {
+  grpc {
+    endpoint = "0.0.0.0:4317"
+  }
+  http {
+    endpoint = "0.0.0.0:4318"
+  }
+
+  output {
+    traces = [otelcol.exporter.otlp.grafanacloud.input,]
+  }
+}
+
+otelcol.exporter.otlp "grafanacloud" {
+  client {
+    endpoint = "엔드포인트"
+    auth = otelcol.auth.basic.grafanacloud.handler
+  }
+}
+
+otelcol.auth.basic "grafanacloud" {
+  username = "1209163"
+  password = "<Your Grafana.com API Token>"
+}
+
+// 프로메테우스
+
+prometheus.remote_write "metrics_service" {
+  endpoint {
+    url = ""
+
+    basic_auth {
+      username = "키값사용하기"
+      password = "키값사용하기"
+    }
+  }
+}
+
+discovery.relabel "metrics_integrations_integrations_spring_boot" {
+  targets = [{
+    __address__ = "note-app:8080",
+  }]
+
+  rule {
+    target_label = "instance"
+    replacement  = constants.hostname
+  }
+}
+
+prometheus.scrape "metrics_integrations_integrations_spring_boot" {
+  targets      = discovery.relabel.metrics_integrations_integrations_spring_boot.output
+  forward_to   = [prometheus.remote_write.metrics_service.receiver]
+  job_name     = "integrations/spring-boot"
+  metrics_path = "/actuator/prometheus"
+}

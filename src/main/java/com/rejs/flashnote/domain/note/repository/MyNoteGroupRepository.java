@@ -1,5 +1,6 @@
 package com.rejs.flashnote.domain.note.repository;
 
+import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -32,7 +33,9 @@ public class MyNoteGroupRepository {
                                 note.id,
                                 note.title,
                                 note.content,
-                                note.updatedAt
+                                note.updatedAt,
+                                note.member.id,
+                                note.published
                         )
                 )
                 .from(note)
