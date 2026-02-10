@@ -93,6 +93,9 @@ dependencies {
 	implementation 'io.opentelemetry:opentelemetry-exporter-otlp'
 	implementation 'net.ttddyy.observation:datasource-micrometer-spring-boot:1.2.1'
 	implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	// meliesearch
+	implementation 'com.meilisearch.sdk:meilisearch-java:0.19.0'
 }
 
 tasks.named('test') {
