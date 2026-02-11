@@ -17,5 +17,4 @@ public class MeilisearchConfig {
         );
         return new Client(config);
     }
-
 }
