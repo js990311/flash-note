@@ -18,3 +18,13 @@ services:
       interval: 1m
       timeout: 5s
       retries: 3
+  meilisearch:
+    image: getmeili/meilisearch:latest
+    container_name: search
+    ports:
+      - "7700:7700"
+    volumes:
+      - ./meili_data:/meili_data
+    environment:
+      - MEILI_MASTER_KEY=master_key
+      - MEILI_ENV=development

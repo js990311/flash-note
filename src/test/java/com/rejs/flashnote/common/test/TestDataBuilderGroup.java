@@ -12,7 +12,10 @@ import com.rejs.flashnote.domain.decks.entity.DeckOriginalType;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.entity.MemberRole;
 import com.rejs.flashnote.domain.note.entity.Note;
+import com.rejs.flashnote.domain.note.search.NoteDocument;
 import io.github.openspacedrepetition.State;
+import io.hypersistence.tsid.TSID;
+import io.hypersistence.utils.hibernate.id.Tsid;
 import net.jqwik.api.Arbitraries;
 
 import java.time.Instant;
@@ -69,6 +72,13 @@ public class TestDataBuilderGroup implements ArbitraryBuilderGroup {
                                                 .set(javaGetter(Card::getLastReviewAt), Instant.now())
                                                 .set(javaGetter(Card::getFsrsJson), "{}")
                                                 .setNull(javaGetter(Card::getDeletedAt))
+                                )
+                )
+                .add(
+                        ArbitraryBuilderCandidateFactory.of(NoteDocument.class)
+                                .builder(
+                                        builder->builder
+                                                .setLazy(javaGetter(NoteDocument::getNoteId),()->TSID.fast().toLong())
                                 )
                 )
 
