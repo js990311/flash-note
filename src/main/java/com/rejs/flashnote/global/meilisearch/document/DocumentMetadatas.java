@@ -11,7 +11,7 @@ import java.util.Arrays;
 @AllArgsConstructor
 @Getter
 public enum DocumentMetadatas {
-    NOTE("notes", "note_id", NoteDocument.class)
+    NOTE("notes", "noteId", NoteDocument.class)
     ;
     private final String indexName;
     private final String primarykey;

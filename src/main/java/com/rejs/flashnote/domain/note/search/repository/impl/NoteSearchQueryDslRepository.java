@@ -1,4 +1,4 @@
-package com.rejs.flashnote.domain.note.repository;
+package com.rejs.flashnote.domain.note.search.repository.impl;
 
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
@@ -7,6 +7,7 @@ import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
 import com.rejs.flashnote.domain.note.entity.Note;
 import com.rejs.flashnote.domain.note.entity.QNote;
+import com.rejs.flashnote.domain.note.search.repository.NoteSearchRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,8 +19,8 @@ import java.util.List;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
-@Repository
-public class NoteSearchQueryDslRepository implements NoteSearchRepository{
+//@Repository
+public class NoteSearchQueryDslRepository implements NoteSearchRepository {
     private final JPAQueryFactory queryFactory;
     private QNote note = QNote.note;
 

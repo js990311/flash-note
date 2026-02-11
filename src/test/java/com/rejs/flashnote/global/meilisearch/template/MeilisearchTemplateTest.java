@@ -33,7 +33,7 @@ import static org.awaitility.Awaitility.await;
 
 @ActiveProfiles("test")
 @Import(TestcontainersConfiguration.class)
-@SpringBootTest(properties = "spring.jackson.serialization.write-dates-as-timestamps=false")
+@SpringBootTest
 class MeilisearchTemplateTest {
     private FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
 
@@ -43,9 +43,39 @@ class MeilisearchTemplateTest {
     @Autowired
     private Client client;
 
-    String targetKeyword = "Target-" + UUID.randomUUID();
+    String targetKeyword = "MeilisearchTemplateTest-" + UUID.randomUUID();
     String noiseKeyword = "Noise-" + UUID.randomUUID();
 
+    @BeforeEach
+    void setUp() {
+        // 1. 테스트마다 고유한 키워드 생성 (데이터 격리)
+        List<NoteDocument> documents = new ArrayList<>();
+
+        // [Doc 1] Title에만 키워드 (ID: 1)
+        documents.add(fixtureMonkey.giveMeBuilder(NoteDocument.class)
+                .set("noteId", 1L)
+                .set("title", targetKeyword)
+                .set("content", noiseKeyword)
+                .sample());
+
+        // [Doc 2] Content에만 키워드 (ID: 2)
+        documents.add(fixtureMonkey.giveMeBuilder(NoteDocument.class)
+                .set("noteId", 2L)
+                .set("title", noiseKeyword)
+                .set("content", targetKeyword)
+                .sample());
+
+        // [Doc 3] 둘 다 없음 (ID: 3)
+        documents.add(fixtureMonkey.giveMeBuilder(NoteDocument.class)
+                .set("noteId", 3L)
+                .set("title", noiseKeyword)
+                .set("content", noiseKeyword)
+                .sample());
+
+        // 2. 저장 및 인덱싱 대기 (공통 준비 과정)
+        TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, documents);
+        meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+    }
 
     @Test
     void save() {
@@ -143,36 +173,6 @@ class MeilisearchTemplateTest {
         assertThat(result.getNumberOfElements()).isEqualTo(pageSize);
     }
 
-    @BeforeEach
-    void setUp() {
-        // 1. 테스트마다 고유한 키워드 생성 (데이터 격리)
-        List<NoteDocument> documents = new ArrayList<>();
-
-        // [Doc 1] Title에만 키워드 (ID: 1)
-        documents.add(fixtureMonkey.giveMeBuilder(NoteDocument.class)
-                .set("noteId", 1L)
-                .set("title", targetKeyword)
-                .set("content", noiseKeyword)
-                .sample());
-
-        // [Doc 2] Content에만 키워드 (ID: 2)
-        documents.add(fixtureMonkey.giveMeBuilder(NoteDocument.class)
-                .set("noteId", 2L)
-                .set("title", noiseKeyword)
-                .set("content", targetKeyword)
-                .sample());
-
-        // [Doc 3] 둘 다 없음 (ID: 3)
-        documents.add(fixtureMonkey.giveMeBuilder(NoteDocument.class)
-                .set("noteId", 3L)
-                .set("title", noiseKeyword)
-                .set("content", noiseKeyword)
-                .sample());
-
-        // 2. 저장 및 인덱싱 대기 (공통 준비 과정)
-        TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, documents);
-        client.index("notes").waitForTask(taskInfo.getTaskUid());
-    }
 
     @Test
     @DisplayName("기본 검색: 필드를 지정하지 않으면 Title과 Content 모두에서 검색되어야 한다")

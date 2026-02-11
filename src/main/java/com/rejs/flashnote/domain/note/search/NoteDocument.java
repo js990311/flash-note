@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.PropertyNamingStrategies;
 import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.rejs.flashnote.domain.note.entity.Note;
+import com.rejs.flashnote.global.meilisearch.config.initializer.annotation.Filterable;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.Column;
 import jakarta.persistence.Id;
@@ -17,13 +18,16 @@ import java.time.LocalDateTime;
 
 @Builder
 @Getter
-@JsonNaming(PropertyNamingStrategies.SnakeCaseStrategy.class)
 public class NoteDocument {
     private Long noteId;
     private String title;
     private String content;
+
+    @Filterable
     private Long memberId;
+
     @Builder.Default
+    @Filterable
     private boolean published = false;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

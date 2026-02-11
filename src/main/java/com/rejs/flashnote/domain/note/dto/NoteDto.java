@@ -1,6 +1,7 @@
 package com.rejs.flashnote.domain.note.dto;
 
 import com.rejs.flashnote.domain.note.entity.Note;
+import com.rejs.flashnote.domain.note.search.NoteDocument;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,5 +30,17 @@ public class NoteDto {
                 .published(note.isPublished())
                 .ownerId(note.getMember().getId())
                 .build();
+    }
+
+    public static NoteDto from(NoteDocument note){
+        return NoteDto.builder()
+                .id(note.getNoteId())
+                .title(note.getTitle())
+                .content(note.getContent())
+                .updatedAt(note.getUpdatedAt())
+                .published(note.isPublished())
+                .ownerId(note.getMemberId())
+                .build();
+
     }
 }
