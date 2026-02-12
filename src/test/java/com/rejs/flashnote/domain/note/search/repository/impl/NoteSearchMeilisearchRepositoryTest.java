@@ -2,15 +2,13 @@ package com.rejs.flashnote.domain.note.search.repository.impl;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.meilisearch.sdk.Client;
 import com.meilisearch.sdk.model.TaskInfo;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
-import com.rejs.flashnote.domain.note.search.NoteDocument;
-import com.rejs.flashnote.global.meilisearch.template.MeilisearchQuery;
+import com.rejs.flashnote.domain.note.search.document.NoteDocument;
 import com.rejs.flashnote.global.meilisearch.template.MeilisearchTemplate;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -28,7 +26,6 @@ import java.util.UUID;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.junit.jupiter.api.Assertions.*;
 
 @ActiveProfiles("test")
 @Import(TestcontainersConfiguration.class)
@@ -95,7 +92,7 @@ class NoteSearchMeilisearchRepositoryTest {
         // 2. 저장 및 인덱싱 대기
         TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, documents);
         // Task 완료 대기 (필수)
-        meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+        meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
     }
 
     @Test
@@ -135,7 +132,7 @@ class NoteSearchMeilisearchRepositoryTest {
         // 2. 저장 및 인덱싱 대기
         TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, documents);
         // Task 완료 대기 (필수)
-        meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+        meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
 
 
         // When
@@ -191,7 +188,7 @@ class NoteSearchMeilisearchRepositoryTest {
         // 2. 저장 및 인덱싱 대기
         TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, documents);
         // Task 완료 대기 (필수)
-        meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+        meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
 
         // When
         Page<NoteDto> result = noteSearchRepository.searchPublicNote(
@@ -254,7 +251,7 @@ class NoteSearchMeilisearchRepositoryTest {
                 .set("content", targetKeyword)
                 .sample();
         TaskInfo t = meilisearchTemplate.save(NoteDocument.class, contentDoc);
-        meilisearchTemplate.getTask(NoteDocument.class, t);
+        meilisearchTemplate.waitForTask(NoteDocument.class, t);
 
         // When
         Page<NoteDto> result = noteSearchRepository.searchPublicNote(

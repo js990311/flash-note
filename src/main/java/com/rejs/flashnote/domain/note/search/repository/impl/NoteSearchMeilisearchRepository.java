@@ -2,7 +2,7 @@ package com.rejs.flashnote.domain.note.search.repository.impl;
 
 import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
-import com.rejs.flashnote.domain.note.search.NoteDocument;
+import com.rejs.flashnote.domain.note.search.document.NoteDocument;
 import com.rejs.flashnote.domain.note.search.repository.NoteSearchRepository;
 import com.rejs.flashnote.global.meilisearch.template.MeilisearchQuery;
 import com.rejs.flashnote.global.meilisearch.template.MeilisearchTemplate;

@@ -1,22 +1,17 @@
-package com.rejs.flashnote.domain.note.search;
+package com.rejs.flashnote.domain.note.search.document;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.PropertyNamingStrategies;
-import com.fasterxml.jackson.databind.annotation.JsonNaming;
 import com.rejs.flashnote.domain.note.entity.Note;
 import com.rejs.flashnote.global.meilisearch.config.initializer.annotation.Filterable;
-import io.hypersistence.utils.hibernate.id.Tsid;
-import jakarta.persistence.Column;
-import jakarta.persistence.Id;
-import jakarta.persistence.Lob;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class NoteDocument {
     private Long noteId;
@@ -29,9 +24,9 @@ public class NoteDocument {
     @Builder.Default
     @Filterable
     private boolean published = false;
-    private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
-    private LocalDateTime deletedAt;
+    private Instant createdAt;
+    private Instant updatedAt;
+    private Instant deletedAt;
 
     public static NoteDocument from(Note note){
         return NoteDocument.builder()
