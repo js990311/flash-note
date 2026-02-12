@@ -8,7 +8,6 @@ import com.meilisearch.sdk.SearchRequest;
 import com.meilisearch.sdk.model.SearchResultPaginated;
 import com.meilisearch.sdk.model.Task;
 import com.meilisearch.sdk.model.TaskInfo;
-import com.rejs.flashnote.domain.note.search.NoteDocument;
 import com.rejs.flashnote.global.meilisearch.document.DocumentMetadatas;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -28,7 +27,7 @@ public class MeilisearchTemplate {
     private final Client client;
     private final ObjectMapper objectMapper;
 
-    public <T> Task getTask(Class<T> clazz, TaskInfo taskInfo){
+    public <T> Task waitForTask(Class<T> clazz, TaskInfo taskInfo){
         DocumentMetadatas documents = DocumentMetadatas.getByClazz(clazz);
         Index index = client.index(documents.getIndexName());
         index.waitForTask(taskInfo.getTaskUid());

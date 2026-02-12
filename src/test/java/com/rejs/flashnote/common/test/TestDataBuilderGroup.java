@@ -12,10 +12,9 @@ import com.rejs.flashnote.domain.decks.entity.DeckOriginalType;
 import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.entity.MemberRole;
 import com.rejs.flashnote.domain.note.entity.Note;
-import com.rejs.flashnote.domain.note.search.NoteDocument;
+import com.rejs.flashnote.domain.note.search.document.NoteDocument;
 import io.github.openspacedrepetition.State;
 import io.hypersistence.tsid.TSID;
-import io.hypersistence.utils.hibernate.id.Tsid;
 import net.jqwik.api.Arbitraries;
 
 import java.time.Instant;

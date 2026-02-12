@@ -1,7 +1,6 @@
 package com.rejs.flashnote.global.meilisearch.template;
 
 import com.meilisearch.sdk.Client;
-import com.meilisearch.sdk.Index;
 import com.meilisearch.sdk.SearchRequest;
 import com.meilisearch.sdk.model.Task;
 import com.meilisearch.sdk.model.TaskInfo;
@@ -9,9 +8,7 @@ import com.meilisearch.sdk.model.TaskStatus;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
-import com.rejs.flashnote.domain.note.search.NoteDocument;
-import com.rejs.flashnote.global.meilisearch.document.DocumentMetadatas;
-import net.jqwik.api.Arbitraries;
+import com.rejs.flashnote.domain.note.search.document.NoteDocument;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -26,7 +23,6 @@ import org.springframework.test.context.ActiveProfiles;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-import java.util.concurrent.TimeUnit;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.awaitility.Awaitility.await;
@@ -74,7 +70,7 @@ class MeilisearchTemplateTest {
 
         // 2. 저장 및 인덱싱 대기 (공통 준비 과정)
         TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, documents);
-        meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+        meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
     }
 
     @Test
@@ -82,7 +78,7 @@ class MeilisearchTemplateTest {
         NoteDocument noteDocument = fixtureMonkey.giveMeOne(NoteDocument.class);
         TaskInfo taskInfo = meilisearchTemplate.save(NoteDocument.class, noteDocument);
         assertThat(taskInfo).isNotNull();
-        Task task = meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+        Task task = meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
         assertThat(task.getStatus()).isEqualTo(TaskStatus.SUCCEEDED);
     }
 
@@ -90,7 +86,7 @@ class MeilisearchTemplateTest {
     void saveAll() {
         List<NoteDocument> noteDocuments = fixtureMonkey.giveMe(NoteDocument.class,5);
         TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, noteDocuments);
-        Task task = meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+        Task task = meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
         assertThat(task.getStatus()).isEqualTo(TaskStatus.SUCCEEDED);
     }
 
@@ -106,7 +102,7 @@ class MeilisearchTemplateTest {
 
         // When
         TaskInfo taskInfo = meilisearchTemplate.save(NoteDocument.class, noteDocument);
-        Task task = meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+        Task task = meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
         assertThat(task.getStatus()).isEqualTo(TaskStatus.SUCCEEDED);
 
         SearchRequest request = new SearchRequest(uniqueTitle);
@@ -132,7 +128,7 @@ class MeilisearchTemplateTest {
                 .sampleList(totalDocs);
 
         TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, documents);
-        Task task = meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+        Task task = meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
         assertThat(task.getStatus()).isEqualTo(TaskStatus.SUCCEEDED);
 
         SearchRequest request = new SearchRequest(commonKeyword);
@@ -158,7 +154,7 @@ class MeilisearchTemplateTest {
                 .sampleList(totalDocs);
 
         TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, documents);
-        Task task = meilisearchTemplate.getTask(NoteDocument.class, taskInfo);
+        Task task = meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
         assertThat(task.getStatus()).isEqualTo(TaskStatus.SUCCEEDED);
 
         Pageable pageable = PageRequest.of(0, pageSize);

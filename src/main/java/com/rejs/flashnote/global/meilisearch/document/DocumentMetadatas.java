@@ -1,7 +1,6 @@
 package com.rejs.flashnote.global.meilisearch.document;
 
-import com.rejs.flashnote.domain.note.entity.Note;
-import com.rejs.flashnote.domain.note.search.NoteDocument;
+import com.rejs.flashnote.domain.note.search.document.NoteDocument;
 import com.rejs.flashnote.global.meilisearch.exception.DocumentNotExistException;
 import lombok.AllArgsConstructor;
 import lombok.Getter;

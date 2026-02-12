@@ -1,13 +1,13 @@
 package com.rejs.flashnote.domain.note.dto;
 
 import com.rejs.flashnote.domain.note.entity.Note;
-import com.rejs.flashnote.domain.note.search.NoteDocument;
+import com.rejs.flashnote.domain.note.search.document.NoteDocument;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -17,7 +17,7 @@ public class NoteDto {
     private Long id;
     private String title;
     private String content;
-    private LocalDateTime updatedAt;
+    private Instant updatedAt;
     private Long ownerId;
     private boolean published;
 
