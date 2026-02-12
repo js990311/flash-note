@@ -23,7 +23,7 @@ public class NoteSyncRepository {
                         note.id,
                         note.title,
                         note.content,
-                        note.member.id, // join 없이 id만 바로 참조 가능
+                        note.member.id,
                         note.published,
                         note.createdAt,
                         note.updatedAt,

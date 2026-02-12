@@ -2,12 +2,16 @@ package com.rejs.flashnote.domain.note.search.document;
 
 import com.rejs.flashnote.domain.note.entity.Note;
 import com.rejs.flashnote.global.meilisearch.config.initializer.annotation.Filterable;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.time.Instant;
 
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Getter
 public class NoteDocument {
     private Long noteId;
