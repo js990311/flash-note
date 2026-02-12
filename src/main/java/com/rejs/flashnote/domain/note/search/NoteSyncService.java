@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -26,28 +27,35 @@ public class NoteSyncService {
     private final SyncRepository syncRepository;
     private final MeilisearchTemplate meilisearchTemplate;
     private final String entityType = DocumentMetadatas.NOTE.getIndexName();
+    private static final int BATCH_SIZE = 1000;
 
     public void sync(){
         try {
+            Instant syncLimitTime = Instant.now().truncatedTo(ChronoUnit.MICROS);
             Optional<Instant> opt = syncRepository.findLastUpdatedAtByEntityType(entityType);
             Instant lastUpdateTime = opt.orElseThrow(()->new MeilisearchSyncException(entityType + "에 대한 sync metadata가 없음"));
 
-            List<NoteDocument> noteDocumentsForSync = noteSyncRepository.findNoteDocumentsForSync(lastUpdateTime, 1000);
+            log.info("[note.sync.start] 기준 시점: {}", lastUpdateTime);
+            while (true){
+                List<NoteDocument> noteDocumentsForSync = noteSyncRepository.findNoteDocumentsForSync(lastUpdateTime, syncLimitTime,BATCH_SIZE);
 
-            if(noteDocumentsForSync.isEmpty()){
-                return;
-            }
+                if(noteDocumentsForSync.isEmpty()){
+                    log.info("[note.sync.end] 더 이상 동기화할 데이터가 없습니다.");
+                    break;
+                }
 
-            TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, noteDocumentsForSync);
-            Task task = meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
+                TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, noteDocumentsForSync);
+                log.info("[note.sync] task Id : {}", taskInfo.getTaskUid());
+                Task task = meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo, 60000,1000);
 
-            if(task.getStatus().equals(TaskStatus.SUCCEEDED)){
-                Instant lastProcessedUpdatedAt = noteDocumentsForSync.getLast().getUpdatedAt();
-                syncRepository.updateSyncTime(entityType, lastProcessedUpdatedAt);
-                log.info("Meilisearch sync 성공: {} 건, 시점: {}", noteDocumentsForSync.size(), lastProcessedUpdatedAt);
-            } else {
-                log.error("Meilisearch sync 실패: {}", task.getError());
-                throw new MeilisearchSyncException(task.getError().getMessage());
+                if(task.getStatus().equals(TaskStatus.SUCCEEDED)){
+                    lastUpdateTime = noteDocumentsForSync.getLast().getUpdatedAt();
+                    syncRepository.updateSyncTime(entityType, lastUpdateTime);
+                    log.info("[note.sync.success] 성공: {} 건, 시점: {}", noteDocumentsForSync.size(), lastUpdateTime);
+                } else {
+                    log.error("[note.sync.fail] 실패: {}", task.getError());
+                    throw new MeilisearchSyncException(task.getError().getMessage());
+                }
             }
         }catch (Exception e){
             throw new MeilisearchSyncException(e);

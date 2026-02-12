@@ -17,7 +17,7 @@ import java.util.List;
 public class NoteSyncRepository {
     private final JPAQueryFactory queryFactory;
     private QNote note = QNote.note;
-    public List<NoteDocument> findNoteDocumentsForSync(Instant lastSyncTime, int limit) {
+    public List<NoteDocument> findNoteDocumentsForSync(Instant lastSyncTime, Instant syncLimitTime, int limit) {
         return queryFactory
                 .select(Projections.constructor(NoteDocument.class,
                         note.id,
@@ -30,7 +30,7 @@ public class NoteSyncRepository {
                         note.deletedAt
                 ))
                 .from(note)
-                .where(note.updatedAt.gt(lastSyncTime))
+                .where(note.updatedAt.gt(lastSyncTime), note.updatedAt.loe(syncLimitTime))
                 .orderBy(note.updatedAt.asc())
                 .limit(limit)
                 .fetch();

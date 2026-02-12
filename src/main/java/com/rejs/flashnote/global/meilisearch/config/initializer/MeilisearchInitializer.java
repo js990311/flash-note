@@ -45,6 +45,7 @@ public class MeilisearchInitializer {
 
             // 3. 설정 업데이트 (비동기)
             TaskInfo task = index.updateSettings(settings);
+            index.waitForTask(task.getTaskUid(), 60000, 1000);
 
             log.debug("[Meilisearch] Index '{}' settings updated. TaskUID: {}", indexName, task.getTaskUid());
         } catch (Exception e) {

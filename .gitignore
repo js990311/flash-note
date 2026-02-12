@@ -45,3 +45,5 @@ test/test_data_builder/sample
 test/test_data_builder/test_data
 **/test-data/**
 **/test-results/**
+
+**/meili_data/**

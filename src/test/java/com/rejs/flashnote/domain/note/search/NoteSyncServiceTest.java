@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Optional;
 
@@ -39,7 +40,7 @@ class NoteSyncServiceTest {
         // given
         when(syncRepository.findLastUpdatedAtByEntityType(anyString()))
                 .thenReturn(Optional.of(Instant.EPOCH));
-        when(noteSyncRepository.findNoteDocumentsForSync(any(), anyInt()))
+        when(noteSyncRepository.findNoteDocumentsForSync(any(),any(), anyInt()))
                 .thenReturn(List.of()); // 빈 리스트
 
         // when
@@ -59,7 +60,7 @@ class NoteSyncServiceTest {
 
         when(syncRepository.findLastUpdatedAtByEntityType(any()))
                 .thenReturn(Optional.of(Instant.EPOCH));
-        when(noteSyncRepository.findNoteDocumentsForSync(any(), anyInt()))
+        when(noteSyncRepository.findNoteDocumentsForSync(any(), any(),anyInt()))
                 .thenReturn(List.of(doc));
 
         TaskInfo mockTaskInfo = new TaskInfo();

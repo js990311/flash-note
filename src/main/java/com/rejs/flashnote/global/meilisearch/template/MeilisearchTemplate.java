@@ -34,6 +34,14 @@ public class MeilisearchTemplate {
         return index.getTask(taskInfo.getTaskUid());
     }
 
+    public <T> Task waitForTask(Class<T> clazz, TaskInfo taskInfo, int timeoutInMs, int intervalInMs){
+        DocumentMetadatas documents = DocumentMetadatas.getByClazz(clazz);
+        Index index = client.index(documents.getIndexName());
+        index.waitForTask(taskInfo.getTaskUid(), timeoutInMs, intervalInMs);
+        return index.getTask(taskInfo.getTaskUid());
+    }
+
+
     public <T> TaskInfo save(Class<T> clazz, T document){
         return this.saveAll(clazz, Collections.singletonList(document));
     }
