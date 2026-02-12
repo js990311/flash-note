@@ -6,3 +6,6 @@ CREATE TABLE sync_metadatas (
     updated_at   DATETIME(6)  NOT NULL DEFAULT CURRENT_TIMESTAMP(6) ON UPDATE CURRENT_TIMESTAMP(6),
     deleted_at   DATETIME(6)  NULL
 ) ENGINE=InnoDB;
+
+INSERT INTO sync_metadatas (entity_type, last_updated_at)
+VALUES('notes', '1970-01-01 00:00:00.000000')

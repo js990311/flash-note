@@ -34,4 +34,8 @@ public class SyncMetadata extends BaseEntity {
 
     @Column
     private Instant lastUpdatedAt;
+
+    public void update(Instant lastProcessedTime) {
+        this.lastUpdatedAt = lastProcessedTime;
+    }
 }
