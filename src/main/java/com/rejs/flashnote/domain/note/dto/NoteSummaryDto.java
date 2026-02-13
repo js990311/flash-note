@@ -27,6 +27,10 @@ public class NoteSummaryDto {
     private Instant updatedAt;
     private Instant deletedAt;
 
+    public Long getId(){
+        return noteId;
+    }
+
     public static NoteSummaryDto from(Note note){
         return NoteSummaryDto.builder()
                 .noteId(note.getId())

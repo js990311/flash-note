@@ -27,6 +27,9 @@ public class NoteSearchMeilisearchRepository implements NoteSearchRepository {
         return meilisearchTemplate.searchSlice(NoteDocument.class,
                 MeilisearchQuery.builder()
                         .query(keyword)
+                        .attributesToRetrieve(List.of(
+                                "noteId", "title", "memberId", "published", "createdAt", "updatedAt", "deletedAt"
+                        ))
                         .filter("memberId = " + memberId)
                         .searchAttributes(targetFields)
                         .pageable(pageable)
@@ -41,6 +44,9 @@ public class NoteSearchMeilisearchRepository implements NoteSearchRepository {
         return meilisearchTemplate.searchSlice(NoteDocument.class,
                 MeilisearchQuery.builder()
                         .query(keyword)
+                        .attributesToRetrieve(List.of(
+                                "noteId", "title", "memberId", "published", "createdAt", "updatedAt", "deletedAt"
+                        ))
                         .filter("published = true")
                         .searchAttributes(targetFields)
                         .pageable(pageable)

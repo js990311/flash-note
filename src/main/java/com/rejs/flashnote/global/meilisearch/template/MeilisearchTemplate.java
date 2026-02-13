@@ -7,6 +7,7 @@ import com.meilisearch.sdk.Index;
 import com.meilisearch.sdk.SearchRequest;
 import com.meilisearch.sdk.model.*;
 import com.rejs.flashnote.global.meilisearch.document.DocumentMetadatas;
+import com.rejs.flashnote.global.meilisearch.mapper.MeilisearchMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
@@ -20,6 +21,7 @@ import java.util.stream.Collectors;
 public class MeilisearchTemplate {
     private final Client client;
     private final ObjectMapper objectMapper;
+    private final MeilisearchMapper meilisearchMapper;
 
     public <T> Task waitForTask(Class<T> clazz, TaskInfo taskInfo){
         DocumentMetadatas documents = DocumentMetadatas.getByClazz(clazz);
@@ -153,7 +155,7 @@ public class MeilisearchTemplate {
             Index index = client.index(metadata.getIndexName());
 
             // 1. SearchRequest 생성
-            SearchRequest request = new SearchRequest(query.getQuery());
+            SearchRequest request = new SearchRequest(query.getQuery() == null ? "" : query.getQuery().trim());
 
             // 2. 필터 적용
             if (query.getFilter() != null && !query.getFilter().isBlank()) {
@@ -189,7 +191,7 @@ public class MeilisearchTemplate {
             boolean hasNext = hits.size() > pageSize;
             List<R> content = hits.stream()
                     .limit(pageSize)
-                    .map(hit -> objectMapper.convertValue(hit, returnClazz))
+                    .map(hit -> meilisearchMapper.map(hit, returnClazz))
                     .toList();
             return new SliceImpl<>(content, pageable, hasNext);
         } catch (Exception e) {
