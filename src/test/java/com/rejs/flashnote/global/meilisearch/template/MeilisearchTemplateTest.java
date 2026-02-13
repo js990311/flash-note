@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.util.ArrayList;
@@ -163,9 +164,7 @@ class MeilisearchTemplateTest {
                 .pageable(pageable)
                 .build();
 
-        Page<NoteDocument> result = meilisearchTemplate.search(NoteDocument.class, request);
-
-        assertThat(result.getTotalElements()).isEqualTo(totalDocs);
+        Slice<NoteDocument> result = meilisearchTemplate.searchSlice(NoteDocument.class, request);
         assertThat(result.getNumberOfElements()).isEqualTo(pageSize);
     }
 
@@ -181,10 +180,10 @@ class MeilisearchTemplateTest {
                 .build();
 
         // When
-        Page<NoteDocument> result = meilisearchTemplate.search(NoteDocument.class, query);
+        Slice<NoteDocument> result = meilisearchTemplate.searchSlice(NoteDocument.class, query);
 
         // Then: Doc1(Title), Doc2(Content) 둘 다 검색됨
-        assertThat(result.getTotalElements()).isEqualTo(2);
+        assertThat(result.getNumberOfElements()).isEqualTo(2);
         assertThat(result.getContent())
                 .extracting("noteId")
                 .containsExactlyInAnyOrder(1L, 2L);
@@ -201,10 +200,10 @@ class MeilisearchTemplateTest {
                 .build();
 
         // When
-        Page<NoteDocument> result = meilisearchTemplate.search(NoteDocument.class, query);
+        Slice<NoteDocument> result = meilisearchTemplate.searchSlice(NoteDocument.class, query);
 
         // Then: Doc1(Title O)만 나와야 함
-        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getNumberOfElements()).isEqualTo(1);
         assertThat(result.getContent().get(0).getNoteId()).isEqualTo(1L);
     }
 
@@ -219,10 +218,10 @@ class MeilisearchTemplateTest {
                 .build();
 
         // When
-        Page<NoteDocument> result = meilisearchTemplate.search(NoteDocument.class, query);
+        Slice<NoteDocument> result = meilisearchTemplate.searchSlice(NoteDocument.class, query);
 
         // Then: Doc2(Content O)만 나와야 함
-        assertThat(result.getTotalElements()).isEqualTo(1);
+        assertThat(result.getNumberOfElements()).isEqualTo(1);
         assertThat(result.getContent().get(0).getNoteId()).isEqualTo(2L);
     }
 }

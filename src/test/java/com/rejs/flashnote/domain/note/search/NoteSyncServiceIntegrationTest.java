@@ -20,6 +20,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
@@ -65,7 +66,7 @@ class NoteSyncServiceIntegrationTest {
 
         // [Then] 1. Meilisearch에 데이터가 들어갔는지 확인 (Template을 통한 직접 검색)
         // waitForTask는 service.sync() 내부에서 수행되므로 즉시 조회 가능
-        Page<NoteDocument> search = meilisearchTemplate.search(NoteDocument.class, MeilisearchQuery.builder().query(uniqueTitle).pageable(PageRequest.of(0, 10)).build());
+        Slice<NoteDocument> search = meilisearchTemplate.searchSlice(NoteDocument.class, MeilisearchQuery.builder().query(uniqueTitle).pageable(PageRequest.of(0, 10)).build());
         assertThat(search.getContent()).hasSize(1);
         assertThat(search.getContent().getFirst().getTitle()).isEqualTo(uniqueTitle);
 
@@ -105,7 +106,7 @@ class NoteSyncServiceIntegrationTest {
         assertThat(secondSyncTime).isAfterOrEqualTo(secondNoteTime);
 
         // Meilisearch에서 두 번째 노트 검색 확인
-        Page<NoteDocument> search = meilisearchTemplate.search(NoteDocument.class, MeilisearchQuery.builder().query(secondTitle).pageable(PageRequest.of(0, 10)).build());
+        Slice<NoteDocument> search = meilisearchTemplate.searchSlice(NoteDocument.class, MeilisearchQuery.builder().query(secondTitle).pageable(PageRequest.of(0, 10)).build());
         assertThat(search.getContent()).hasSize(1);
     }
 }

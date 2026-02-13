@@ -9,6 +9,7 @@ import com.rejs.flashnote.global.meilisearch.document.DocumentMetadatas;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Field;
@@ -17,11 +18,12 @@ import java.util.List;
 
 @Slf4j
 @Component
+@Profile("test")
 @RequiredArgsConstructor
 public class MeilisearchInitializer {
     private final Client client;
 
-//    @PostConstruct
+    @PostConstruct
     public void initIndexes() {
         for (DocumentMetadatas metadata : DocumentMetadatas.values()) {
             applySettingsFor(metadata);
