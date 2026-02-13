@@ -21,7 +21,6 @@ import java.util.stream.Collectors;
 public class MeilisearchTemplate {
     private final Client client;
     private final ObjectMapper objectMapper;
-    private final MeilisearchMapper meilisearchMapper;
 
     public <T> Task waitForTask(Class<T> clazz, TaskInfo taskInfo){
         DocumentMetadatas documents = DocumentMetadatas.getByClazz(clazz);
@@ -191,7 +190,7 @@ public class MeilisearchTemplate {
             boolean hasNext = hits.size() > pageSize;
             List<R> content = hits.stream()
                     .limit(pageSize)
-                    .map(hit -> meilisearchMapper.map(hit, returnClazz))
+                    .map(hit -> objectMapper.convertValue(hit, returnClazz))
                     .toList();
             return new SliceImpl<>(content, pageable, hasNext);
         } catch (Exception e) {

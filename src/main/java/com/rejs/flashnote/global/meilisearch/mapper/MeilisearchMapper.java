@@ -8,7 +8,9 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 
-@Component
+/**
+ * 부하테스트상에서 유의미한 성능개선을 이루지 못함
+ */
 public class MeilisearchMapper {
 
     private final Map<Class<?>, Function<Map<String, Object>, ?>> mappers = new ConcurrentHashMap<>();
