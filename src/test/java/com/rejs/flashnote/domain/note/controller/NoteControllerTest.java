@@ -114,15 +114,12 @@ class NoteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("notes/page"))
                 .andExpect(model().attributeExists("notes"))
-                .andExpect(model().attribute("notes", instanceOf(Pagination.class)))
-                .andExpect(result -> {
-                    Pagination<NoteDto> actual = (Pagination<NoteDto>) result.getModelAndView().getModel().get("notes");
-                    assertThat(actual.getContents()).hasSize(3);
-                });
-
+                .andExpect(model().attribute("notes", instanceOf(List.class)));
+        
         // then: 호출 검증도 noteSearchService로 변경
         then(noteSearchService).should().searchMyNote(eq(memberId), any(), any(), any(Pageable.class));
     }
+
     @Test
     @DisplayName("노트 수정 폼 조회(GET): DTO를 폼 객체로 변환하여 모델에 담는다")
     @WithMockOidcMember

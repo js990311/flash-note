@@ -55,7 +55,10 @@ public class NoteController {
         Long memberId = PrincipalUtils.getMemberId();
         Slice<NoteDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
 
-        model.addAttribute("notes", results);
+        model.addAttribute("notes", results.getContent());
+        model.addAttribute("hasNext", results.hasNext());
+        model.addAttribute("pageNumber", pageable.getPageNumber());
+        model.addAttribute("pageSize", pageable.getPageSize());
         model.addAttribute("keyword", keyword);
         model.addAttribute("searchOption", searchOption);
         model.addAttribute("searchOptions", NoteSearchOption.values());
@@ -97,7 +100,10 @@ public class NoteController {
     ){
         Slice<NoteDto> results = noteSearchService.searchPublicNote(keyword, searchOption, pageable);
 
-        model.addAttribute("notes", results);
+        model.addAttribute("notes", results.getContent());
+        model.addAttribute("hasNext", results.hasNext());
+        model.addAttribute("pageNumber", pageable.getPageNumber());
+        model.addAttribute("pageSize", pageable.getPageSize());
         model.addAttribute("keyword", keyword);
         model.addAttribute("searchOption", searchOption);
         model.addAttribute("searchOptions", NoteSearchOption.values());
