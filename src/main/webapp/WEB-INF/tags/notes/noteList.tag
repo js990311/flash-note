@@ -43,12 +43,6 @@
                                         <n:publicBadge isPublic="${note.published}" showText="false" />
                                     </div>
                                 </div>
-                                    <%-- 내용 미리보기 --%>
-                                <c:if test="${not empty note.content}">
-                                    <small class="text-muted d-block text-truncate" style="max-width: 500px;">
-                                        <c:out value="${note.content}"/>
-                                    </small>
-                                </c:if>
                             </td>
                             <td class="text-muted small">
                                 <i class="bi bi-clock me-1"></i> ${note.updatedAt}
