@@ -9,6 +9,7 @@ import com.rejs.flashnote.global.meilisearch.template.MeilisearchTemplate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.stereotype.Repository;
 
 import java.util.Collections;
@@ -20,9 +21,9 @@ public class NoteSearchMeilisearchRepository implements NoteSearchRepository {
     private final MeilisearchTemplate meilisearchTemplate;
 
     @Override
-    public Page<NoteDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable) {
+    public Slice<NoteDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable) {
         List<String> targetFields = resolveSearchAttributes(searchOption);
-        return meilisearchTemplate.search(NoteDocument.class,
+        return meilisearchTemplate.searchSlice(NoteDocument.class,
                 MeilisearchQuery.builder()
                         .query(keyword)
                         .filter("memberId = " + memberId)
@@ -33,9 +34,9 @@ public class NoteSearchMeilisearchRepository implements NoteSearchRepository {
     }
 
     @Override
-    public Page<NoteDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable) {
+    public Slice<NoteDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable) {
         List<String> targetFields = resolveSearchAttributes(searchOption);
-        return meilisearchTemplate.search(NoteDocument.class,
+        return meilisearchTemplate.searchSlice(NoteDocument.class,
                 MeilisearchQuery.builder()
                         .query(keyword)
                         .filter("published = true")

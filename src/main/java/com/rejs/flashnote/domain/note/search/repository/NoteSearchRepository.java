@@ -4,10 +4,11 @@ import com.rejs.flashnote.domain.note.dto.NoteDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 
 public interface NoteSearchRepository {
-    Page<NoteDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable);
+    Slice<NoteDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable);
 
-    Page<NoteDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable);
+    Slice<NoteDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable);
 
 }

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,9 +53,9 @@ public class NoteController {
             Model model
     ){
         Long memberId = PrincipalUtils.getMemberId();
-        Page<NoteDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
+        Slice<NoteDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
 
-        model.addAttribute("notes", Pagination.from(results));
+        model.addAttribute("notes", results);
         model.addAttribute("keyword", keyword);
         model.addAttribute("searchOption", searchOption);
         model.addAttribute("searchOptions", NoteSearchOption.values());
@@ -94,9 +95,9 @@ public class NoteController {
             @PageableDefault Pageable pageable,
             Model model
     ){
-        Page<NoteDto> results = noteSearchService.searchPublicNote(keyword, searchOption, pageable);
+        Slice<NoteDto> results = noteSearchService.searchPublicNote(keyword, searchOption, pageable);
 
-        model.addAttribute("notes", Pagination.from(results));
+        model.addAttribute("notes", results);
         model.addAttribute("keyword", keyword);
         model.addAttribute("searchOption", searchOption);
         model.addAttribute("searchOptions", NoteSearchOption.values());
