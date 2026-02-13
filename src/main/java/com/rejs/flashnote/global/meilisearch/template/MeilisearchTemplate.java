@@ -11,10 +11,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.*;
 import org.springframework.stereotype.Component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
@@ -114,6 +112,11 @@ public class MeilisearchTemplate {
                 request.setAttributesToSearchOn(query.getSearchAttributes().toArray(new String[0]));
             }
 
+            // 프로젝션
+            if (!query.getAttributesToRetrieve().isEmpty()) {
+                request.setAttributesToRetrieve(query.getAttributesToRetrieve().toArray(new String[0]));
+            }
+
             // 4. 페이징 및 정렬 적용
             Pageable pageable = query.getPageable();
             int pageSize = pageable.getPageSize();
@@ -126,22 +129,74 @@ public class MeilisearchTemplate {
             Searchable search = index.search(request);
 
             // 6. 결과 매핑
-            ArrayList<HashMap<String, Object>> hits = search.getHits();
+            List<HashMap<String, Object>> hits = search.getHits();
+            boolean hasNext = hits.size() > pageSize;
+            if (hasNext) {
+                hits = hits.subList(0, pageSize);
+            }
+
             List<T> content = (hits == null || hits.isEmpty())
                     ? Collections.emptyList()
                     : hits.stream()
                     .map(hit -> objectMapper.convertValue(hit, clazz))
                     .collect(Collectors.toList());
 
-            boolean hasNext = content.size() > pageSize;
-            if (hasNext) {
-                content = content.subList(0, pageSize);
-            }
             return new SliceImpl<>(content, pageable, hasNext);
         } catch (Exception e) {
             throw new RuntimeException("Meilisearch searchSlice execution failed", e);
         }
     }
+
+    public <T, R> Slice<R> searchSlice(Class<T> clazz, MeilisearchQuery query, Class<R> returnClazz) {
+        try {
+            DocumentMetadatas metadata = DocumentMetadatas.getByClazz(clazz);
+            Index index = client.index(metadata.getIndexName());
+
+            // 1. SearchRequest 생성
+            SearchRequest request = new SearchRequest(query.getQuery());
+
+            // 2. 필터 적용
+            if (query.getFilter() != null && !query.getFilter().isBlank()) {
+                request.setFilter(new String[]{query.getFilter()});
+            }
+
+            // 3. 검색 필드 제한 적용
+            if (!query.getSearchAttributes().isEmpty()) {
+                request.setAttributesToSearchOn(query.getSearchAttributes().toArray(new String[0]));
+            }
+
+            // 프로젝션
+            if (!query.getAttributesToRetrieve().isEmpty()) {
+                request.setAttributesToRetrieve(query.getAttributesToRetrieve().toArray(new String[0]));
+            }
+
+            // 4. 페이징 및 정렬 적용
+            Pageable pageable = query.getPageable();
+            int pageSize = pageable.getPageSize();
+            int offset = Math.toIntExact(pageable.getOffset());
+            int limit = pageSize + 1;
+            request.setOffset(offset);
+            request.setLimit(limit);
+
+            // 5. 실행
+            Searchable search = index.search(request);
+
+            // 6. 결과 매핑
+            List<HashMap<String, Object>> hits = search.getHits();
+            if(hits == null || hits.isEmpty()){
+                return new SliceImpl<>(Collections.emptyList(), pageable, false);
+            }
+            boolean hasNext = hits.size() > pageSize;
+            List<R> content = hits.stream()
+                    .limit(pageSize)
+                    .map(hit -> objectMapper.convertValue(hit, returnClazz))
+                    .toList();
+            return new SliceImpl<>(content, pageable, hasNext);
+        } catch (Exception e) {
+            throw new RuntimeException("Meilisearch searchSlice execution failed", e);
+        }
+    }
+
 
 
     public <T> Page<T> search(Class<T> clazz, SearchRequest request, Pageable pageable) {

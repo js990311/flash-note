@@ -7,6 +7,7 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
 import com.rejs.flashnote.domain.note.search.document.NoteDocument;
 import com.rejs.flashnote.global.meilisearch.template.MeilisearchTemplate;
@@ -137,7 +138,7 @@ class NoteSearchMeilisearchRepositoryTest {
 
 
         // When
-        Slice<NoteDto> result = noteSearchRepository.searchMyNote(
+        Slice<NoteSummaryDto> result = noteSearchRepository.searchMyNote(
                 myMemberId,
                 targetKeyword,
                 NoteSearchOption.TITLE_CONTENT,
@@ -149,7 +150,7 @@ class NoteSearchMeilisearchRepositoryTest {
         // Doc 2 (내꺼 X, 키워드 O) -> 조회 안됨
         // Doc 3 (내꺼 O, 키워드 X) -> 조회 안됨
         assertThat(result.getNumberOfElements()).isEqualTo(1);
-        assertThat(result.getContent().get(0).getId()).isEqualTo(1L);
+        assertThat(result.getContent().get(0).getNoteId()).isEqualTo(1L);
     }
 
     @Test
@@ -192,7 +193,7 @@ class NoteSearchMeilisearchRepositoryTest {
         meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo);
 
         // When
-        Slice<NoteDto> result = noteSearchRepository.searchPublicNote(
+        Slice<NoteSummaryDto> result = noteSearchRepository.searchPublicNote(
                 targetKeyword,
                 NoteSearchOption.TITLE_CONTENT,
                 PageRequest.of(0, 10)
@@ -202,14 +203,14 @@ class NoteSearchMeilisearchRepositoryTest {
         // Doc 1 (공개 O, 키워드 O) -> 조회됨
         // Doc 2 (공개 X, 키워드 O) -> 조회 안됨 (비공개 필터링)
         assertThat(result.getNumberOfElements()).isEqualTo(1);
-        assertThat(result.getContent().get(0).getId()).isEqualTo(1L);
+        assertThat(result.getContent().get(0).getNoteId()).isEqualTo(1L);
     }
 
     @Test
     @DisplayName("검색 옵션(Title Only): 제목에 키워드가 있는 문서만 조회된다")
     void searchOption_TitleOnly() {
         // When: 옵션을 TITLE_ONLY로 설정하고 검색 (대상은 내 노트로 가정)
-        Slice<NoteDto> result = noteSearchRepository.searchMyNote(
+        Slice<NoteSummaryDto> result = noteSearchRepository.searchMyNote(
                 myMemberId,
                 targetKeyword,
                 NoteSearchOption.TITLE, // ★ 제목만 검색
@@ -219,7 +220,7 @@ class NoteSearchMeilisearchRepositoryTest {
         // Then
         // Doc 1: Title에 targetKeyword 있음 -> 조회됨
         assertThat(result.getNumberOfElements()).isEqualTo(1);
-        assertThat(result.getContent().get(0).getId()).isEqualTo(1L);
+        assertThat(result.getContent().get(0).getNoteId()).isEqualTo(1L);
     }
 
     @Test
@@ -228,7 +229,7 @@ class NoteSearchMeilisearchRepositoryTest {
         // Given: 테스트를 위해 Doc 2의 조건을 변경해서 검색해봄 (남의 노트지만 공개 검색으로 테스트)
 
         // When: 공개 노트 검색 + Content Only 옵션
-        Slice<NoteDto> result = noteSearchRepository.searchPublicNote(
+        Slice<NoteSummaryDto> result = noteSearchRepository.searchPublicNote(
                 targetKeyword,
                 NoteSearchOption.CONTENT, // ★ 내용만 검색
                 PageRequest.of(0, 10)
@@ -255,7 +256,7 @@ class NoteSearchMeilisearchRepositoryTest {
         meilisearchTemplate.waitForTask(NoteDocument.class, t);
 
         // When
-        Slice<NoteDto> result = noteSearchRepository.searchPublicNote(
+        Slice<NoteSummaryDto> result = noteSearchRepository.searchPublicNote(
                 targetKeyword,
                 NoteSearchOption.CONTENT,
                 PageRequest.of(0, 10)
@@ -263,7 +264,7 @@ class NoteSearchMeilisearchRepositoryTest {
 
         // Then
         assertThat(result.getNumberOfElements()).isEqualTo(1);
-        assertThat(result.getContent().get(0).getId()).isEqualTo(4L);
+        assertThat(result.getContent().get(0).getNoteId()).isEqualTo(4L);
     }
 
 }

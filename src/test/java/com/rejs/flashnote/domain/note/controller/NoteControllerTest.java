@@ -4,6 +4,7 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.common.security.WithMockOidcMember;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.service.NoteSearchService;
 import com.rejs.flashnote.domain.note.service.NoteService;
@@ -104,7 +105,7 @@ class NoteControllerTest {
         // 2. 서비스 Mocking (수정된 부분: noteSearchService를 Mocking함)
         // 컨트롤러에서 사용하는 파라미터(memberId, keyword, searchOption, pageable)에 맞춰 stubbing
         given(noteSearchService.searchMyNote(eq(memberId), any(), any(), any(Pageable.class)))
-                .willReturn(noteDtoPage);
+                .willReturn(noteDtoPage.map(NoteSummaryDto::from));
 
         // when & then
         mockMvc.perform(get("/notes")

@@ -1,6 +1,5 @@
 package com.rejs.flashnote.domain.note.search;
 
-import com.meilisearch.sdk.model.SearchResult;
 import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.TestcontainersConfiguration;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
@@ -8,6 +7,7 @@ import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.entity.Note;
 import com.rejs.flashnote.domain.note.repository.NoteRepository;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.search.document.NoteDocument;
 import com.rejs.flashnote.domain.sync.SyncRepository;
 import com.rejs.flashnote.global.meilisearch.document.DocumentMetadatas;
@@ -18,13 +18,13 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.test.context.ActiveProfiles;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
+import java.util.List;
 import java.util.Optional;
 
 import static com.navercorp.fixturemonkey.api.expression.JavaGetterMethodPropertySelector.javaGetter;
@@ -66,7 +66,15 @@ class NoteSyncServiceIntegrationTest {
 
         // [Then] 1. Meilisearch에 데이터가 들어갔는지 확인 (Template을 통한 직접 검색)
         // waitForTask는 service.sync() 내부에서 수행되므로 즉시 조회 가능
-        Slice<NoteDocument> search = meilisearchTemplate.searchSlice(NoteDocument.class, MeilisearchQuery.builder().query(uniqueTitle).pageable(PageRequest.of(0, 10)).build());
+        Slice<NoteSummaryDto> search = meilisearchTemplate.searchSlice(NoteDocument.class,
+                MeilisearchQuery.builder()
+                        .query(uniqueTitle)
+                        .pageable(PageRequest.of(0, 10))
+                        .attributesToRetrieve(List.of(
+                                "noteId", "title", "memberId", "published", "createdAt", "updatedAt", "deletedAt"
+                        ))
+                        .build(),
+                NoteSummaryDto.class);
         assertThat(search.getContent()).hasSize(1);
         assertThat(search.getContent().getFirst().getTitle()).isEqualTo(uniqueTitle);
 
@@ -106,7 +114,15 @@ class NoteSyncServiceIntegrationTest {
         assertThat(secondSyncTime).isAfterOrEqualTo(secondNoteTime);
 
         // Meilisearch에서 두 번째 노트 검색 확인
-        Slice<NoteDocument> search = meilisearchTemplate.searchSlice(NoteDocument.class, MeilisearchQuery.builder().query(secondTitle).pageable(PageRequest.of(0, 10)).build());
+        Slice<NoteSummaryDto> search = meilisearchTemplate.searchSlice(NoteDocument.class,
+                MeilisearchQuery.builder()
+                        .query(secondTitle)
+                        .pageable(PageRequest.of(0, 10))
+                        .attributesToRetrieve(List.of(
+                                "noteId", "title", "memberId", "published", "createdAt", "updatedAt", "deletedAt"
+                        ))
+                        .build(),
+                NoteSummaryDto.class);
         assertThat(search.getContent()).hasSize(1);
     }
 }

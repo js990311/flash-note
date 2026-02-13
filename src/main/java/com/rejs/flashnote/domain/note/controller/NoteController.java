@@ -1,6 +1,7 @@
 package com.rejs.flashnote.domain.note.controller;
 
 import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
 import com.rejs.flashnote.domain.note.service.NoteSearchService;
@@ -53,7 +54,7 @@ public class NoteController {
             Model model
     ){
         Long memberId = PrincipalUtils.getMemberId();
-        Slice<NoteDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
+        Slice<NoteSummaryDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
 
         model.addAttribute("notes", results.getContent());
         model.addAttribute("hasNext", results.hasNext());
@@ -98,7 +99,7 @@ public class NoteController {
             @PageableDefault Pageable pageable,
             Model model
     ){
-        Slice<NoteDto> results = noteSearchService.searchPublicNote(keyword, searchOption, pageable);
+        Slice<NoteSummaryDto> results = noteSearchService.searchPublicNote(keyword, searchOption, pageable);
 
         model.addAttribute("notes", results.getContent());
         model.addAttribute("hasNext", results.hasNext());

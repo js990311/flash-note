@@ -1,6 +1,7 @@
 package com.rejs.flashnote.domain.note.search.repository.impl;
 
 import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
 import com.rejs.flashnote.domain.note.search.document.NoteDocument;
 import com.rejs.flashnote.domain.note.search.repository.NoteSearchRepository;
@@ -21,7 +22,7 @@ public class NoteSearchMeilisearchRepository implements NoteSearchRepository {
     private final MeilisearchTemplate meilisearchTemplate;
 
     @Override
-    public Slice<NoteDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable) {
+    public Slice<NoteSummaryDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable) {
         List<String> targetFields = resolveSearchAttributes(searchOption);
         return meilisearchTemplate.searchSlice(NoteDocument.class,
                 MeilisearchQuery.builder()
@@ -30,11 +31,12 @@ public class NoteSearchMeilisearchRepository implements NoteSearchRepository {
                         .searchAttributes(targetFields)
                         .pageable(pageable)
                         .build()
-                ).map(NoteDto::from);
+                , NoteSummaryDto.class
+                );
     }
 
     @Override
-    public Slice<NoteDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable) {
+    public Slice<NoteSummaryDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable) {
         List<String> targetFields = resolveSearchAttributes(searchOption);
         return meilisearchTemplate.searchSlice(NoteDocument.class,
                 MeilisearchQuery.builder()
@@ -43,7 +45,7 @@ public class NoteSearchMeilisearchRepository implements NoteSearchRepository {
                         .searchAttributes(targetFields)
                         .pageable(pageable)
                         .build()
-        ).map(NoteDto::from);
+        , NoteSummaryDto.class);
     }
 
     private List<String> resolveSearchAttributes(NoteSearchOption option) {
