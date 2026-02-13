@@ -21,7 +21,7 @@ import java.util.List;
 public class MeilisearchInitializer {
     private final Client client;
 
-    @PostConstruct
+//    @PostConstruct
     public void initIndexes() {
         for (DocumentMetadatas metadata : DocumentMetadatas.values()) {
             applySettingsFor(metadata);

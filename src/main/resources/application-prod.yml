@@ -94,3 +94,7 @@ management:
 gemini:
   api:
     key: ${GEMINI_API_KEY}
+
+meilisearch:
+  api-key: ${MEILISEARCH_API_KEY}
+  host: ${MEILISEARCH_HOST}
