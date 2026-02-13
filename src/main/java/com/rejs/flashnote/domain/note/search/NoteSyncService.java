@@ -27,7 +27,7 @@ public class NoteSyncService {
     private final SyncRepository syncRepository;
     private final MeilisearchTemplate meilisearchTemplate;
     private final String entityType = DocumentMetadatas.NOTE.getIndexName();
-    private static final int BATCH_SIZE = 1000;
+    private static final int BATCH_SIZE = 128;
 
     public void sync(){
         try {
@@ -46,7 +46,7 @@ public class NoteSyncService {
 
                 TaskInfo taskInfo = meilisearchTemplate.saveAll(NoteDocument.class, noteDocumentsForSync);
                 log.info("[note.sync] task Id : {}", taskInfo.getTaskUid());
-                Task task = meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo, 60000,1000);
+                Task task = meilisearchTemplate.waitForTask(NoteDocument.class, taskInfo, 90000,1000);
 
                 if(task.getStatus().equals(TaskStatus.SUCCEEDED)){
                     lastUpdateTime = noteDocumentsForSync.getLast().getUpdatedAt();
