@@ -15,5 +15,8 @@ public class MeilisearchQuery {
     private final String filter;
     @Builder.Default
     private final List<String> searchAttributes = new ArrayList<>();
+    @Builder.Default
+    private final List<String> attributesToRetrieve = new ArrayList<>();
     private final Pageable pageable;
+    private final Class<?> returnClazz;
 }

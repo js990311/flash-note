@@ -4,6 +4,7 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
 import com.rejs.flashnote.domain.note.entity.Note;
 import com.rejs.flashnote.domain.note.entity.QNote;
@@ -24,7 +25,7 @@ public class NoteSearchQueryDslRepository implements NoteSearchRepository {
     private final JPAQueryFactory queryFactory;
     private QNote note = QNote.note;
 
-    public Page<NoteDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable){
+    public Page<NoteSummaryDto> searchMyNote(Long memberId, String keyword, NoteSearchOption searchOption, Pageable pageable){
         List<Note> content = queryFactory
                 .selectFrom(note)
                 .where(
@@ -45,11 +46,11 @@ public class NoteSearchQueryDslRepository implements NoteSearchRepository {
                         keywordCondition(keyword, searchOption)
                 );
 
-        return PageableExecutionUtils.getPage(content.stream().map(NoteDto::from).toList(), pageable, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(content.stream().map(NoteSummaryDto::from).toList(), pageable, countQuery::fetchOne);
     }
 
     @Override
-    public Page<NoteDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable) {
+    public Page<NoteSummaryDto> searchPublicNote(String keyword, NoteSearchOption searchOption, Pageable pageable) {
         List<Note> content = queryFactory
                 .selectFrom(note)
                 .where(
@@ -70,7 +71,7 @@ public class NoteSearchQueryDslRepository implements NoteSearchRepository {
                         keywordCondition(keyword, searchOption)
                 );
 
-        return PageableExecutionUtils.getPage(content.stream().map(NoteDto::from).toList(), pageable, countQuery::fetchOne);
+        return PageableExecutionUtils.getPage(content.stream().map(NoteSummaryDto::from).toList(), pageable, countQuery::fetchOne);
     }
 
     private BooleanExpression keywordCondition(String keyword, NoteSearchOption searchOption) {

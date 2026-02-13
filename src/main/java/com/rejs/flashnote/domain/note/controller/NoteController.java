@@ -1,6 +1,7 @@
 package com.rejs.flashnote.domain.note.controller;
 
 import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteSearchOption;
 import com.rejs.flashnote.domain.note.service.NoteSearchService;
@@ -13,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -52,9 +54,12 @@ public class NoteController {
             Model model
     ){
         Long memberId = PrincipalUtils.getMemberId();
-        Page<NoteDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
+        Slice<NoteSummaryDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
 
-        model.addAttribute("notes", Pagination.from(results));
+        model.addAttribute("notes", results.getContent());
+        model.addAttribute("hasNext", results.hasNext());
+        model.addAttribute("pageNumber", pageable.getPageNumber());
+        model.addAttribute("pageSize", pageable.getPageSize());
         model.addAttribute("keyword", keyword);
         model.addAttribute("searchOption", searchOption);
         model.addAttribute("searchOptions", NoteSearchOption.values());
@@ -94,9 +99,12 @@ public class NoteController {
             @PageableDefault Pageable pageable,
             Model model
     ){
-        Page<NoteDto> results = noteSearchService.searchPublicNote(keyword, searchOption, pageable);
+        Slice<NoteSummaryDto> results = noteSearchService.searchPublicNote(keyword, searchOption, pageable);
 
-        model.addAttribute("notes", Pagination.from(results));
+        model.addAttribute("notes", results.getContent());
+        model.addAttribute("hasNext", results.hasNext());
+        model.addAttribute("pageNumber", pageable.getPageNumber());
+        model.addAttribute("pageSize", pageable.getPageSize());
         model.addAttribute("keyword", keyword);
         model.addAttribute("searchOption", searchOption);
         model.addAttribute("searchOptions", NoteSearchOption.values());

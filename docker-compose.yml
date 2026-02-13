@@ -23,8 +23,8 @@ services:
     container_name: search
     ports:
       - "7700:7700"
-    volumes:
-      - ./meili_data:/meili_data
+#    volumes:
+#      - ./meili_data:/meili_data
     environment:
       - MEILI_MASTER_KEY=master_key
       - MEILI_ENV=development

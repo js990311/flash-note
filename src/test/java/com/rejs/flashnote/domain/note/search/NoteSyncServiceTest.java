@@ -61,7 +61,8 @@ class NoteSyncServiceTest {
         when(syncRepository.findLastUpdatedAtByEntityType(any()))
                 .thenReturn(Optional.of(Instant.EPOCH));
         when(noteSyncRepository.findNoteDocumentsForSync(any(), any(),anyInt()))
-                .thenReturn(List.of(doc));
+                .thenReturn(List.of(doc))
+                .thenReturn(List.of());
 
         TaskInfo mockTaskInfo = new TaskInfo();
         Task task = new Task();
@@ -69,7 +70,7 @@ class NoteSyncServiceTest {
         doReturn(TaskStatus.SUCCEEDED).when(spyTask).getStatus();
 
         when(meilisearchTemplate.saveAll(any(), any())).thenReturn(mockTaskInfo);
-        when(meilisearchTemplate.waitForTask(any(), any())).thenReturn(spyTask);
+        when(meilisearchTemplate.waitForTask(any(), any(),anyInt(),anyInt())).thenReturn(spyTask);
 
         // when
         noteSyncService.sync();

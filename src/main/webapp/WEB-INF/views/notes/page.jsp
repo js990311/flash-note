@@ -49,12 +49,16 @@
             </div>
 
                 <%-- 통합 목록 출력 --%>
-            <n:noteList notes="${notes.contents}" />
-
-                <%-- 페이징 --%>
-            <div class="mt-4">
-                <t:pagination meta="${notes.paginationMetadata}" />
-            </div>
+            <n:noteList notes="${notes}" />
+            <t:slicePagination
+                    baseUrl="/notes/search"
+                    keyword="${keyword}"
+                    searchOption="${searchOption}"
+                    pageNumber="${pageNumber}"
+                    pageSize="${pageSize}"
+                    hasPrev="${hasPrev}"
+                    hasNext="${hasNext}"
+            />
         </div>
     </jsp:body>
 </t:layout>

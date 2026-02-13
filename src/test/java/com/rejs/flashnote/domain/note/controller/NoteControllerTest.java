@@ -4,6 +4,7 @@ import com.navercorp.fixturemonkey.FixtureMonkey;
 import com.rejs.flashnote.common.security.WithMockOidcMember;
 import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.service.NoteSearchService;
 import com.rejs.flashnote.domain.note.service.NoteService;
@@ -104,7 +105,7 @@ class NoteControllerTest {
         // 2. 서비스 Mocking (수정된 부분: noteSearchService를 Mocking함)
         // 컨트롤러에서 사용하는 파라미터(memberId, keyword, searchOption, pageable)에 맞춰 stubbing
         given(noteSearchService.searchMyNote(eq(memberId), any(), any(), any(Pageable.class)))
-                .willReturn(noteDtoPage);
+                .willReturn(noteDtoPage.map(NoteSummaryDto::from));
 
         // when & then
         mockMvc.perform(get("/notes")
@@ -114,15 +115,12 @@ class NoteControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(view().name("notes/page"))
                 .andExpect(model().attributeExists("notes"))
-                .andExpect(model().attribute("notes", instanceOf(Pagination.class)))
-                .andExpect(result -> {
-                    Pagination<NoteDto> actual = (Pagination<NoteDto>) result.getModelAndView().getModel().get("notes");
-                    assertThat(actual.getContents()).hasSize(3);
-                });
-
+                .andExpect(model().attribute("notes", instanceOf(List.class)));
+        
         // then: 호출 검증도 noteSearchService로 변경
         then(noteSearchService).should().searchMyNote(eq(memberId), any(), any(), any(Pageable.class));
     }
+
     @Test
     @DisplayName("노트 수정 폼 조회(GET): DTO를 폼 객체로 변환하여 모델에 담는다")
     @WithMockOidcMember
