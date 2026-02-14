@@ -47,22 +47,15 @@ public class NoteController {
     }
 
     @GetMapping()
-    public String getNotePage(
-            @RequestParam(required = false) String keyword,
-            @RequestParam(required = false, defaultValue = "TITLE_CONTENT") NoteSearchOption searchOption,
+    public String getMyNotePage(
             @PageableDefault Pageable pageable,
             Model model
     ){
         Long memberId = PrincipalUtils.getMemberId();
-        Slice<NoteSummaryDto> results = noteSearchService.searchMyNote(memberId, keyword, searchOption, pageable);
+        Page<NoteDto> results = noteService.readByPage(memberId, pageable);
 
         model.addAttribute("notes", results.getContent());
-        model.addAttribute("hasNext", results.hasNext());
-        model.addAttribute("pageNumber", pageable.getPageNumber());
-        model.addAttribute("pageSize", pageable.getPageSize());
-        model.addAttribute("keyword", keyword);
-        model.addAttribute("searchOption", searchOption);
-        model.addAttribute("searchOptions", NoteSearchOption.values());
+        model.addAttribute("pagination", Pagination.from(results).getPaginationMetadata());
         return "notes/page";
     }
 

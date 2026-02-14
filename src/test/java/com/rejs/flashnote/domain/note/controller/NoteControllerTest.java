@@ -92,7 +92,7 @@ class NoteControllerTest {
     }
 
     @Test
-    @DisplayName("노트 목록 조회(GET): 페이징된 데이터와 페이지네이션 객체를 모델에 담는다")
+    @DisplayName("내 노트 목록 조회(GET)")
     @WithMockOidcMember()
     void getNotePage_success() throws Exception {
         // given
@@ -103,9 +103,8 @@ class NoteControllerTest {
         Page<NoteDto> noteDtoPage = new PageImpl<>(noteDtoList, PageRequest.of(0, 10), noteDtoList.size());
 
         // 2. 서비스 Mocking (수정된 부분: noteSearchService를 Mocking함)
-        // 컨트롤러에서 사용하는 파라미터(memberId, keyword, searchOption, pageable)에 맞춰 stubbing
-        given(noteSearchService.searchMyNote(eq(memberId), any(), any(), any(Pageable.class)))
-                .willReturn(noteDtoPage.map(NoteSummaryDto::from));
+        given(noteService.readByPage(eq(memberId), any(Pageable.class)))
+                .willReturn(noteDtoPage);
 
         // when & then
         mockMvc.perform(get("/notes")
@@ -118,7 +117,7 @@ class NoteControllerTest {
                 .andExpect(model().attribute("notes", instanceOf(List.class)));
         
         // then: 호출 검증도 noteSearchService로 변경
-        then(noteSearchService).should().searchMyNote(eq(memberId), any(), any(), any(Pageable.class));
+        then(noteService).should().readByPage(eq(memberId), any(Pageable.class));
     }
 
     @Test
