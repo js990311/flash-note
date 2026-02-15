@@ -94,5 +94,5 @@ export default function(data) {
     'status is 200': (r) => r.status === 200,
     'response time < 1s': (r) => r.timings.duration < 1000,
   });
-  sleep(1);
+  sleep(0.25);
 }
