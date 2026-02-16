@@ -96,6 +96,9 @@ dependencies {
 
 	// meliesearch
 	implementation 'com.meilisearch.sdk:meilisearch-java:0.19.0'
+
+	// s3
+	implementation 'software.amazon.awssdk:s3:2.41.4'
 }
 
 tasks.named('test') {
