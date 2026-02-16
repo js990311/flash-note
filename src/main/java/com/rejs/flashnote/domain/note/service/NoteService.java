@@ -5,6 +5,7 @@ import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.domain.note.authorization.PreNoteReadAuthorize;
 import com.rejs.flashnote.domain.note.authorization.PreNoteWriteAuthorize;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.dto.request.note.NoteEditRequest;
 import com.rejs.flashnote.domain.note.entity.Note;
 import com.rejs.flashnote.domain.note.error.NoteException;
@@ -15,6 +16,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Service
@@ -43,6 +46,11 @@ public class NoteService {
     @Transactional(readOnly = true)
     public Page<NoteDto> readByPage(Long memberId, Pageable pageable){
         return myNoteGroupRepository.findByMemberId(memberId, pageable);
+    }
+
+    @Transactional(readOnly = true)
+    public List<NoteSummaryDto> readProfilePage(Long memberId, boolean isPublic){
+        return myNoteGroupRepository.findByMemberId(memberId, isPublic);
     }
 
     // ## Update

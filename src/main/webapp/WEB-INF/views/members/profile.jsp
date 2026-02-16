@@ -18,9 +18,11 @@
                     <span class="badge bg-light text-secondary border">Member ID: #${profile.id}</span>
                 </div>
             </div>
-            <a href="/profile/edit" class="btn btn-outline-dark btn-sm rounded-pill px-3">
-                <i class="bi bi-pencil me-1"></i> 수정하기
-            </a>
+            <c:if test="${myProfile}">
+                <a href="/profile/edit" class="btn btn-outline-dark btn-sm rounded-pill px-3">
+                    <i class="bi bi-pencil me-1"></i> 수정하기
+                </a>
+            </c:if>
         </div>
 
         <hr class="my-4">
@@ -43,11 +45,27 @@
             </div>
         </div>
 
-        <div class="mt-5 text-center">
-            <p class="text-muted small">
-                <i class="bi bi-info-circle me-1"></i>
-                프로필 정보는 서비스 내에서 다른 사용자에게 공개될 수 있습니다.
-            </p>
+        <div class="mt-5">
+            <h5 class="fw-bold mb-3">최근 노트</h5>
+            <div class="d-flex flex-column gap-2">
+                <c:forEach var="note" items="${notes}">
+                    <div class="note-item p-3 position-relative">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <h6 class="mb-0 fw-bold text-truncate" style="max-width: 80%;">
+                                <a href="/notes/${note.id}" class="text-dark text-decoration-none stretched-link">
+                                        ${note.title}
+                                </a>
+                                <c:if test="${not note.published}">
+                                    <i class="bi bi-lock-fill ms-1 text-muted small"></i>
+                                </c:if>
+                            </h6>
+                            <span class="text-muted text-xs">
+                                    ${note.updatedAt}
+                            </span>
+                        </div>
+                    </div>
+                </c:forEach>
+            </div>
         </div>
     </jsp:body>
 </t:layout>
