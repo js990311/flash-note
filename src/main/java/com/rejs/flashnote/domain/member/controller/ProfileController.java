@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 public class ProfileController {
     private final MemberService memberService;
 
-    @GetMapping("/me")
+    @GetMapping("")
     public String getMyProfile(Model model){
         Long memberId = PrincipalUtils.getMemberId();
         ProfileDto profileDto = memberService.readProfile(memberId);
@@ -26,7 +26,7 @@ public class ProfileController {
         return "members/profile";
     }
 
-    @GetMapping("/me/edit")
+    @GetMapping("/edit")
     public String getMyProfileEdit(Model model) {
         Long memberId = PrincipalUtils.getMemberId();
         ProfileDto profile = memberService.readProfile(memberId);
@@ -36,7 +36,7 @@ public class ProfileController {
         return "members/edit";
     }
 
-    @PostMapping("/me/edit")
+    @PostMapping("/edit")
     public String postMyProfileEdit(
             @Valid @ModelAttribute("profileForm") UpdateProfileRequest request,
             BindingResult bindingResult,
@@ -49,7 +49,7 @@ public class ProfileController {
             return "members/edit";
         }
         memberService.updateProfile(memberId, request);
-        return "redirect:/members/me";
+        return "redirect:/profile";
     }
 
     @GetMapping("/{id}")

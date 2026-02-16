@@ -4,11 +4,10 @@ import com.rejs.flashnote.domain.member.dto.ProfileDto;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.*;
 
-@Getter
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@EqualsAndHashCode
+@Data
 public class UpdateProfileRequest {
     @NotEmpty
     private String name;

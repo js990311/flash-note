@@ -34,7 +34,7 @@ class ProfileControllerTest {
     private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
 
     @Test
-    @DisplayName("내 프로필 조회(GET /profile/me): members/profile 뷰 + myProfile=true + profile 모델 반환")
+    @DisplayName("내 프로필 조회(GET /profile): members/profile 뷰 + myProfile=true + profile 모델 반환")
     @WithMockOidcMember
     void getMyProfile_success() throws Exception {
         // given
@@ -46,7 +46,7 @@ class ProfileControllerTest {
         given(memberService.readProfile(memberId)).willReturn(profileDto);
 
         // when & then
-        mockMvc.perform(get("/profile/me"))
+        mockMvc.perform(get("/profile"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("members/profile"))
                 .andExpect(model().attribute("myProfile", true))
@@ -68,7 +68,7 @@ class ProfileControllerTest {
         given(memberService.readProfile(memberId)).willReturn(profileDto);
 
         // when & then
-        mockMvc.perform(get("/profile/me/edit"))
+        mockMvc.perform(get("/profile/edit"))
                 .andExpect(status().isOk())
                 .andExpect(view().name("members/edit"))
                 .andExpect(model().attribute("profile", profileDto))
@@ -78,7 +78,7 @@ class ProfileControllerTest {
     }
 
     @Test
-    @DisplayName("내 프로필 수정(POST /profile/me/edit): 유효성 성공 시 수정 후 redirect:/members/me")
+    @DisplayName("내 프로필 수정(POST /profile/edit): 유효성 성공 시 수정 후 redirect:/members/me")
     @WithMockOidcMember
     void postMyProfileEdit_success() throws Exception {
         // given
@@ -96,19 +96,19 @@ class ProfileControllerTest {
                 .willReturn(updatedProfile);
 
         // when & then
-        mockMvc.perform(post("/profile/me/edit")
+        mockMvc.perform(post("/profile/edit")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .flashAttr("profileForm", form)
                 )
                 .andExpect(status().is3xxRedirection())
-                .andExpect(redirectedUrl("/members/me"));
+                .andExpect(redirectedUrl("/profile"));
 
         then(memberService).should().updateProfile(eq(memberId), any(UpdateProfileRequest.class));
     }
 
     @Test
-    @DisplayName("내 프로필 수정(POST /profile/me/edit): 유효성 실패 시 members/edit로 돌아가고 profile을 다시 모델에 담는다")
+    @DisplayName("내 프로필 수정(POST /profile/edit): 유효성 실패 시 members/edit로 돌아가고 profile을 다시 모델에 담는다")
     @WithMockOidcMember
     void postMyProfileEdit_validationFail() throws Exception {
         // given
@@ -126,7 +126,7 @@ class ProfileControllerTest {
         given(memberService.readProfile(memberId)).willReturn(profileDto);
 
         // when & then
-        mockMvc.perform(post("/profile/me/edit")
+        mockMvc.perform(post("/profile/edit")
                         .with(csrf())
                         .contentType(MediaType.APPLICATION_FORM_URLENCODED)
                         .flashAttr("profileForm", invalidForm)
