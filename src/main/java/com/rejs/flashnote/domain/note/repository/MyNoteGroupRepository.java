@@ -6,6 +6,7 @@ import com.querydsl.jpa.impl.JPAQuery;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import com.rejs.flashnote.domain.member.entity.QMember;
 import com.rejs.flashnote.domain.note.dto.NoteDto;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
 import com.rejs.flashnote.domain.note.entity.QNote;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -53,4 +54,29 @@ public class MyNoteGroupRepository {
         return PageableExecutionUtils.getPage(content, pageable, countq::fetchOne);
 
     }
+
+    public List<NoteSummaryDto> findByMemberId(Long memberId, boolean isPublic){
+        List<NoteSummaryDto> content = jpaQueryFactory.select(
+                        Projections.constructor(
+                                NoteSummaryDto.class,
+                                note.id,
+                                note.title,
+                                note.member.id,
+                                note.published,
+                                note.createdAt,
+                                note.updatedAt,
+                                note.deletedAt
+                        )
+                )
+                .from(note)
+                .where(note.member.id.eq(memberId),
+                        isPublic ? note.published.eq(true) : null
+                )
+                .orderBy(note.updatedAt.desc())
+                .limit(15)
+                .fetch();
+        ;
+        return content;
+    }
+
 }

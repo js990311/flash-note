@@ -20,7 +20,7 @@
             <thead class="table-light">
             <tr>
                 <th scope="col" class="ps-4" style="width: 50%">제목</th>
-                <th scope="col" style="width: 25%">수정일</th>
+                <th scope="col" style="width: 25%">작성정보</th>
                 <c:if test="${showActions}">
                     <th scope="col" class="pe-4 text-center" style="width: 15%">관리</th>
                 </c:if>
@@ -45,7 +45,16 @@
                                 </div>
                             </td>
                             <td class="text-muted small">
-                                <i class="bi bi-clock me-1"></i> ${note.updatedAt}
+                                <div class="d-flex flex-column gap-1">
+                                    <a href="/profile/${note.memberId}"
+                                       class="text-dark text-decoration-none fw-medium small">
+                                        <i class="bi bi-person-fill me-1 text-secondary"></i>
+                                        <c:out value="${note.memberId}" />
+                                    </a>
+                                    <span class="text-muted" style="font-size: 0.75rem;">
+                                        <i class="bi bi-clock me-1"></i>${note.updatedAt}
+                                    </span>
+                                </div>
                             </td>
                             <c:if test="${showActions}">
                                 <td class="pe-4 text-center">

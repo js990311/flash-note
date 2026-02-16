@@ -28,12 +28,16 @@
                                 <li class="breadcrumb-item active">노트 상세</li>
                             </ol>
                         </nav>
-                            <%-- 제목과 공개 상태 배지를 한 줄에 배치 --%>
                         <div class="d-flex align-items-center gap-2">
                             <h1 class="fw-bold text-dark mb-0 text-break">
                                 <c:out value="${note.title}" />
                             </h1>
                             <n:publicBadge isPublic="${note.published}" />
+                        </div>
+                        <div class="mt-2 text-muted small">
+                            <a href="/profile/${note.memberId}" class="text-secondary text-decoration-none fw-medium">
+                                #<c:out value="${note.memberId}" />
+                            </a>
                         </div>
                     </div>
 

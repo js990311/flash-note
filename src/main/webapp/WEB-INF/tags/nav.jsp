@@ -52,7 +52,6 @@
                         </a>
                         <ul class="dropdown-menu dropdown-menu-end shadow-sm border-0 mt-2">
                             <li><a class="dropdown-item" href="<c:url value='/profile' />">내 프로필</a></li>
-                            <li><a class="dropdown-item" href="<c:url value='/settings' />">설정</a></li>
                             <li><hr class="dropdown-divider"></li>
                             <li>
                                 <form action="<c:url value='/logout' />" method="post" class="m-0">
