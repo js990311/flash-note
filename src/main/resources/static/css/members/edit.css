@@ -1,0 +1,18 @@
+.edit-container {
+    max-width: 500px;
+    margin: 2rem auto;
+}
+.form-label {
+    font-weight: 600;
+    color: #343a40;
+}
+.error-message {
+    font-size: 0.875rem;
+    color: #dc3545;
+    margin-top: 0.25rem;
+}
+.current-badge {
+    font-size: 0.75rem;
+    vertical-align: middle;
+    margin-left: 0.5rem;
+}

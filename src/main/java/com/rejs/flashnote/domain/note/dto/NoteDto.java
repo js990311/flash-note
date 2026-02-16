@@ -21,6 +21,10 @@ public class NoteDto {
     private Long ownerId;
     private boolean published;
 
+    public Long getMemberId(){
+        return ownerId;
+    }
+
     public static NoteDto from(Note note){
         return NoteDto.builder()
                 .id(note.getId())

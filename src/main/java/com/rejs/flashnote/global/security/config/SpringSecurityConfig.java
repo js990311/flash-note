@@ -36,10 +36,11 @@ public class SpringSecurityConfig {
                 // 접근 권한 설정
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
-                        .requestMatchers("notes/**").authenticated()
-                        .requestMatchers("decks/**").authenticated()
-                        .requestMatchers("cards/**").authenticated()
+                        .requestMatchers("/notes/**").authenticated()
+                        .requestMatchers("/decks/**").authenticated()
+                        .requestMatchers("/cards/**").authenticated()
                         .requestMatchers("/api/study/**").authenticated()
+                        .requestMatchers("/profile/**").authenticated()
                         .requestMatchers("/actuator/prometheus/**").permitAll()
                         .anyRequest().permitAll()
                 )
