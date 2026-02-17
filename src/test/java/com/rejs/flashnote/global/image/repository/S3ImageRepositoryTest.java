@@ -7,6 +7,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.test.context.ActiveProfiles;
 import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -58,5 +59,38 @@ class S3ImageRepositoryTest {
                 s3Client.getObject(b -> b.bucket(BUCKET).key(key));
 
         assertEquals(content, new String(s3Object.readAllBytes()));
+    }
+
+    @Test
+    @DisplayName("이미지 리소스 조회 테스트 (동기)")
+    void getImageAsResourceTest() throws Exception {
+        // Given: 테스트용 데이터 업로드
+        String key = "test/get-image.png";
+        String content = "hello-s3-resource";
+        byte[] contentBytes = content.getBytes();
+        s3Client.putObject(b -> b.bucket(BUCKET).key(key),
+                software.amazon.awssdk.core.sync.RequestBody.fromBytes(contentBytes));
+
+        // When
+        InputStreamResource resource = s3ImageRepository.getImageAsResource(BUCKET, key);
+
+        // Then
+        assertNotNull(resource);
+        try (InputStream is = resource.getInputStream()) {
+            byte[] downloadedBytes = is.readAllBytes();
+            assertEquals(content, new String(downloadedBytes));
+        }
+    }
+
+    @Test
+    @DisplayName("존재하지 않는 키 조회 시 예외 발생 테스트")
+    void getImageNotFoundTest() {
+        // Given
+        String invalidKey = "none-existent.png";
+
+        // When & Then
+        assertThrows(Exception.class, () -> {
+            s3ImageRepository.getImageAsResource(BUCKET, invalidKey);
+        });
     }
 }

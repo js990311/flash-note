@@ -1,5 +1,6 @@
 package com.rejs.flashnote.domain.image.service;
 
+import com.rejs.flashnote.domain.image.dto.S3ViewMetadata;
 import com.rejs.flashnote.domain.image.entity.ImageMetadata;
 import com.rejs.flashnote.domain.image.repository.ImageMetadataRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,10 @@ public class ImageMetadataService {
         ImageMetadata imageMetadata = imageMetadataRepository.findById(id).orElseThrow();
         imageMetadata.uploadSuccess();
         return imageMetadata.getId();
+    }
+
+    @Transactional(readOnly = true)
+    public S3ViewMetadata read(Long id){
+        return S3ViewMetadata.from(imageMetadataRepository.findById(id).orElseThrow());
     }
 }

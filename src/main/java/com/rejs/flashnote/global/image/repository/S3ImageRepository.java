@@ -3,15 +3,15 @@ package com.rejs.flashnote.global.image.repository;
 import com.rejs.flashnote.global.image.exception.ImageException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Repository;
+import software.amazon.awssdk.core.ResponseInputStream;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.PutObjectResponse;
-import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.model.*;
 import software.amazon.awssdk.transfer.s3.S3TransferManager;
 
 import java.io.InputStream;
@@ -67,5 +67,19 @@ public class S3ImageRepository {
                     }
                     return response;
                 });
+    }
+
+    public InputStreamResource getImageAsResource(String bucket, String key) {
+        try {
+            ResponseInputStream<GetObjectResponse> s3InputStream = s3Client.getObject(
+                    GetObjectRequest.builder()
+                            .bucket(bucket)
+                            .key(key)
+                            .build()
+            );
+            return new InputStreamResource(s3InputStream);
+        } catch (S3Exception e) {
+            throw new ImageException("이미지 가져오기 실패", e);
+        }
     }
 }
