@@ -37,10 +37,13 @@ public class TestcontainersConfiguration {
 
     @Bean
     @Primary
-    DynamicPropertyRegistrar dynamicPropertyRegistrar(MeilisearchContainer meilisearchContainer) {
+    DynamicPropertyRegistrar dynamicPropertyRegistrar(MeilisearchContainer meilisearchContainer, LocalStackContainer localStackContainer) {
         return registry -> {
             registry.add("meilisearch.host", ()->"http://"+meilisearchContainer.getHost() + ":" + meilisearchContainer.getMappedPort(7700));
             registry.add("meilisearch.api-key", meilisearchContainer::getMasterKey);
+            registry.add("aws.s3.access-key", ()->localStackContainer.getAccessKey());
+            registry.add("aws.s3.secret-key", ()->localStackContainer.getSecretKey());
+            registry.add("aws.s3.bucket", ()->"test-bucket");
         };
     }
 

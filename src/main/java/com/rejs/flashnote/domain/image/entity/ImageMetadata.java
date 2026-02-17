@@ -19,12 +19,11 @@ import org.hibernate.annotations.SQLRestriction;
 @SQLRestriction("deleted_at IS NULL")
 @Getter
 public class ImageMetadata extends BaseEntity {
-    @Tsid
     @Id
     @Column(name = "image_metadata_id")
     private Long id;
 
-    @Column(nullable = false)
+    @Column(name = "s3_key", nullable = false)
     private String s3Key;
 
     @Column(nullable = false)
@@ -36,4 +35,12 @@ public class ImageMetadata extends BaseEntity {
     private Long fileSize;
 
     private Long memberId;
+
+    @Builder.Default
+    @Column(columnDefinition = "DEFAULT FALSE")
+    private boolean isUploaded = false;
+
+    public void uploadSuccess(){
+        this.isUploaded = true;
+    }
 }

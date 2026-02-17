@@ -5,6 +5,11 @@ server:
 
 
 spring:
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 10MB
+
   application:
     name: flashnote
   web:
@@ -98,3 +103,9 @@ gemini:
 meilisearch:
   api-key: ${MEILISEARCH_API_KEY}
   host: ${MEILISEARCH_HOST}
+
+aws:
+  s3:
+    access-key: ${AWS_S3_ACCESS}
+    secret-key: ${AWS_S3_SECRET}
+    bucket: ${AWS_S3_BUCKET}
