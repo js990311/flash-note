@@ -6,6 +6,8 @@ import com.rejs.flashnote.common.test.TestDataBuilderGroup;
 import com.rejs.flashnote.domain.member.dto.ProfileDto;
 import com.rejs.flashnote.domain.member.dto.request.UpdateProfileRequest;
 import com.rejs.flashnote.domain.member.service.MemberService;
+import com.rejs.flashnote.domain.note.dto.NoteSummaryDto;
+import com.rejs.flashnote.domain.note.service.NoteService;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +33,9 @@ class ProfileControllerTest {
     @MockitoBean
     private MemberService memberService;
 
+    @MockitoBean
+    private NoteService noteService;
+
     private final FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
 
     @Test
@@ -43,6 +48,9 @@ class ProfileControllerTest {
                 .set(javaGetter(ProfileDto::getId), memberId)
                 .sample();
 
+        given(noteService.readProfilePage(memberId, false)).willReturn(
+                fixtureMonkey.giveMe(NoteSummaryDto.class, 15)
+        );
         given(memberService.readProfile(memberId)).willReturn(profileDto);
 
         // when & then
@@ -56,7 +64,7 @@ class ProfileControllerTest {
     }
 
     @Test
-    @DisplayName("내 프로필 수정 폼 조회(GET /profile/me/edit): members/edit 뷰 + profile/profileForm 모델 반환")
+    @DisplayName("내 프로필 수정 폼 조회(GET /profile/edit): members/edit 뷰 + profile/profileForm 모델 반환")
     @WithMockOidcMember
     void getMyProfileEdit_success() throws Exception {
         // given
@@ -151,6 +159,9 @@ class ProfileControllerTest {
                 .sample();
 
         given(memberService.readProfile(memberId)).willReturn(profileDto);
+        given(noteService.readProfilePage(memberId, false)).willReturn(
+                fixtureMonkey.giveMe(NoteSummaryDto.class, 15)
+        );
 
         // when & then
         mockMvc.perform(get("/profile/{id}", memberId))
@@ -175,6 +186,9 @@ class ProfileControllerTest {
                 .sample();
 
         given(memberService.readProfile(otherId)).willReturn(profileDto);
+        given(noteService.readProfilePage(otherId, false)).willReturn(
+                fixtureMonkey.giveMe(NoteSummaryDto.class, 15)
+        );
 
         // when & then
         mockMvc.perform(get("/profile/{id}", otherId))
