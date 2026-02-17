@@ -14,7 +14,7 @@ public class S3ViewMetadata {
     private Long id;
     private String originalFileName;
     private String contentType;
-    private String viewUrl;
+    private String s3Key;
     private long size;
 
     public static S3ViewMetadata from(ImageMetadata entity) {
@@ -22,7 +22,7 @@ public class S3ViewMetadata {
                 .id(entity.getId())
                 .originalFileName(entity.getFileName())
                 .contentType(entity.getContentType())
-                .viewUrl("/api/images/" + entity.getId())
+                .s3Key(entity.getS3Key())
                 .size(entity.getFileSize())
                 .build();
     }

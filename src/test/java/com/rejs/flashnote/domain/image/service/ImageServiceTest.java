@@ -9,17 +9,20 @@ import com.rejs.flashnote.domain.member.entity.Member;
 import com.rejs.flashnote.domain.member.repository.MemberRepository;
 import com.rejs.flashnote.global.image.S3Properties;
 import com.rejs.flashnote.global.image.repository.LocalFileRepository;
+import io.hypersistence.tsid.TSID;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.core.io.Resource;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.context.ActiveProfiles;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -99,5 +102,39 @@ class ImageServiceIntegrationTest {
         assertThat(Files.exists(tempFilePath))
                 .as("업로드 완료 후 로컬 임시 파일은 삭제되어야 합니다.")
                 .isFalse();
+    }
+
+    @Test
+    @DisplayName("S3 실물 데이터를 Resource로 내려받는지 테스트")
+    void getImageResource_Integration_Test() throws Exception {
+        // 1. Given: S3에 직접 파일 업로드 및 DB 메타데이터 생성
+        Long tsid = TSID.fast().toLong();
+        String s3Key = "images/" + tsid + ".png";
+        String content = "binary-image-data-123";
+
+        // S3에 데이터 직접 삽입
+        s3Client.putObject(b -> b.bucket(BUCKET).key(s3Key),
+                software.amazon.awssdk.core.sync.RequestBody.fromString(content));
+
+        // DB에 데이터 삽입 (imageMetadataService.create 등을 활용하거나 Repository 직접 사용)
+        imageMetadataRepository.save(ImageMetadata.builder()
+                .id(tsid)
+                .s3Key(s3Key)
+                .fileName("test.png")
+                .contentType("image/png")
+                .fileSize((long) content.length())
+                .memberId(memberId)
+                .isUploaded(true)
+                .build());
+
+        // 2. When: 서비스 호출
+        Resource resource = imageService.getImageResource(tsid);
+
+        // 3. Then: 데이터 일치 여부 확인
+        assertThat(resource).isNotNull();
+        try (InputStream is = resource.getInputStream()) {
+            String result = new String(is.readAllBytes());
+            assertThat(result).isEqualTo(content);
+        }
     }
 }

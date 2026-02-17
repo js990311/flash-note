@@ -1,5 +1,6 @@
 package com.rejs.flashnote.domain.image.service;
 
+import com.rejs.flashnote.domain.image.dto.S3ViewMetadata;
 import com.rejs.flashnote.domain.image.entity.ImageMetadata;
 import com.rejs.flashnote.domain.image.repository.ImageMetadataRepository;
 import com.rejs.flashnote.global.image.S3Properties;
@@ -9,8 +10,12 @@ import com.rejs.flashnote.global.image.repository.S3ImageRepository;
 import io.hypersistence.tsid.TSID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.ResponseInputStream;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
 
 import java.io.FileInputStream;
 import java.io.IOException;
@@ -64,6 +69,15 @@ public class ImageService {
             localFileRepository.delete(tempPath);
             throw new ImageException("파일 처리 중 오류 발생", e);
         }
+    }
+
+    public Resource getImageResource(Long id) {
+        // 1. DB에서 메타데이터 조회 (S3 Key 확인)
+        S3ViewMetadata metadata = imageMetadataService.read(id);
+
+        // 2. S3에서 스트림 데이터 조회
+        InputStreamResource imageAsResource = s3ImageRepository.getImageAsResource(s3Properties.getBucket(), metadata.getS3Key());
+        return imageAsResource;
     }
 
     private String getExtension(String fileName) {
