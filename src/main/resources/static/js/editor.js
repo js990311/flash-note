@@ -10,10 +10,35 @@ const editor = new toastui.Editor({
         ['hr', 'quote'],
         ['ul', 'ol', 'task', 'indent', 'outdent'],
         ['table', 'link'],
-        ['code', 'codeblock']
-    ]
-});
+        ['code', 'codeblock'],
+        ['image']
+    ],
+    hooks: {
+        addImageBlobHook: async (blob, callback) => {
+            try {
+                const formData = new FormData();
 
+                const file = blob instanceof File ? blob : new File([blob], 'image.png', { type: blob.type || 'image/png' });
+                formData.append('file', file);
+
+                const res = await fetch('/api/images', {
+                    method: 'POST',
+                    body: formData,
+                    credentials: 'include'
+                });
+
+                if (!res.ok) throw new Error(`upload failed: ${res.status}`);
+
+                const data = await res.json();
+                const imageUrl = `/api/images/${data.id}`;
+                callback(imageUrl, file.name);
+            } catch (err) {
+                console.error(err);
+                alert('이미지 업로드에 실패했습니다.');
+            }
+        }
+    }
+});
 
 document.getElementById('btnSubmit').addEventListener('click', function(e) {
     e.preventDefault(); // 혹시 모를 기본 제출 동작 방지
