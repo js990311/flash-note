@@ -43,6 +43,7 @@ class ImageServiceIntegrationTest {
     @Autowired private S3Properties s3Properties;
     @Autowired private LocalFileRepository localFileRepository;
     @Autowired private MemberRepository memberRepository;
+    @Autowired private ImageValidationService imageValidationService;
     private FixtureMonkey fixtureMonkey = TestDataBuilderGroup.fixtureMonkey();
 
     private final String BUCKET = "test-bucket";
@@ -66,7 +67,12 @@ class ImageServiceIntegrationTest {
         // 1. Given: 테스트 파일 및 회원 정보 준비
         String originalFileName = "integration-test.png";
         String contentType = "image/png";
-        byte[] content = "real-file-content-binary".getBytes();
+        byte[] png = new byte[]{
+                (byte) 0x89, 0x50, 0x4E, 0x47,
+                0x0D, 0x0A, 0x1A, 0x0A,
+                0x00, 0x00, 0x00, 0x00
+        };
+        byte[] content = png;
 
         MockMultipartFile file = new MockMultipartFile(
                 "file", originalFileName, contentType, content

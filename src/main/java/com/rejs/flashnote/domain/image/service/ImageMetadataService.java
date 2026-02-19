@@ -27,6 +27,18 @@ public class ImageMetadataService {
         return imageMetadataRepository.save(metadata).getId();
     }
 
+    public Long create(Long tsid, String s3Key, String originalFilename, String contentType, long fileSize, Long memberId){
+        ImageMetadata metadata = ImageMetadata.builder()
+                .id(tsid)
+                .s3Key(s3Key)
+                .fileName(originalFilename)
+                .contentType(contentType)
+                .fileSize(fileSize)
+                .memberId(memberId)
+                .build();
+        return imageMetadataRepository.save(metadata).getId();
+    }
+
     @Transactional
     public Long update(Long id){
         ImageMetadata imageMetadata = imageMetadataRepository.findById(id).orElseThrow();
