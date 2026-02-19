@@ -60,7 +60,7 @@ public class ImageService {
                 localFileRepository.delete(tempPath);
 
                 if (throwable != null) {
-                    throw new ImageException("S3 업로드 실패", throwable);
+                    throw ImageException.s3UploadFailed(throwable);
                 }
 
                 // 5. DB 메타데이터 저장 (Entity의 @Tsid가 ID를 자동 생성)
@@ -68,7 +68,7 @@ public class ImageService {
             });
         } catch (IOException e) {
             localFileRepository.delete(tempPath);
-            throw new ImageException("파일 처리 중 오류 발생", e);
+            throw ImageException.fileProcessingFailed(e);
         }
     }
 
@@ -100,7 +100,7 @@ public class ImageService {
                 localFileRepository.delete(tempPath);
 
                 if (throwable != null) {
-                    throw new ImageException("S3 업로드 실패", throwable);
+                    throw ImageException.s3UploadFailed(throwable);
                 }
 
                 // 5. DB 메타데이터 저장 (Entity의 @Tsid가 ID를 자동 생성)
@@ -109,7 +109,7 @@ public class ImageService {
             return id;
         } catch (IOException e) {
             localFileRepository.delete(tempPath);
-            throw new ImageException("파일 처리 중 오류 발생", e);
+            throw ImageException.fileProcessingFailed(e);
         }
     }
 

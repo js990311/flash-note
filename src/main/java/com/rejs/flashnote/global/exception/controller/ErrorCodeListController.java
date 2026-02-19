@@ -6,6 +6,7 @@ import com.rejs.flashnote.domain.member.error.MemberErrorCode;
 import com.rejs.flashnote.domain.note.error.NoteErrorCode;
 import com.rejs.flashnote.global.exception.code.CommonErrorCode;
 import com.rejs.flashnote.global.exception.code.ErrorCode;
+import com.rejs.flashnote.global.image.exception.ImageErrorCode;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -26,6 +27,7 @@ public class ErrorCodeListController {
         errorCodes.addAll(List.of(NoteErrorCode.values()));
         errorCodes.addAll(List.of(DeckErrorCode.values()));
         errorCodes.addAll(List.of(CardErrorCode.values()));
+        errorCodes.addAll(List.of(ImageErrorCode.values()));
     }
 
     @GetMapping
