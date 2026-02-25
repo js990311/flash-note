@@ -30,19 +30,22 @@ public class ImageService {
     private final S3ImageRepository s3ImageRepository;
     private final LocalFileRepository localFileRepository;
     private final ImageMetadataService imageMetadataService;
+    private final ImageValidationService imageValidationService;
     private final S3Properties s3Properties;
 
     public CompletableFuture<Long> uploadImage(MultipartFile file, Long memberId) {
+        // 0. 검증
+        ImageValidationService.ValidatedImage validatedImage = imageValidationService.validate(file);
+
         // 1. 파일 정보 준비
         String originalFilename = file.getOriginalFilename();
-        String extension = getExtension(originalFilename);
         Long tsid = TSID.fast().toLong();
-        String tempFilename = tsid + "." + extension;
+        String tempFilename = buildTempFilename(tsid, validatedImage.extension());
         String s3Key = "images/" + tempFilename;
 
         // 2. 로컬 임시 저장
         Path tempPath = localFileRepository.save(file, tempFilename);
-        imageMetadataService.create(tsid, s3Key, originalFilename, file, memberId);
+        imageMetadataService.create(tsid, s3Key, validatedImage.filename(), validatedImage.contentType(), validatedImage.size(), memberId);
 
         try {
             FileInputStream fis = new FileInputStream(tempPath.toFile());
@@ -60,7 +63,7 @@ public class ImageService {
                 localFileRepository.delete(tempPath);
 
                 if (throwable != null) {
-                    throw new ImageException("S3 업로드 실패", throwable);
+                    throw ImageException.s3UploadFailed(throwable);
                 }
 
                 // 5. DB 메타데이터 저장 (Entity의 @Tsid가 ID를 자동 생성)
@@ -68,21 +71,23 @@ public class ImageService {
             });
         } catch (IOException e) {
             localFileRepository.delete(tempPath);
-            throw new ImageException("파일 처리 중 오류 발생", e);
+            throw ImageException.fileProcessingFailed(e);
         }
     }
 
     public Long uploadImageReturnId(MultipartFile file, Long memberId) {
+        // 0. 검증
+        ImageValidationService.ValidatedImage validatedImage = imageValidationService.validate(file);
+
         // 1. 파일 정보 준비
         String originalFilename = file.getOriginalFilename();
-        String extension = getExtension(originalFilename);
         Long tsid = TSID.fast().toLong();
-        String tempFilename = tsid + "." + extension;
+        String tempFilename = buildTempFilename(tsid, validatedImage.extension());
         String s3Key = "images/" + tempFilename;
 
         // 2. 로컬 임시 저장
         Path tempPath = localFileRepository.save(file, tempFilename);
-        Long id = imageMetadataService.create(tsid, s3Key, originalFilename, file, memberId);
+        Long id = imageMetadataService.create(tsid, s3Key, validatedImage.filename(), validatedImage.contentType(), validatedImage.size(), memberId);
 
         try {
             FileInputStream fis = new FileInputStream(tempPath.toFile());
@@ -100,7 +105,7 @@ public class ImageService {
                 localFileRepository.delete(tempPath);
 
                 if (throwable != null) {
-                    throw new ImageException("S3 업로드 실패", throwable);
+                    throw ImageException.s3UploadFailed(throwable);
                 }
 
                 // 5. DB 메타데이터 저장 (Entity의 @Tsid가 ID를 자동 생성)
@@ -109,7 +114,7 @@ public class ImageService {
             return id;
         } catch (IOException e) {
             localFileRepository.delete(tempPath);
-            throw new ImageException("파일 처리 중 오류 발생", e);
+            throw ImageException.fileProcessingFailed(e);
         }
     }
 
@@ -144,5 +149,9 @@ public class ImageService {
         } catch (IOException e) {
             log.warn("Stream close fail", e);
         }
+    }
+
+    private String buildTempFilename(Long tsid, String extension) {
+        return tsid + "." + extension;
     }
 }

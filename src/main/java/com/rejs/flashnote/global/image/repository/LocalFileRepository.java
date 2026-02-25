@@ -30,7 +30,7 @@ public class LocalFileRepository {
                 Files.createDirectories(this.rootPath);
             }
         } catch (Exception e) {
-            throw new ImageException("로컬 임시 디렉토리 초기화 실패", e);
+            throw ImageException.tempDirectoryInitFailed(e);
         }
     }
 
@@ -40,7 +40,7 @@ public class LocalFileRepository {
             file.transferTo(targetPath);
             return targetPath;
         } catch (IOException e) {
-            throw new ImageException("로컬 파일 저장 실패: " + filename, e);
+            throw ImageException.localSaveFailed(filename, e);
         }
     }
 

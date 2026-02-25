@@ -42,7 +42,7 @@ public class S3ImageRepository {
 
             s3Client.putObject(putObjectRequest, requestBody);
         } catch (S3Exception e) {
-            throw ImageException.putException(e);
+            throw ImageException.s3UploadFailed(e);
         }
     }
 
@@ -63,7 +63,7 @@ public class S3ImageRepository {
                 .handle((response, throwable) -> {
                     if (throwable != null) {
                         Throwable cause = throwable.getCause() != null ? throwable.getCause() : throwable;
-                        throw ImageException.putException(cause);
+                        throw ImageException.s3UploadFailed(cause);
                     }
                     return response;
                 });
@@ -79,7 +79,7 @@ public class S3ImageRepository {
             );
             return new InputStreamResource(s3InputStream);
         } catch (S3Exception e) {
-            throw new ImageException("이미지 가져오기 실패", e);
+            throw ImageException.fileProcessingFailed(e);
         }
     }
 }

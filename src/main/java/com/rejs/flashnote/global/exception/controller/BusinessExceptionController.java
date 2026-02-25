@@ -5,12 +5,14 @@ import com.rejs.flashnote.global.exception.throwable.BusinessException;
 import com.rejs.flashnote.global.exception.code.CommonErrorCode;
 import com.rejs.flashnote.global.exception.code.ErrorCode;
 import com.rejs.flashnote.global.exception.throwable.InvalidParameterException;
+import com.rejs.flashnote.global.image.exception.ImageErrorCode;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.multipart.MaxUploadSizeExceededException;
 import org.springframework.web.servlet.ModelAndView;
 
 @Slf4j
@@ -40,6 +42,16 @@ public class BusinessExceptionController {
     @ExceptionHandler(InvalidParameterException.class)
     public Object handleInvalidParameterException(InvalidParameterException e, HttpServletRequest request){
         return createErrorResponseEntity(e, request);
+    }
+
+    @ExceptionHandler(MaxUploadSizeExceededException.class)
+    public Object handleMaxUploadSizeExceededException(MaxUploadSizeExceededException e, HttpServletRequest request) {
+        ErrorCode ec = ImageErrorCode.FILE_TOO_LARGE;
+        log.error("Image upload too large: {}", e.getMessage());
+        if (isAjax(request)) {
+            return createErrorResponseEntity(ec, request);
+        }
+        return createErrorModelAndView(ec, ec.getDetail(), request);
     }
 
     private ModelAndView createErrorModelAndView(ErrorCode ec, String message, HttpServletRequest request) {
